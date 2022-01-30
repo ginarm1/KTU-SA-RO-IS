@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace KTU_SA_RO_IS
+namespace KTU_SA_RO
 {
     public class Program
     {

@@ -1,5 +1,5 @@
-﻿using KTU_SA_RO_IS.Data;
-using KTU_SA_RO_IS.Models;
+﻿using KTU_SA_RO.Data;
+using KTU_SA_RO.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace KTU_SA_RO_IS.Controllers
+namespace KTU_SA_RO.Controllers
 {
     public class HomeController : Controller
     {

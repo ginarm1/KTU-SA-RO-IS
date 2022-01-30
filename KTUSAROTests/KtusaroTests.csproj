@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KTU SA RO IS\KTU SA RO IS.csproj" />
+    <ProjectReference Include="..\KTU SA RO IS\KTU SA RO.csproj" />
   </ItemGroup>
 
 </Project>

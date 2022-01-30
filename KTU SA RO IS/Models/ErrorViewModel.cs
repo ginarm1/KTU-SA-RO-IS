@@ -1,6 +1,6 @@
 using System;
 
-namespace KTU_SA_RO_IS.Models
+namespace KTU_SA_RO.Models
 {
     public class ErrorViewModel
     {

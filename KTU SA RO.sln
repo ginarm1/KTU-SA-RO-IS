@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KTU SA RO IS", "KTU SA RO IS\KTU SA RO IS.csproj", "{80F221C5-BE21-4C93-B045-9A7760C89FF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KTU SA RO", "KTU SA RO IS\KTU SA RO.csproj", "{80F221C5-BE21-4C93-B045-9A7760C89FF8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KtusaroTests", "KTUSAROTests\KtusaroTests.csproj", "{3EDB0877-9F73-4585-A465-929C1FA27690}"
 EndProject
