@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace KTU_SA_RO_IS.Data
+namespace KTU_SA_RO.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
