@@ -1,4 +1,5 @@
 using KTU_SA_RO.Data;
+using KTU_SA_RO.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,7 +32,7 @@ namespace KTU_SA_RO
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             services
-                .AddDefaultIdentity<IdentityUser>()
+                .AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddDefaultTokenProviders()
@@ -65,6 +66,7 @@ namespace KTU_SA_RO
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
