@@ -14,5 +14,9 @@ namespace KTU_SA_RO.Data
             : base(options)
         {
         }
+
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventType> EventTypes { get; set; }
+
     }
 }
