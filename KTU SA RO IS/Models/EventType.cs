@@ -9,7 +9,7 @@ namespace KTU_SA_RO.Models
         [Required]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Renginio tipo pavadinimas yra privalomas")]
         public string Name { get; set; }
 
         public ICollection<Event> Event { get; set; }

@@ -8,11 +8,11 @@ namespace KTU_SA_RO.Models
     public class ApplicationUser : IdentityUser
     {
         [PersonalData]
-        [Required]
+        [Required(ErrorMessage = "Vardas yra privalomas")]
         [DisplayName("Vardas")]
         public string Name { get; set; }
         [PersonalData]
-        [Required]
+        [Required(ErrorMessage = "Pavardė yra privaloma")]
         [DisplayName("Pavardė")]
         public string Surname { get; set; }
 
