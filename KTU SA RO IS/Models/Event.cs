@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,7 +13,7 @@ namespace KTU_SA_RO.Models
 
         [Required]
         [DisplayName("Pavadinimas")]
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         [Required]
         [DisplayName("Renginio pradžia")]
@@ -30,6 +31,18 @@ namespace KTU_SA_RO.Models
         public string Description { get; set; }
 
         [Required]
+        [DisplayName("Ar išrinktas renginio koordinatorius?")]
+        public bool? Has_coordinator { get; set; }
+
+        [Required]
+        [DisplayName("Renginio koordinatoriaus vardas")]
+        public string CoordinatorName { get; set; }
+
+        [Required]
+        [DisplayName("Renginio koordinatoriaus pavardė")]
+        public string CoordinatorSurname { get; set; }
+
+        [Required]
         [DisplayName("Ar atšauktas")]
         public bool? Is_canceled { get; set; }
 
@@ -38,17 +51,19 @@ namespace KTU_SA_RO.Models
         public bool? Is_public { get; set; }
 
         [Required]
-        [DisplayName("Ar gyvas?")]
+        [DisplayName("Ar gyvai įvyks?")]
         public bool? Is_live { get; set; }
 
         [Required]
         [DisplayName("Planuojamas dalyvių kiekis")]
         public int PlannedPeopleCount { get; set; }
 
-        [Required]
-        [DisplayName("Planuojamas dalyvių kiekis")]
+        [DisplayName("Atvykusių dalyvių kiekis")]
         public int PeopleCount { get; set; }
 
         public EventType EventType { get; set; }
+
+        [DisplayName("Organizatorius")]
+        public ICollection<ApplicationUser> Users { get; set; }
     }
 }

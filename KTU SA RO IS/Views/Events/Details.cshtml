@@ -1,0 +1,96 @@
+﻿@model KTU_SA_RO.Models.Event
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Event</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EndDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Location)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Has_coordinator)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Has_coordinator)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CoordinatorName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CoordinatorName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CoordinatorSurname)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CoordinatorSurname)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Is_canceled)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Is_canceled)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Is_public)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Is_public)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Is_live)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Is_live)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PlannedPeopleCount)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PlannedPeopleCount)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PeopleCount)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PeopleCount)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

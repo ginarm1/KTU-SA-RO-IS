@@ -1,0 +1,94 @@
+﻿@model KTU_SA_RO.Models.Event
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Event</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate" class="control-label"></label>
+                <input asp-for="EndDate" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Location" class="control-label"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Has_coordinator" class="control-label"></label>
+                <input asp-for="Has_coordinator" class="form-control" />
+                <span asp-validation-for="Has_coordinator" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoordinatorName" class="control-label"></label>
+                <input asp-for="CoordinatorName" class="form-control" />
+                <span asp-validation-for="CoordinatorName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoordinatorSurname" class="control-label"></label>
+                <input asp-for="CoordinatorSurname" class="form-control" />
+                <span asp-validation-for="CoordinatorSurname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Is_canceled" class="control-label"></label>
+                <input asp-for="Is_canceled" class="form-control" />
+                <span asp-validation-for="Is_canceled" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Is_public" class="control-label"></label>
+                <input asp-for="Is_public" class="form-control" />
+                <span asp-validation-for="Is_public" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Is_live" class="control-label"></label>
+                <input asp-for="Is_live" class="form-control" />
+                <span asp-validation-for="Is_live" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlannedPeopleCount" class="control-label"></label>
+                <input asp-for="PlannedPeopleCount" class="form-control" />
+                <span asp-validation-for="PlannedPeopleCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PeopleCount" class="control-label"></label>
+                <input asp-for="PeopleCount" class="form-control" />
+                <span asp-validation-for="PeopleCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

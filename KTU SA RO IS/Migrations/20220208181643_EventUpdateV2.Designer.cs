@@ -3,6 +3,7 @@ using System;
 using KTU_SA_RO.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KTU_SA_RO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220208181643_EventUpdateV2")]
+    partial class EventUpdateV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,14 +117,6 @@ namespace KTU_SA_RO.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("CoordinatorName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CoordinatorSurname")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -132,10 +126,6 @@ namespace KTU_SA_RO.Migrations
 
                     b.Property<int?>("EventTypeId")
                         .HasColumnType("int");
-
-                    b.Property<bool?>("Has_coordinator")
-                        .IsRequired()
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool?>("Is_canceled")
                         .IsRequired()
