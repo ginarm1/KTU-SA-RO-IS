@@ -76,7 +76,6 @@ namespace KTU_SA_RO.Controllers
                                 break;
                         }
                     }
-                    //break;
                 }
                 
             }

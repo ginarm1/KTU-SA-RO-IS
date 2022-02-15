@@ -42,6 +42,7 @@ let calendar = new FullCalendar.Calendar(calendarEl, {
     eventClick: (info) => {
         toggleEvent(info.event.id)
     },
+    weekNumberCalculation: 'ISO'
 })
 
 calendar.render();

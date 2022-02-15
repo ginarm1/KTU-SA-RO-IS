@@ -1,8 +1,13 @@
 ﻿@model KTU_SA_RO.Models.Event
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Redaguoti renginį";
 }
+
+<link rel="stylesheet" href="~/css/searchDrop.css" >
 
 <div class="row">
     <div class="d-flex justify-content-center">
@@ -19,12 +24,12 @@
             <div class="row">
                 <div class="col-6 form-group">
                     <label asp-for="StartDate" class="control-label"></label>
-                    <input asp-for="StartDate" class="form-control" />
+                    <input asp-for="StartDate" class="form-control" id="startDate" />
                     <span asp-validation-for="StartDate" class="text-danger"></span>
                 </div>
                 <div class="col-6 form-group">
                     <label asp-for="EndDate" class="control-label"></label>
-                    <input asp-for="EndDate" class="form-control" />
+                    <input asp-for="EndDate" class="form-control" id="endDate" />
                     <span asp-validation-for="EndDate" class="text-danger"></span>
                 </div>
             </div>
@@ -39,6 +44,8 @@
                 <textarea asp-for="Description" class="form-control" rows="4"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+            <label asp-for="EventType.Name" class="control-label"></label>
+            <select id="jquery-searchable-dropdown" name="Name" asp-for="EventType.Name" class="form-control custom-select mb-3" asp-items="@(new SelectList(ViewData["eventTypes"] as List<EventType>, "Name", "Name"))"></select>
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="hasCoordinatorCheckbox" checked>
                 <label asp-for="Has_coordinator" class="form-check-label"></label>
@@ -47,12 +54,12 @@
             <div id="coordinatorContainer" class="my-3 p-3">
                 <div class="form-group">
                     <label asp-for="CoordinatorName" class="control-label"></label>
-                    <input asp-for="CoordinatorName" class="form-control w-50" />
+                    <input asp-for="CoordinatorName" class="form-control w-50" id="coordName" />
                     <span asp-validation-for="CoordinatorName" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="CoordinatorSurname" class="control-label"></label>
-                    <input asp-for="CoordinatorSurname" class="form-control w-50" />
+                    <input asp-for="CoordinatorSurname" class="form-control w-50" id="coordSurname" />
                     <span asp-validation-for="CoordinatorSurname" class="text-danger"></span>
                 </div>
             </div>
@@ -68,7 +75,7 @@
             </div>
             <div class="form-group mt-2 mb-4">
                 <label asp-for="PeopleCount" class="control-label"></label>
-                <input asp-for="PeopleCount" class="form-control w-25 text-end" min='0' max='200000'/>
+                <input asp-for="PeopleCount" class="form-control w-25 text-end" min='0' max='200000' />
                 <span asp-validation-for="PeopleCount" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -81,12 +88,45 @@
 
 @section Scripts {
 <script>
+    var changeCoordInput = (checked) => {
+        if(checked == ":checked"){
+            $('#coordName').val('');
+            $( "#coordName" ).prop( "disabled", false );
+
+            $('#coordSurname').val('');
+            $( "#coordSurname" ).prop( "disabled", false );
+        }
+        else{
+            $('#coordName').val("@Html.Raw(@UserManager.GetUserAsync(User).Result.Name)");
+            $( "#coordName" ).prop( "disabled", true );
+
+            $('#coordSurname').val("@Html.Raw(@UserManager.GetUserAsync(User).Result.Surname)");
+            $( "#coordSurname" ).prop( "disabled", true );
+        }
+    }
+
     $(document).ready(() => {
+        changeCoordInput("");
         $('#hasCoordinatorCheckbox').click(function(){
             if($('#hasCoordinatorCheckbox').is(":checked"))
-                $('#coordinatorContainer').show();
+            {
+                changeCoordInput(":checked");
+            }
+
             else
-                $('#coordinatorContainer').hide();
+            {
+                changeCoordInput("");
+            }
+        });
+
+        // set min value for event end date
+        $('#startDate').change(() => {
+            var endDate = $('#endDate').attr({"min" : $('#startDate').val()});
+        })
+
+        $('#submit').click(() => {
+            $( "#coordName" ).prop( "disabled", false );
+            $( "#coordSurname" ).prop( "disabled", false );
         });
     });
 </script>

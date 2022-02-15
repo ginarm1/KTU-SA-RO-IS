@@ -93,6 +93,9 @@ namespace KTU_SA_RO.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["eventTypes"] = _context.EventTypes.ToList();
+
             return View(@event);
         }
 
@@ -101,7 +104,8 @@ namespace KTU_SA_RO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,StartDate,EndDate,Location,Description,Has_coordinator,CoordinatorName,CoordinatorSurname,Is_canceled,Is_public,Is_live,PlannedPeopleCount,PeopleCount")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,StartDate,EndDate,Location,Description,Has_coordinator,CoordinatorName,CoordinatorSurname,Is_canceled,Is_public,Is_live,PlannedPeopleCount,PeopleCount")] 
+            Event @event, EventType eventType)
         {
             if (id != @event.Id)
             {
@@ -112,7 +116,18 @@ namespace KTU_SA_RO.Controllers
             {
                 try
                 {
+                    @event.EventType = await _context.EventTypes.FirstOrDefaultAsync(et => et.Name.Equals(eventType.Name));
+
+                    ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(@event.CoordinatorName) && u.Surname.Equals(@event.CoordinatorSurname));
+
                     _context.Update(@event);
+                    await _context.SaveChangesAsync();
+
+                    EventTeam team = new EventTeam();
+                    team.EventId = @event.Id;
+                    team.UserId = user.Id;
+
+                    _context.Add(team);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
