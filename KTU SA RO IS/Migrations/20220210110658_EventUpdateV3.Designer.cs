@@ -147,10 +147,6 @@ namespace KTU_SA_RO.Migrations
                         .IsRequired()
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool?>("Is_public")
-                        .IsRequired()
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Location")
                         .HasColumnType("longtext");
 

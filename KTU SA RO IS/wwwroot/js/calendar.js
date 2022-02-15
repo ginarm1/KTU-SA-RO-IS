@@ -12,10 +12,10 @@ let trElems = eventsTable.getElementsByTagName('tr');
 for (let tr of trElems) {
     let tdElems = tr.getElementsByTagName('td');
     const tempStartDate = new Date(tdElems[2].innerText);
+    tempStartDate.setDate(tempStartDate.getDate() + 1)
     tdElems[2].innerText = tempStartDate.toISOString().split('T')[0]
-    console.log('Start date: ' + tdElems[2].innerText);
     const tempEndDate = new Date(tdElems[3].innerText);
-    tempEndDate.setDate(tempEndDate.getDate() + 1)
+    tempEndDate.setDate(tempEndDate.getDate() + 2)
     tdElems[3].innerText = tempEndDate.toISOString().split('T')[0]
 
     let event = {
@@ -23,6 +23,8 @@ for (let tr of trElems) {
         title: tdElems[1].innerText,
         start: tdElems[2].innerText,
         end: tdElems[3].innerText,
+        backgroundColor: tdElems[4].innerText,
+        borderColor: tdElems[4].innerText,
     };
     eventsArr.push(event)
 }
@@ -39,7 +41,7 @@ let calendar = new FullCalendar.Calendar(calendarEl, {
     events: eventsArr,
     eventClick: (info) => {
         toggleEvent(info.event.id)
-    }
+    },
 })
 
 calendar.render();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KTU_SA_RO.Models
 {
@@ -35,7 +36,7 @@ namespace KTU_SA_RO.Models
 
         [Required]
         [DisplayName("Ar išrinktas renginio koordinatorius?")]
-        public bool? Has_coordinator { get; set; }
+        public bool Has_coordinator { get; set; }
 
         [Required]
         [DisplayName("Renginio koordinatoriaus vardas")]
@@ -47,15 +48,11 @@ namespace KTU_SA_RO.Models
 
         [Required]
         [DisplayName("Ar atšauktas")]
-        public bool? Is_canceled { get; set; }
-
-        [Required]
-        [DisplayName("Ar viešas")]
-        public bool? Is_public { get; set; }
+        public bool Is_canceled { get; set; }
 
         [Required]
         [DisplayName("Ar įvyks gyvai?")]
-        public bool? Is_live { get; set; }
+        public bool Is_live { get; set; }
 
         [Required(ErrorMessage = "Renginyje planuojamų dalyvių kiekis yra privalomas")]
         [DisplayName("Planuojamas dalyvių kiekis")]
@@ -68,5 +65,7 @@ namespace KTU_SA_RO.Models
 
         [DisplayName("Organizatorius")]
         public ICollection<ApplicationUser> Users { get; set; }
+
+        public EventTeam EventTeam { get; set; }
     }
 }

@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KTU_SA_RO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220208181643_EventUpdateV2")]
-    partial class EventUpdateV2
+    [Migration("20220214193242_EventTeam")]
+    partial class EventTeam
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("ApplicationUserEvent", b =>
@@ -54,6 +54,9 @@ namespace KTU_SA_RO.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("EventTeamId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -101,6 +104,8 @@ namespace KTU_SA_RO.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EventTeamId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -117,6 +122,14 @@ namespace KTU_SA_RO.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("CoordinatorName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CoordinatorSurname")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -127,12 +140,13 @@ namespace KTU_SA_RO.Migrations
                     b.Property<int?>("EventTypeId")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("Is_canceled")
-                        .IsRequired()
+                    b.Property<bool>("Has_coordinator")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool?>("Is_live")
-                        .IsRequired()
+                    b.Property<bool>("Is_canceled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("Is_live")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Location")
@@ -156,6 +170,26 @@ namespace KTU_SA_RO.Migrations
                     b.HasIndex("EventTypeId");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("KTU_SA_RO.Models.EventTeam", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId")
+                        .IsUnique();
+
+                    b.ToTable("EventTeams");
                 });
 
             modelBuilder.Entity("KTU_SA_RO.Models.EventType", b =>
@@ -320,6 +354,15 @@ namespace KTU_SA_RO.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("KTU_SA_RO.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("KTU_SA_RO.Models.EventTeam", "EventTeam")
+                        .WithMany("Users")
+                        .HasForeignKey("EventTeamId");
+
+                    b.Navigation("EventTeam");
+                });
+
             modelBuilder.Entity("KTU_SA_RO.Models.Event", b =>
                 {
                     b.HasOne("KTU_SA_RO.Models.EventType", "EventType")
@@ -327,6 +370,17 @@ namespace KTU_SA_RO.Migrations
                         .HasForeignKey("EventTypeId");
 
                     b.Navigation("EventType");
+                });
+
+            modelBuilder.Entity("KTU_SA_RO.Models.EventTeam", b =>
+                {
+                    b.HasOne("KTU_SA_RO.Models.Event", "Events")
+                        .WithOne("EventTeam")
+                        .HasForeignKey("KTU_SA_RO.Models.EventTeam", "EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -378,6 +432,16 @@ namespace KTU_SA_RO.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("KTU_SA_RO.Models.Event", b =>
+                {
+                    b.Navigation("EventTeam");
+                });
+
+            modelBuilder.Entity("KTU_SA_RO.Models.EventTeam", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("KTU_SA_RO.Models.EventType", b =>

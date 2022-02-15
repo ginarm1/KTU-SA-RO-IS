@@ -1,14 +1,12 @@
 ﻿@model IEnumerable<KTU_SA_RO.Models.Event>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Visi renginiai";
 }
 
-<h1>Index</h1>
+<h1>@ViewData["Title"]</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<a asp-action="Create" class="btn btn-primary my-2 col-3"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują renginį</a>
 <table class="table">
     <thead>
         <tr>
@@ -16,10 +14,7 @@
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                Renginio data
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Location)
@@ -28,80 +23,60 @@
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Has_coordinator)
+                Renginio koordinatorius
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CoordinatorName)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CoordinatorSurname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Is_canceled)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Is_public)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Is_live)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.PlannedPeopleCount)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.PeopleCount)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Is_canceled)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Has_coordinator)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CoordinatorName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CoordinatorSurname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Is_canceled)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Is_public)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Is_live)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PlannedPeopleCount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PeopleCount)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CoordinatorName) @Html.DisplayFor(modelItem => item.CoordinatorSurname)
+                </td>
+                <td>
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.PlannedPeopleCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PeopleCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Is_canceled)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success" style="width:7rem;"> Plačiau</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

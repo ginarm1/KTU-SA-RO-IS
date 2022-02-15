@@ -1,8 +1,40 @@
 ﻿@model KTU_SA_RO.Models.Event
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<ApplicationUser> UserManager
+
 
 @{
     ViewData["Title"] = "Sukurti renginį";
 }
+
+<style>
+    /*jquery-searchable-dropdown container*/
+    .custom-select {
+        border: 1px solid #ced4da;
+    }
+
+        .custom-select, .custom-select > div {
+            border-radius: 0.25rem;
+        }
+
+            .custom-select:focus {
+                border-color: #86b7fe;
+                background: #ced4da;
+                box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+            }
+
+            .custom-select > div {
+                padding: 0.6rem 0;
+                background: #ced4da;
+                border: 1px solid #7e8082;
+            }
+
+            .custom-select input {
+                border: 1px solid rgb(13 110 253 / 25%);
+                box-shadow: 0 0 0 0.1rem rgb(13 110 253 / 25%);
+            }
+</style>
 
 <div class="row">
     <div class="d-flex justify-content-center">
@@ -18,12 +50,12 @@
             <div class="row">
                 <div class="col-6 form-group">
                     <label asp-for="StartDate" class="control-label"></label>
-                    <input asp-for="StartDate" class="form-control" />
+                    <input asp-for="StartDate" class="form-control" id="startDate" />
                     <span asp-validation-for="StartDate" class="text-danger"></span>
                 </div>
                 <div class="col-6 form-group">
                     <label asp-for="EndDate" class="control-label"></label>
-                    <input asp-for="EndDate" class="form-control" />
+                    <input asp-for="EndDate" class="form-control" id="endDate" />
                     <span asp-validation-for="EndDate" class="text-danger"></span>
                 </div>
             </div>
@@ -38,6 +70,8 @@
                 <textarea asp-for="Description" class="form-control" rows="4"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+            <label asp-for="EventType.Name" class="control-label"></label>
+            <select id="jquery-searchable-dropdown" name="Name" asp-for="EventType.Name" class="form-control custom-select mb-3" asp-items="@(new SelectList(ViewData["eventTypes"] as List<EventType>, "Name", "Name"))"></select>
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="hasCoordinatorCheckbox">
                 <label asp-for="Has_coordinator" class="form-check-label"></label>
@@ -46,19 +80,14 @@
             <div id="coordinatorContainer" class="my-3 p-3">
                 <div class="form-group">
                     <label asp-for="CoordinatorName" class="control-label"></label>
-                    <input asp-for="CoordinatorName" class="form-control w-50" />
+                    <input asp-for="CoordinatorName" class="form-control w-50" id="coordName" />
                     <span asp-validation-for="CoordinatorName" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="CoordinatorSurname" class="control-label"></label>
-                    <input asp-for="CoordinatorSurname" class="form-control w-50" />
+                    <input asp-for="CoordinatorSurname" class="form-control w-50" id="coordSurname" />
                     <span asp-validation-for="CoordinatorSurname" class="text-danger"></span>
                 </div>
-            </div>
-            <div class="form-check my-2">
-                <input type="checkbox" class="form-check-input" id="isPublicCheckbox">
-                <label asp-for="Is_public" class="form-check-label"></label>
-                <span asp-validation-for="Is_public" class="text-danger"></span>
             </div>
             <div class="form-check mt-2 mb-4">
                 <input type="checkbox" class="form-check-input" id="isLiveCheckbox">
@@ -71,8 +100,8 @@
                 <span asp-validation-for="PlannedPeopleCount" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <a asp-action="Index" class="btn btn-outline-dark text-uppercase">← Grižti į sąrašą</a>
-                <input type="submit" value="Create" class="btn btn-primary text-uppercase" />
+                <a asp-action="Index" class="btn btn-outline-dark text-uppercase"><i class="fas fa-arrow-left"></i> Grižti į sąrašą</a>
+                <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase" id="submit" />
             </div>
         </form>
     </div>
@@ -80,16 +109,49 @@
 
 @section Scripts {
 <script>
-    $(document).ready(() => {
-        $('#coordinatorContainer').hide();
+    var changeCoordInput = (checked) => {
+        if(checked == ":checked"){
+            $('#coordName').val('');
+            $( "#coordName" ).prop( "disabled", false );
 
+            $('#coordSurname').val('');
+            $( "#coordSurname" ).prop( "disabled", false );
+        }
+        else{
+            $('#coordName').val("@Html.Raw(@UserManager.GetUserAsync(User).Result.Name)");
+            $( "#coordName" ).prop( "disabled", true );
+
+            $('#coordSurname').val("@Html.Raw(@UserManager.GetUserAsync(User).Result.Surname)");
+            $( "#coordSurname" ).prop( "disabled", true );
+        }
+    }
+
+    $(document).ready(() => {
+        changeCoordInput("");
         $('#hasCoordinatorCheckbox').click(function(){
             if($('#hasCoordinatorCheckbox').is(":checked"))
-                $('#coordinatorContainer').show();
+            {
+                changeCoordInput(":checked");
+            }
+
             else
-                $('#coordinatorContainer').hide();
+            {
+                changeCoordInput("");
+            }
+        });
+
+        // set min value for event end date
+        $('#startDate').change(() => {
+            var endDate = $('#endDate').attr({"min" : $('#startDate').val()});
+        })
+
+        $('#submit').click(() => {
+            $( "#coordName" ).prop( "disabled", false );
+            $( "#coordSurname" ).prop( "disabled", false );
         });
     });
 </script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }

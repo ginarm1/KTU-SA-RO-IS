@@ -24,6 +24,65 @@ namespace KTU_SA_RO.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var a = await _context.Events
+                .Include(et => et.EventType)
+                .Include(et => et.EventTeam)
+                    .ThenInclude(u => u.Users)
+                .ToListAsync();
+
+            var userRepresent = await _context.Users.ToListAsync();
+            var repList = new Dictionary<int,string>();
+            var eventIds = new List<int>();
+
+            foreach (var Event in a)
+            {
+                foreach (var ur in userRepresent)
+                {
+                    if (Event.EventTeam.UserId.Equals(ur.Id) && Event.EventTeam.Is_event_coord)
+                    {
+                        eventIds.Add(Event.EventTeam.EventId);
+
+                        switch (ur.Representative.ToString())
+                        {
+                            case "infosa":
+                                repList.Add(Event.EventTeam.EventId, "#03afd7");
+                                break;
+                            case "csa":
+                                repList.Add(Event.EventTeam.EventId, "#2B2B2B");
+                                break;
+                            case "vivat":
+                                repList.Add(Event.EventTeam.EventId, "#ea6c32");
+                                break;
+                            case "indi":
+                                repList.Add(Event.EventTeam.EventId, "#332c75");
+                                break;
+                            case "vfsa":
+                                repList.Add(Event.EventTeam.EventId, "#3b3c5a");
+                                break;
+                            case "esa":
+                                repList.Add(Event.EventTeam.EventId, "#27395b");
+                                break;
+                            case "shm":
+                                repList.Add(Event.EventTeam.EventId, "#78274b");
+                                break;
+                            case "statius":
+                                repList.Add(Event.EventTeam.EventId, "#1a5d33");
+                                break;
+                            case "fumsa":
+                                repList.Add(Event.EventTeam.EventId, "#ea3c3b");
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                    //break;
+                }
+                
+            }
+            ViewData["represantatives"] = repList;
+            ViewData["eventIds"] = eventIds;
+
             return View(await _context.Events
                 .Include(et => et.EventType)
                 .ToListAsync());

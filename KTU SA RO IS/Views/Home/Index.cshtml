@@ -1,11 +1,17 @@
 ﻿@model IEnumerable<KTU_SA_RO.Models.Event>
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<ApplicationUser> UserManager
+
 @{
     ViewData["Title"] = "Home Page";
-
+    var rep = ViewData["represantatives"] as Dictionary<int, string>;
+    var eventIds = ViewData["eventIds"] as List<int>;
+    int i = 0;
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.css">
 
-<table id="eventsTable">
+<table id="eventsTable" hidden>
 
     @*List of events*@
     @foreach (var item in Model)
@@ -15,6 +21,23 @@
             <td>@Html.DisplayFor(modelItem => item.Title)</td>
             <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
             <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+            @if (i < eventIds.Count)
+             {
+                if (eventIds[i] == item.Id)
+                {
+                    <td>@rep[item.Id]</td>
+                    i++;
+                }
+                else
+                {
+                    <td></td>
+                }
+            }
+            else
+            {
+                <td></td>
+            }
+
         </tr>
     }
 </table>
@@ -33,19 +56,35 @@
                 <h5 class="col-1 text-end"><i class="far fa-calendar"></i></h5>
                 <p class="col-9">@item.StartDate.ToString("yyyy-MM-dd") - @item.EndDate.ToString("yyyy-MM-dd")</p>
             </div>
-            @if (item.Location != null)
-            {
-                <div class="row mt-4">
-                    <h5 class="col-3">Vieta:</h5>
-                    <p class="col-9">@item.Location</p>
-                </div>
-            }
             <div class="row mt-4">
-                <h5 class="col-3">Tipas:</h5>
-                <p class="col-9">@item.EventType.Name</p>
+                <h5 class="col-sm-7 col-md-6 col-lg-4">Vieta:</h5>
+                @if (item.Location == null)
+                {
+                    <p class="col-6">Nežinoma</p>
+                }
+                else
+                {
+                    <p class="col-6">@item.Location</p>
+                }
             </div>
-            <div class="row mt-3">
-                <h5 class="col-3">Dalyvių skaičius:</h5>
+            <div class="row mt-2">
+                <h5 class="col-sm-7 col-md-6 col-lg-4">Renginio koordinatorius:</h5>
+                @if (item.CoordinatorName.Equals("Narys"))
+                {
+                    <p class="col-6">Narys</p>
+                }
+                else
+                {
+                    <p class="col-6">@item.CoordinatorName @item.CoordinatorSurname</p>
+                }
+
+            </div>
+            <div class="row mt-2">
+                <h5 class="col-sm-7 col-md-6 col-lg-4">Tipas:</h5>
+                <p class="col-6">@item.EventType.Name</p>
+            </div>
+            <div class="row mt-2">
+                <h5 class="col-sm-7 col-md-6 col-lg-4">Dalyvių skaičius:</h5>
                 <p class="col-2">@item.PlannedPeopleCount</p>
             </div>
             <p id="eventDetails-@item.Id">@item.Description</p>

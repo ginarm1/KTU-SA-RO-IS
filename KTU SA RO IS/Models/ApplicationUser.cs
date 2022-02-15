@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KTU_SA_RO.Models
 {
@@ -19,5 +20,6 @@ namespace KTU_SA_RO.Models
         public Representative Representative { get; set; }
 
         public ICollection<Event> Events { get; set; }
+        public EventTeam EventTeam { get; set; }
     }
 }

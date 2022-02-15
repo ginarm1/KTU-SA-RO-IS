@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace KTU_SA_RO.Models
@@ -9,6 +10,7 @@ namespace KTU_SA_RO.Models
         [Required]
         public int Id { get; set; }
 
+        [DisplayName("Renginio tipas")]
         [Required(ErrorMessage = "Renginio tipo pavadinimas yra privalomas")]
         public string Name { get; set; }
 

@@ -31,7 +31,7 @@ namespace KTU_SA_RO.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
+                    Title = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -40,7 +40,6 @@ namespace KTU_SA_RO.Migrations
                     Description = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Is_canceled = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Is_public = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Is_live = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     PlannedPeopleCount = table.Column<int>(type: "int", nullable: false),
                     PeopleCount = table.Column<int>(type: "int", nullable: false),
