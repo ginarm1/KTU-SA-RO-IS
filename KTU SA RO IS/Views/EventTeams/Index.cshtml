@@ -1,25 +1,22 @@
 ﻿@model IEnumerable<KTU_SA_RO.Models.EventTeam>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Renginių komandos";
 }
 
-<h1>Index</h1>
+<h1>Renginių komandos</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Events)
+                Renginio pavadinimas
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserId)
+                Komandos nario vardas pavardė
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Is_event_coord)
+                Ar yra renginio koordinatorius
             </th>
             <th></th>
         </tr>
@@ -28,10 +25,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Events.CoordinatorName)
+                @Html.DisplayFor(modelItem => item.Events.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserId)
+                @Html.DisplayFor(modelItem => item.Events.CoordinatorName) @Html.DisplayFor(modelItem => item.Events.CoordinatorSurname)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Is_event_coord)

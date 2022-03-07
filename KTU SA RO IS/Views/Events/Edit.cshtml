@@ -47,7 +47,7 @@
             <label asp-for="EventType.Name" class="control-label"></label>
             <select id="jquery-searchable-dropdown" name="Name" asp-for="EventType.Name" class="form-control custom-select mb-3" asp-items="@(new SelectList(ViewData["eventTypes"] as List<EventType>, "Name", "Name"))"></select>
             <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="hasCoordinatorCheckbox" checked>
+                <input asp-for="Has_coordinator" type="checkbox" class="form-check-input" checked>
                 <label asp-for="Has_coordinator" class="form-check-label"></label>
                 <span asp-validation-for="Has_coordinator" class="text-danger"></span>
             </div>
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="form-check mt-2 mb-4">
-                <input type="checkbox" class="form-check-input" id="isLiveCheckbox">
+                <input asp-for="Is_live" type="checkbox" class="form-check-input">
                 <label asp-for="Is_live" class="form-check-label"></label>
                 <span asp-validation-for="Is_live" class="text-danger"></span>
             </div>
@@ -106,7 +106,6 @@
     }
 
     $(document).ready(() => {
-        changeCoordInput("");
         $('#hasCoordinatorCheckbox').click(function(){
             if($('#hasCoordinatorCheckbox').is(":checked"))
             {

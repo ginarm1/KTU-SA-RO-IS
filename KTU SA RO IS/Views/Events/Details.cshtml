@@ -9,70 +9,91 @@
 <div>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-9 col-lg-10 fw-bold">
+        <dd class="col-sm-9 col-lg-10 fw-bold">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.StartDate)
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-10">
             @Html.DisplayFor(model => model.StartDate)
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.EndDate)
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-10">
             @Html.DisplayFor(model => model.EndDate)
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.Location)
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-10">
             @Html.DisplayFor(model => model.Location)
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.Has_coordinator)
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
-            @Html.DisplayFor(model => model.Has_coordinator)
+        <dd class="col-sm-9 col-lg-10">
+            @if (!Model.Has_coordinator)
+            {
+                <p><i class="fas fa-times"></i></p>
+            }
+            else
+            {
+                <i class="fas fa-check"></i>
+            }
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             Renginio koordinatorius
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-10">
             @Html.DisplayFor(model => model.CoordinatorName) <span class="ms-2">@Html.DisplayFor(model => model.CoordinatorSurname)</span>
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-32">
+        <dt class="col-sm-3 col-lg-2 mb-32">
             @Html.DisplayNameFor(model => model.Is_canceled)
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
-            @Html.DisplayFor(model => model.Is_canceled)
+        <dd class="col-sm-9 col-lg-10">
+            @if (!Model.Is_canceled)
+            {
+                <span><i class="fas fa-times"></i></span>
+            }
+            else
+            {
+                <span><i class="fas fa-check"></i></span>
+            }
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.Is_live)
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
-            @Html.DisplayFor(model => model.Is_live)
+        <dd class="col-sm-9 col-lg-10">
+            @if (!Model.Is_live)
+            {
+                <span><i class="fas fa-times"></i></span>
+            }
+            else
+            {
+                <i class="fas fa-check"></i>
+            }
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.PlannedPeopleCount)
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-10">
             @Html.DisplayFor(model => model.PlannedPeopleCount)
         </dd>
-        <dt class = "col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.PeopleCount)
         </dt>
-        <dd class = "col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-10">
             @Html.DisplayFor(model => model.PeopleCount)
         </dd>
         <dd>

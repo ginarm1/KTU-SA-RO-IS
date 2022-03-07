@@ -23,7 +23,7 @@ namespace KTU_SA_RO.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.EventTeams.Include(e => e.Events);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await applicationDbContext.OrderByDescending(e => e.Events.Id).ToListAsync());
         }
 
         // GET: EventTeams/Details/5

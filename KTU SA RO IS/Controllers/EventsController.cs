@@ -22,7 +22,7 @@ namespace KTU_SA_RO.Controllers
         // GET: Events
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Events.ToListAsync());
+            return View(await _context.Events.OrderByDescending(e => e.Id).ToListAsync());
         }
 
         // GET: Events/Details/5
@@ -73,11 +73,13 @@ namespace KTU_SA_RO.Controllers
 
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
-                
-                EventTeam team = new EventTeam();
-                team.EventId = @event.Id;
 
-                team.UserId = user.Id;
+                EventTeam team = new()
+                {
+                    EventId = @event.Id,
+                    UserId = user.Id,
+                    Is_event_coord = true
+                };
 
                 _context.Add(team);
                 await _context.SaveChangesAsync();
@@ -130,11 +132,10 @@ namespace KTU_SA_RO.Controllers
                     _context.Update(@event);
                     await _context.SaveChangesAsync();
 
-                    EventTeam team = new EventTeam();
-                    team.EventId = @event.Id;
+                    EventTeam team = await _context.EventTeams.Where(t => t.EventId == @event.Id).FirstOrDefaultAsync();
                     team.UserId = user.Id;
 
-                    _context.Add(team);
+                    _context.Update(team);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
