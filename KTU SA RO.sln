@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KTU SA RO", "KTU SA RO IS\KTU SA RO.csproj", "{80F221C5-BE21-4C93-B045-9A7760C89FF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KTU SA RO Tests", "KTU SA RO Tests\KTU SA RO Tests.csproj", "{B54A0CF8-D041-4DE6-8313-782D91A1BC97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KTU SA RO Tests", "KTU SA RO Tests\KTU SA RO Tests.csproj", "{B54A0CF8-D041-4DE6-8313-782D91A1BC97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

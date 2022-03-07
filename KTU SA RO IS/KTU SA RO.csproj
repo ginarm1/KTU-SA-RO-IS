@@ -22,4 +22,8 @@
     <PackageReference Include="RestSharp" Version="107.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\documents\eventTemplate\" />
+  </ItemGroup>
+
 </Project>

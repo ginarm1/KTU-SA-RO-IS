@@ -1,0 +1,58 @@
+﻿@model KTU_SA_RO.Models.EventTemplate
+
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @Html.Raw(TempData["success"].ToString())
+    </div>
+}
+@if (TempData["file_type_danger"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @Html.Raw(TempData["file_type_danger"].ToString())
+    </div>
+}
+@if (TempData["name_danger"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @Html.Raw(TempData["name_danger"].ToString())
+    </div>
+}
+
+<div class="container">
+    <h2 class="mt-3 mb-3">Renginio šablonas</h2>
+    @if (@Model != null)
+    {
+        <div class="row mb-4">
+            <div class="col-3">
+                <i class="fas fa-file-excel me-3"></i>
+                <a asp-action="Download"
+               asp-route-filename="@Model.Name">
+                    @Model.Name
+                </a>
+            </div>
+
+            <div class="col-6">
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="@Model.Path" />
+                    <input type="submit" value="Patvirtinti šalinimą" class="btn btn-danger mx-3" />
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            Nėra patalpinto renginio šablono
+        </div>
+    }
+</div>
+
+@if (@Model == null)
+{
+    <form asp-controller="EventTemplate" asp-action="UploadFile" method="post"
+      enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <button type="submit">Patvirtinti Excel įkėlimą</button>
+    </form>
+}

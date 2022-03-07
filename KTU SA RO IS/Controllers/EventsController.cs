@@ -65,11 +65,18 @@ namespace KTU_SA_RO.Controllers
 
                 ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(@event.CoordinatorName) && u.Surname.Equals(@event.CoordinatorSurname));
                 
+                if (user == null)
+                {
+                    TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nebuvo rastas sistemoje";
+                    return RedirectToAction(nameof(Create));
+                }
+
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 
                 EventTeam team = new EventTeam();
                 team.EventId = @event.Id;
+
                 team.UserId = user.Id;
 
                 _context.Add(team);

@@ -98,19 +98,19 @@ namespace KTU_SA_RO.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [Route("getCalendarEvents")]
-        public IActionResult Calendar()
-        {
-            var events = _context.Events.Select( e => new
-            {
-                id = e.Id,
-                title = e.Title,
-                description = e.Description,
-                start = e.StartDate.ToString("yyyy-MM-dd"),
-                end = e.EndDate.ToString("yyyy-MM-dd"),
-            }).ToList();
-            return new JsonResult(events);
+        //[Route("getCalendarEvents")]
+        //public IActionResult Calendar()
+        //{
+        //    var events = _context.Events.Select( e => new
+        //    {
+        //        id = e.Id,
+        //        title = e.Title,
+        //        description = e.Description,
+        //        start = e.StartDate.ToString("yyyy-MM-dd"),
+        //        end = e.EndDate.ToString("yyyy-MM-dd"),
+        //    }).ToList();
+        //    return new JsonResult(events);
 
-        }
+        //}
     }
 }
