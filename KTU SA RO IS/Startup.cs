@@ -43,11 +43,21 @@ namespace KTU_SA_RO
                 .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddTransient<SeedData>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context, SeedData seeder)
         {
+            //context.Database.Migrate();
+            var s = seeder.SeedAdminUser().Result;
+
+            if (!s)
+            {
+                throw new Exception("Failed to seed data");
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
