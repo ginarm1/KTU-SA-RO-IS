@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KTU_SA_RO.Controllers
 {
+    [Authorize(Roles = "admin,eventCoord")]
     public class EventsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -84,6 +86,8 @@ namespace KTU_SA_RO.Controllers
                 _context.Add(team);
                 await _context.SaveChangesAsync();
 
+                TempData["success"] = "Renginys <b> " + @event.Title + " </b> sėkmingai sukurtas!";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(@event);
@@ -137,6 +141,8 @@ namespace KTU_SA_RO.Controllers
 
                     _context.Update(team);
                     await _context.SaveChangesAsync();
+
+                    TempData["success"] = "Renginys <b> " + @event.Title + " </b> sėkmingai atnaujintas!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {

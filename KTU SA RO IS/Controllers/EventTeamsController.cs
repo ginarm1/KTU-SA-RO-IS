@@ -63,6 +63,8 @@ namespace KTU_SA_RO.Controllers
             {
                 _context.Add(eventTeam);
                 await _context.SaveChangesAsync();
+
+                TempData["success"] = "Komanda <b> " + eventTeam.Id + "</b> sėkmingai sukurta!";
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EventId"] = new SelectList(_context.Events, "Id", "CoordinatorName", eventTeam.EventId);
@@ -104,6 +106,7 @@ namespace KTU_SA_RO.Controllers
                 {
                     _context.Update(eventTeam);
                     await _context.SaveChangesAsync();
+                    TempData["success"] = "Komanda <b> " + eventTeam.Id + "</b> sėkmingai atnaujinta!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {

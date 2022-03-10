@@ -1,4 +1,5 @@
 ﻿using KTU_SA_RO.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ namespace KTU_SA_RO.Controllers
         {
             this.fileProvider = fileProvider;
         }
-
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var model = new EventTemplate();
@@ -136,6 +137,7 @@ namespace KTU_SA_RO.Controllers
             };
         }
 
+        [Authorize(Roles = "admin,orgCoord, eventCoord")]
         public IActionResult Delete(string path)
         {
             if (path == null)

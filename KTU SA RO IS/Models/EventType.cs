@@ -11,6 +11,7 @@ namespace KTU_SA_RO.Models
         public int Id { get; set; }
 
         [DisplayName("Renginio tipas")]
+        [MaxLength(100)]
         [Required(ErrorMessage = "Renginio tipo pavadinimas yra privalomas")]
         public string Name { get; set; }
 

@@ -10,10 +10,12 @@ namespace KTU_SA_RO.Models
     {
         [PersonalData]
         [Required(ErrorMessage = "Vardas yra privalomas")]
+        [MaxLength(100)]
         [DisplayName("Vardas")]
         public string Name { get; set; }
         [PersonalData]
         [Required(ErrorMessage = "Pavardė yra privaloma")]
+        [MaxLength(100)]
         [DisplayName("Pavardė")]
         public string Surname { get; set; }
 

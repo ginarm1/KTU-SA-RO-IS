@@ -1,0 +1,76 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model KTU_SA_RO.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Naudotojo rolių redagavimas";
+    var usersRoleName = ViewData["userRoleName"];
+    var roles = ViewData["roles"] as List<string>;
+}
+@if (TempData["danger"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @Html.Raw(TempData["danger"].ToString())
+    </div>
+}
+@*<script src="~/js/modal.js" asp-append-version="true"></script>*@
+<link rel="stylesheet" href="~/css/modal.css" />
+@*Forma, kurioje pakeičiama naudotojo rolė, pašalinamas naudotojas*@
+
+<div>
+    <h4>Naudotojo informacija</h4>
+    <hr />
+    <form asp-action="ChangeUserRole">
+        <input type="hidden" asp-for="Email" />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Surname)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+                @Html.DisplayFor(model => model.Surname)
+            </dd>
+            <dt class="col-sm-2">
+                Rolė
+            </dt>
+            <dd class="col-sm-10">
+                @usersRoleName
+            </dd>
+            <dt class="col-sm-2">
+                Pakeisti rolę
+            </dt>
+            <dd class="col-sm-10">
+                <select name="pickedRole" class="form-control w-25" asp-items="@(new SelectList(roles,"",""))">
+                    <option value=""></option>
+                </select>
+            </dd>
+            <div class="form-group mt-4">
+                <a asp-action="Index" class="btn btn-outline-dark text-uppercase"><i class="fas fa-arrow-left"></i> Grižti į sąrašą</a>
+                <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase" id="submit" />
+            </div>
+        </dl>
+    </form>
+</div>
+
+<!-- Trigger/Open The Modal -->
+<button class="btn btn-danger" id="myBtn">Pašalinti naudotoją</button>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content w-50">
+        <span class="close">&times;</span>
+        <hr />
+        <div class="row">
+            <p class="ms-3 display-6 col-10">Ar tikrai norite pašalinti naudotoją?</p>
+        </div>
+        <hr />
+        <div class="row me-5 align-self-end">
+            <button class="w-50 btn btn-outline-dark" id="close">Uždaryti</button>
+            <form asp-action="DeleteUser" class="col-4">
+                <input type="hidden" asp-for="UserName" value="@Model.UserName" />
+                <button type="submit" class="btn btn-danger"> Patvirtinti</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="~/js/modal.js" asp-append-version="true"></script>

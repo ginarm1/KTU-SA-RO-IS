@@ -1,0 +1,62 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<KTU_SA_RO.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Visi registruooti naudotojai";
+    var UsersRoles = ViewData["roles"] as Dictionary<string, IdentityRole>;
+}
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @Html.Raw(TempData["success"].ToString())
+    </div>
+}
+@if (TempData["danger"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @Html.Raw(TempData["danger"].ToString())
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Surname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>Rolė</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderBy(a => a.UserName))
+        {
+            <tr>
+                <td>@item.Name @item.Surname</td>
+                <td>@item.UserName</td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-bold align-self-center">
+                            @{
+                                var role = UsersRoles.SingleOrDefault((a => a.Key.Equals(item.UserName))).Value;
+                                if (role != null)
+                                {
+                                    <span>
+                                        @role.NormalizedName
+                                    </span>
+                                }
+                            }
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <a asp-action="UserRole" asp-route-email="@item.Email" class="btn btn-secondary mx-3"><i class="fas fa-edit pe-1"></i> Redaguoti naudotojo statusą</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

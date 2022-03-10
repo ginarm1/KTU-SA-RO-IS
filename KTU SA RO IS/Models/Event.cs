@@ -13,6 +13,7 @@ namespace KTU_SA_RO.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Renginio pavadinimas yra privalomas")]
+        [MaxLength(300)]
         [DisplayName("Pavadinimas")]
 
         public string Title { get; set; }
@@ -27,6 +28,7 @@ namespace KTU_SA_RO.Models
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
+        [MaxLength(100)]
         [DisplayName("Vieta")]
         public string Location { get; set; }
 
@@ -39,10 +41,12 @@ namespace KTU_SA_RO.Models
         public bool Has_coordinator { get; set; }
 
         [Required]
+        [MaxLength(100)]
         [DisplayName("Renginio koordinatoriaus vardas")]
         public string CoordinatorName { get; set; }
 
         [Required]
+        [MaxLength(100)]
         [DisplayName("Renginio koordinatoriaus pavardė")]
         public string CoordinatorSurname { get; set; }
 
@@ -55,6 +59,7 @@ namespace KTU_SA_RO.Models
         public bool Is_live { get; set; }
 
         [Required(ErrorMessage = "Renginyje planuojamų dalyvių kiekis yra privalomas")]
+        [MaxLength(10)]
         [DisplayName("Planuojamas dalyvių kiekis")]
         public int PlannedPeopleCount { get; set; }
 

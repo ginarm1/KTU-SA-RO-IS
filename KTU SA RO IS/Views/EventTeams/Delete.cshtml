@@ -32,8 +32,8 @@
     </dl>
     
     <form asp-action="Delete">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-success" style="width:7rem;"><i class="fas fa-arrow-left"></i>  Grįžti į detales</a>
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Patvirtinti šalinimą" class="btn btn-danger mx-3" />
     </form>
 </div>

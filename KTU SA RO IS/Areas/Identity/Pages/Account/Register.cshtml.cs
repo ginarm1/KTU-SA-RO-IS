@@ -125,39 +125,56 @@ namespace KTU_SA_RO.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var user = new ApplicationUser
+                {
+                    Name = Input.Name,
+                    Surname = Input.Surname,
+                    Representative = Input.Representative,
+                    UserName = Input.Email,
+                    Email = Input.Email
+                };
+                //var user = CreateUser();
 
-                user.Name = Input.Name;
-                user.Surname = Input.Surname;
-                user.Representative = Input.Representative;
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                //user.Name = Input.Name;
+                //user.Surname = Input.Surname;
+                //user.Representative = Input.Representative;
+
+
+                //await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                //await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("Naudotojas sukūrė naują paskyrą");
-
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId, code, returnUrl },
-                        protocol: Request.Scheme);
-
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Patvirtinkite paskyrą paspausdami ant <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>šios nuorodos</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    _logger.LogInformation("Naudotojas" + Input.Email + " sukūrė naują paskyrą");
+                    var result_role = await _userManager.AddToRoleAsync(user, Role.registered.ToString());
+                    if (result_role.Succeeded)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
+                        var userId = await _userManager.GetUserIdAsync(user);
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                        var callbackUrl = Url.Page(
+                            "/Account/ConfirmEmail",
+                            pageHandler: null,
+                            values: new { area = "Identity", userId, code, returnUrl },
+                            protocol: Request.Scheme);
+
+                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                            $"Patvirtinkite paskyrą paspausdami ant <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>šios nuorodos</a>.");
+
+                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        {
+                            return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
                     }
-                    else
+                    foreach (var error in result_role.Errors)
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
                 foreach (var error in result.Errors)

@@ -6,6 +6,13 @@
 
 <h1>Plačiau apie renginį</h1>
 
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @Html.Raw(TempData["success"].ToString())
+    </div>
+}
+
 <div>
     <hr />
     <dl class="row">
