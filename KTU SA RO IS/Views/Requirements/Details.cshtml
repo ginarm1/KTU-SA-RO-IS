@@ -1,0 +1,69 @@
+﻿@model KTU_SA_RO.Models.Requirement
+
+@{
+    ViewData["Title"] = "Informacija";
+}
+
+<div class="container display-6 fw-bold">@ViewData["Title"]</div>
+
+<div>
+    <hr />
+    <dl class="container row">
+        <dt class="col-sm-3 mb-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-9 fw-bold">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-3 mb-3">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-3 mb-3">
+            @Html.DisplayNameFor(model => model.Comment)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Comment)
+        </dd>
+        <dt class="col-sm-3 mb-3">
+            @Html.DisplayNameFor(model => model.Is_general)
+        </dt>
+        <dd class="col-sm-9">
+            @if (!Model.Is_general)
+            {
+                <span><i class="fas fa-times"></i></span>
+            }
+            else
+            {
+                <span><i class="fas fa-check"></i></span>
+            }
+        </dd>
+        @if (!Model.Is_general)
+        {
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Is_fulfilled)
+            </dt>
+            <dd class="col-sm-9">
+                @if (!Model.Is_fulfilled)
+                {
+                    <span><i class="fas fa-times"></i></span>
+                }
+                else
+                {
+                    <span><i class="fas fa-check"></i></span>
+                }
+            </dd>
+        }
+        <dd>
+            <div class="float-start">
+                <a asp-action="Index" class="btn btn-outline-dark my-3"><i class="fas fa-arrow-left"></i>  Grįžti į sąrašą</a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary mx-3"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+            </div>
+            <div class="float-end">
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger mx-3"><i class="fas fa-trash pe-1"></i> Ištrinti</a>
+            </div>
+        </dd>
+    </dl>
+</div>

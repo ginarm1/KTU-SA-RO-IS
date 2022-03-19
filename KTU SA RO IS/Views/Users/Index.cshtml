@@ -2,7 +2,7 @@
 @model IEnumerable<KTU_SA_RO.Models.ApplicationUser>
 
 @{
-    ViewData["Title"] = "Visi registruooti naudotojai";
+    ViewData["Title"] = "Registruoti naudotojai";
     var UsersRoles = ViewData["roles"] as Dictionary<string, IdentityRole>;
 }
 @if (TempData["success"] != null)
@@ -17,6 +17,7 @@
         @Html.Raw(TempData["danger"].ToString())
     </div>
 }
+<div class="container display-6 my-4 fw-bold">@ViewData["Title"]</div>
 
 <table class="table">
     <thead>
@@ -54,7 +55,7 @@
                     </div>
                 </td>
                 <td>
-                    <a asp-action="UserRole" asp-route-email="@item.Email" class="btn btn-secondary mx-3"><i class="fas fa-edit pe-1"></i> Redaguoti naudotojo statusą</a>
+                    <a asp-action="UserRole" asp-route-email="@item.Email" class="btn btn-secondary mx-3"><i class="fas fa-edit pe-1"></i> Pakeisti rolę</a>
                 </td>
             </tr>
         }

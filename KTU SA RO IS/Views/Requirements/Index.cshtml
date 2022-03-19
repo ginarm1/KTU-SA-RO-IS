@@ -1,0 +1,125 @@
+﻿@model IEnumerable<KTU_SA_RO.Models.Requirement>
+
+@{
+    ViewData["Title"] = "Reikalavimai";
+    var generalReq = ViewData["GeneralReq"] as List<Requirement>;
+    var additionalReq = ViewData["AdditionalReq"] as List<Requirement>;
+}
+
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @Html.Raw(TempData["success"].ToString())
+    </div>
+}
+
+<div class="display-6 m-2 mt-4 fw-bold">@ViewData["Title"]</div>
+
+<a asp-action="Create" class="btn btn-primary my-3 col-4"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti bendrinį reikalavimą</a>
+<hr />
+<h3 class="container mb-3">Bendriniai reikalavimai</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Pavadinimas
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.Category)
+                </th>*@
+            <th>
+                Aprašymas
+            </th>
+            <th>
+                Komentaras
+            </th>
+@*            <th>
+                @Html.DisplayNameFor(model => model.Is_general)
+            </th>*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var requirement in generalReq)
+        {
+            <tr>
+                <td>
+                    @requirement.Name
+                </td>
+                <td>
+                    @requirement.Description
+                </td>
+                <td>
+                    @requirement.Comment
+                </td>
+@*                <td class="ps-3">
+                    @if (!requirement.Is_general)
+                    {
+                        <span><i class="fas fa-times"></i></span>
+                    }
+                    else
+                    {
+                        <span><i class="fas fa-check"></i></span>
+                    }
+                </td>*@
+                <td>
+                    <a asp-action="Details" asp-route-id="@requirement.Id" class="btn btn-dark d-flex"><i class="mt-1 mr-2 fas fa-info-circle"></i> Plačiau</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3 class="container mt-5 mb-3">Specifiniai reikalavimai</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Pavadinimas
+            </th>
+            <th>
+                Aprašymas
+            </th>
+            <th>
+                Komentaras
+            </th>
+            <th>Atsakingas asmuo</th>
+            <th>
+                Ar įvykdytas?
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var requirement in additionalReq)
+        {
+            <tr>
+                <td>
+                    @requirement.Name
+                </td>
+                <td>
+                    @requirement.Description
+                </td>
+                <td>
+                    @requirement.Comment
+                </td>
+                <td>
+                    Vardenis Pavardenis
+                </td>
+                <td class="ps-3">
+                    @if (!requirement.Is_fulfilled)
+                    {
+                        <span><i class="fas fa-times"></i></span>
+                    }
+                    else
+                    {
+                        <span><i class="fas fa-check"></i></span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@requirement.Id" class="btn btn-dark d-flex"><i class="mt-1 mr-2 fas fa-info-circle"></i> Plačiau</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

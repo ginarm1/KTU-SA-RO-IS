@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @model KTU_SA_RO.Models.ApplicationUser
 @{
-    ViewData["Title"] = "Naudotojo rolių redagavimas";
+    ViewData["Title"] = "Naudotojo rolės redagavimas";
     var usersRoleName = ViewData["userRoleName"];
     var roles = ViewData["roles"] as List<string>;
 }
@@ -15,8 +15,8 @@
 <link rel="stylesheet" href="~/css/modal.css" />
 @*Forma, kurioje pakeičiama naudotojo rolė, pašalinamas naudotojas*@
 
-<div>
-    <h4>Naudotojo informacija</h4>
+<div class="container mt-4">
+    <div class="display-6 fw-bold">Naudotojo informacija</div>
     <hr />
     <form asp-action="ChangeUserRole">
         <input type="hidden" asp-for="Email" />
@@ -49,10 +49,11 @@
             </div>
         </dl>
     </form>
+    <!-- Trigger/Open The Modal -->
+    <button class="btn btn-danger" id="myBtn">Pašalinti naudotoją</button>
 </div>
 
-<!-- Trigger/Open The Modal -->
-<button class="btn btn-danger" id="myBtn">Pašalinti naudotoją</button>
+
 
 <!-- The Modal -->
 <div id="myModal" class="modal">

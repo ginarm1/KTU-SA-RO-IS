@@ -3,6 +3,7 @@ using System;
 using KTU_SA_RO.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KTU_SA_RO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220319151837_RequirementCommentDelete")]
+    partial class RequirementCommentDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,6 +163,9 @@ namespace KTU_SA_RO.Migrations
                     b.Property<int>("PlannedPeopleCount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RequirementId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
 
@@ -172,6 +177,8 @@ namespace KTU_SA_RO.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventTypeId");
+
+                    b.HasIndex("RequirementId");
 
                     b.ToTable("Events");
                 });
@@ -228,9 +235,6 @@ namespace KTU_SA_RO.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("EventId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("Is_fulfilled")
                         .HasColumnType("tinyint(1)");
 
@@ -243,8 +247,6 @@ namespace KTU_SA_RO.Migrations
                         .HasColumnType("varchar(300)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EventId");
 
                     b.ToTable("Requirements");
                 });
@@ -411,6 +413,10 @@ namespace KTU_SA_RO.Migrations
                         .WithMany("Event")
                         .HasForeignKey("EventTypeId");
 
+                    b.HasOne("KTU_SA_RO.Models.Requirement", null)
+                        .WithMany("Events")
+                        .HasForeignKey("RequirementId");
+
                     b.Navigation("EventType");
                 });
 
@@ -423,15 +429,6 @@ namespace KTU_SA_RO.Migrations
                         .IsRequired();
 
                     b.Navigation("Events");
-                });
-
-            modelBuilder.Entity("KTU_SA_RO.Models.Requirement", b =>
-                {
-                    b.HasOne("KTU_SA_RO.Models.Event", "Event")
-                        .WithMany("Requirements")
-                        .HasForeignKey("EventId");
-
-                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -488,8 +485,6 @@ namespace KTU_SA_RO.Migrations
             modelBuilder.Entity("KTU_SA_RO.Models.Event", b =>
                 {
                     b.Navigation("EventTeam");
-
-                    b.Navigation("Requirements");
                 });
 
             modelBuilder.Entity("KTU_SA_RO.Models.EventTeam", b =>
@@ -500,6 +495,11 @@ namespace KTU_SA_RO.Migrations
             modelBuilder.Entity("KTU_SA_RO.Models.EventType", b =>
                 {
                     b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("KTU_SA_RO.Models.Requirement", b =>
+                {
+                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }

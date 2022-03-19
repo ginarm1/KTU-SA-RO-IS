@@ -4,7 +4,7 @@
     ViewData["Title"] = "Visi renginiai";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="display-6 m-2 mt-4 fw-bold">@ViewData["Title"]</div>
 
 @if (TempData["success"] != null)
 {
@@ -13,7 +13,7 @@
     </div>
 }
 
-<a asp-action="Create" class="btn btn-primary my-2 col-3"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują renginį</a>
+<a asp-action="Create" class="btn btn-primary my-3 col-3"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują renginį</a>
 <table class="table">
     <thead>
         <tr>
@@ -75,7 +75,7 @@
                     @Html.DisplayFor(modelItem => item.PeopleCount)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success" style="width:7rem;"> Plačiau</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-dark d-flex"><i class="mt-1 mr-2 fas fa-info-circle"></i> Plačiau</a>
                 </td>
             </tr>
         }

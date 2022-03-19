@@ -1,0 +1,61 @@
+﻿@model KTU_SA_RO.Models.Requirement
+
+@{
+    ViewData["Title"] = "Pašalinti reikalavimą";
+}
+
+<div>
+    <div class="display-6 mb-4 fw-bold alert alert-danger " role="alert">Ar tikrai norite pašalinti?</div>
+    <dl class="row">
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10 fw-bold">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.Comment)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Comment)
+        </dd>
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.Is_general)
+        </dt>
+        <dd class="col-sm-10">
+            @if (!Model.Is_general)
+            {
+                <span><i class="fas fa-times"></i></span>
+            }
+            else
+            {
+                <span><i class="fas fa-check"></i></span>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Is_fulfilled)
+        </dt>
+        <dd class="col-sm-10">
+            @if (!Model.Is_fulfilled)
+            {
+                <span><i class="fas fa-times"></i></span>
+            }
+            else
+            {
+                <span><i class="fas fa-check"></i></span>
+            }
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i>  Grįžti į detales</a>
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Patvirtinti šalinimą" class="btn btn-danger mx-3 text-uppercase" />
+    </form>
+</div>

@@ -36,6 +36,7 @@ namespace KTU_SA_RO.Controllers
             }
 
             var @event = await _context.Events
+                .Include(r => r.Requirements.Where(e => e.Event.Id == id))
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@event == null)
             {

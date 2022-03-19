@@ -59,7 +59,7 @@ namespace KTU_SA_RO.Models
         public bool Is_live { get; set; }
 
         [Required(ErrorMessage = "Renginyje planuojamų dalyvių kiekis yra privalomas")]
-        [MaxLength(10)]
+        [Range(0,99999)]
         [DisplayName("Planuojamas dalyvių kiekis")]
         public int PlannedPeopleCount { get; set; }
 
@@ -72,5 +72,8 @@ namespace KTU_SA_RO.Models
         public ICollection<ApplicationUser> Users { get; set; }
 
         public EventTeam EventTeam { get; set; }
+
+        [DisplayName("Spec. reikalavimai")]
+        public ICollection<Requirement> Requirements { get; set; }
     }
 }

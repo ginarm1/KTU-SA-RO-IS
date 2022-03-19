@@ -11,8 +11,7 @@
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.css">
 
-<table id="eventsTable" hidden>
-
+<table id="eventsTable" style="display: none">
     @*List of events*@
     @foreach (var item in Model)
     {
@@ -22,30 +21,21 @@
             <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
             <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
             @if (i < eventIds.Count)
-             {
+            {
                 if (eventIds[i] == item.Id)
                 {
                     <td>@rep[item.Id]</td>
                     i++;
                 }
-                else
-                {
-                    <td></td>
-                }
             }
-            else
-            {
-                <td></td>
-            }
-
         </tr>
     }
 </table>
-<div id="calendar"></div>
+<div id="calendar" class="mt-4"></div>
 
 @foreach (var item in Model)
 {
-    <div id="eventContainer-@item.Id" class="card col-7 fixed-top" style="margin: 6rem 20rem; display: none; border-radius: 40px">
+    <div id="eventContainer-@item.Id" class="card col-sm-8 col-lg-7 fixed-top" style="margin: 6rem 17rem; display: none; border-radius: 40px">
         <div class="card-header p-4 mt-4" style="background: rgb(34,193,195);
             background: linear-gradient(216deg, rgba(34,193,195,1) 0%, rgba(3,102,214,1) 100%);
             border-radius: 20px">
@@ -56,7 +46,7 @@
                 <h5 class="col-1 text-end"><i class="far fa-calendar"></i></h5>
                 <p class="col-9">@item.StartDate.ToString("yyyy-MM-dd") - @item.EndDate.ToString("yyyy-MM-dd")</p>
             </div>
-            <div class="row mt-4">
+            <div class="row mt-3">
                 <h5 class="col-sm-7 col-md-6 col-lg-4">Vieta:</h5>
                 @if (item.Location == null)
                 {
@@ -67,7 +57,7 @@
                     <p class="col-6">@item.Location</p>
                 }
             </div>
-            <div class="row mt-2">
+            <div class="row mt-1">
                 <h5 class="col-sm-7 col-md-6 col-lg-4">Renginio koordinatorius:</h5>
                 @if (item.CoordinatorName.Equals("Narys"))
                 {
@@ -79,15 +69,19 @@
                 }
 
             </div>
-            <div class="row mt-2">
+            <div class="row mt-1">
                 <h5 class="col-sm-7 col-md-6 col-lg-4">Tipas:</h5>
                 <p class="col-6">@item.EventType.Name</p>
             </div>
-            <div class="row mt-2">
+            <div class="row mt-1">
                 <h5 class="col-sm-7 col-md-6 col-lg-4">Dalyvių skaičius:</h5>
                 <p class="col-2">@item.PlannedPeopleCount</p>
             </div>
-            <p id="eventDetails-@item.Id">@item.Description</p>
+            <p id="eventDetails-@item.Id" class="mt-0 mb-4 ms-3">@item.Description</p>
+            @if (User.IsInRole("admin") || User.IsInRole("eventCoord") || User.IsInRole("orgCoord"))
+            {
+                <a asp-action="Edit" asp-controller="Events" asp-route-id="@item.Id" class="btn btn-secondary"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+            }
             <button type="button" class="btn btn-light float-end mb-4 rounded-lg" onclick=toggleEvent(@item.Id)>X</button>
         </div>
     </div>
@@ -95,30 +89,3 @@
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.js"></script>
 <script src="~/js/calendar.js"></script>
-
-<!-- Main Content-->
-@*<div class="container px-4 px-lg-5">
-    <div class="row gx-4 gx-lg-5 justify-content-center">
-        <div class="col-md-10 col-lg-8 col-xl-7">
-
-
-            <!-- Post preview-->
-            <div class="post-preview">
-                <a href="post.html">
-                    <h2 class="post-title">Man must explore, and this is exploration at its greatest</h2>
-                    <h3 class="post-subtitle">Problems look mighty small from 150 miles up</h3>
-                </a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#!">Start Bootstrap</a>
-                    on September 24, 2021
-                </p>
-            </div>
-
-            <!-- Divider-->
-            <hr class="my-4" />
-            <!-- Pager-->
-            <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
-        </div>
-    </div>
-</div>*@

@@ -133,9 +133,11 @@ namespace KTU_SA_RO.Controllers
 
         private void AddNewUserRole(ApplicationUser tempUser, string roleId)
         {
-            var newUserRole = new IdentityUserRole<string>();
-            newUserRole.UserId = tempUser.Id;
-            newUserRole.RoleId = roleId;
+            var newUserRole = new IdentityUserRole<string>
+            {
+                UserId = tempUser.Id,
+                RoleId = roleId
+            };
             _context.UserRoles.Add(newUserRole);
         }
 

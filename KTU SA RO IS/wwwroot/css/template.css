@@ -84,11 +84,21 @@ body {
   line-height: var(--bs-body-line-height);
   color: var(--bs-body-color);
   text-align: var(--bs-body-text-align);
-  background-color: var(--bs-body-bg);
+  /*background-color: var(--bs-body-bg);*/
+  /*mano prideta*/
+  background-color: #f3cdcd;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
-
+/*mano prideta*/
+main {
+    padding: 10px 1.2rem;
+    border: 1px solid #efefef;
+    border-radius: 13px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+/**/
 hr {
   margin: 1rem 0;
   color: inherit;

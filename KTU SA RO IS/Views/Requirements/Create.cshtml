@@ -1,0 +1,66 @@
+﻿@model KTU_SA_RO.Models.Requirement
+
+@{
+    var eventTitle = ViewData["eventTitle"];
+    if (eventTitle != null)
+        ViewData["Title"] = "Sukurti specifinį reikalavimą";
+    else
+        ViewData["Title"] = "Sukurti bendrinį reikalavimą";
+}
+
+<div class="row">
+    <div class="d-flex justify-content-center">
+        <form asp-action="Create">
+            <div class="display-6 mt-4 mb-5 fw-bold ">@ViewData["Title"]</div>
+            <hr />
+            @if (TempData["danger"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @Html.Raw(TempData["danger"].ToString())
+                </div>           
+            }
+            @if (eventTitle != null)
+            {
+                <div class="container d-flex justify-content-center fw-bold bg-light py-3 rounded-2">Renginys: @eventTitle</div>
+                <hr />
+            }
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2 mb-4">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2 mb-4">
+                <label asp-for="Comment" class="control-label"></label>
+                <textarea asp-for="Comment" class="form-control"></textarea>
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div>
+            @if (User.IsInRole("orgCoord"))
+            {
+                <div class="form-group mt-2 mb-4 form-check">
+                    <label class="col-6 form-check-label">
+                        <input class="form-check-input" asp-for="Is_general" /> @Html.DisplayNameFor(model => model.Is_general)
+                    </label>
+                    <label class="col-6 form-check-label">
+                        <input class="form-check-input" asp-for="Is_fulfilled" /> @Html.DisplayNameFor(model => model.Is_fulfilled)
+                    </label>
+                </div>
+            }
+            <div class="form-group mt-2 mb-4">
+                <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i> Grižti į sąrašą</a>
+                <input type="submit" value="Patvirtinti" asp-action="Create" class="btn btn-primary text-uppercase" id="submit" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
