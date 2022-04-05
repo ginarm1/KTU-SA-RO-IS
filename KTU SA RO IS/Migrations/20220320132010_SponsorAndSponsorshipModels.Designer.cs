@@ -3,6 +3,7 @@ using System;
 using KTU_SA_RO.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KTU_SA_RO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220320132010_SponsorAndSponsorshipModels")]
+    partial class SponsorAndSponsorshipModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,14 +244,9 @@ namespace KTU_SA_RO.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Requirements");
                 });
@@ -262,8 +259,8 @@ namespace KTU_SA_RO.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("CompanyHeadName")
                         .IsRequired()
@@ -282,8 +279,8 @@ namespace KTU_SA_RO.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("PhoneNr")
                         .IsRequired()
@@ -514,13 +511,7 @@ namespace KTU_SA_RO.Migrations
                         .WithMany("Requirements")
                         .HasForeignKey("EventId");
 
-                    b.HasOne("KTU_SA_RO.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Event");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("KTU_SA_RO.Models.Sponsorship", b =>

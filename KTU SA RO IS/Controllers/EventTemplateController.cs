@@ -27,11 +27,11 @@ namespace KTU_SA_RO.Controllers
             {
                 model = new EventTemplate { Name = item.Name, Path = item.PhysicalPath };
             }
-            model.Path = model.Path + "\\documents\\eventTemplate\\Renginio-šablonas.xlsx";
+            model.Path += "\\documents\\eventTemplate\\Renginio-šablonas.xlsx";
             model.Name = "Renginio-šablonas";
 
 
-            FileInfo file = new FileInfo(model.Path);
+            FileInfo file = new(model.Path);
             if (file.Exists)
                 return View(model);
             else
@@ -144,8 +144,7 @@ namespace KTU_SA_RO.Controllers
             {
                 return NotFound();
             }
-            FileInfo file = new FileInfo(path);
-            var model = new EventTemplate();
+            FileInfo file = new(path);
 
             file.Delete();
 

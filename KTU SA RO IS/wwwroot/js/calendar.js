@@ -33,9 +33,10 @@ for (let tr of trElems) {
 let calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
     headerToolbar: {
-        left: 'prev,next today',
+        left: 'prevYear prev today',
         center: 'title',
-        right: 'dayGridMonth'
+        right: 'next nextYear'
+        //right: 'dayGridMonth'
     },
     locale: 'lt',
     events: eventsArr,

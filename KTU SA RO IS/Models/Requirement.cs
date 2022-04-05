@@ -33,5 +33,7 @@ namespace KTU_SA_RO.Models
         public bool Is_fulfilled { get; set; }
 
         public Event Event { get; set; }
+
+        public ApplicationUser User { get; set; }
     }
 }

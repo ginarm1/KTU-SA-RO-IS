@@ -32,6 +32,7 @@
                     {
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Events" asp-action="Index">Renginiai</a></li>
                     }
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Sponsors" asp-action="Index">Rėmėjai</a></li>
                     @if (User.IsInRole("admin") || User.IsInRole("orgCoord"))
                     {
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Users" asp-action="Index">Naudotojai</a></li>

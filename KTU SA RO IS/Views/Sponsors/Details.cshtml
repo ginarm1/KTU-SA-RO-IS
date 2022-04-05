@@ -1,0 +1,66 @@
+﻿@model KTU_SA_RO.Models.Sponsor
+
+@{
+    ViewData["Title"] = "Rėmėjo detali informacija";
+}
+
+<div class="container display-6 my-4 fw-bold">Plačiau apie rėmėją</div>
+
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @Html.Raw(TempData["success"].ToString())
+    </div>
+}
+
+<div>
+    <hr />
+    <dl class="container row">
+        <dt class="col-sm-3 col-lg-2 mb-3">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-9 col-lg-10 fw-bold">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-3 col-lg-2 mb-3">
+            @Html.DisplayNameFor(model => model.CompanyVAT)
+        </dt>
+        <dd class="col-sm-9 col-lg-10">
+            @Html.DisplayFor(model => model.CompanyVAT)
+        </dd>
+        <dt class="col-sm-3 col-lg-2 mb-3">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class="col-sm-9 col-lg-10">
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt class="col-sm-3 col-lg-2 mb-3">
+            @Html.DisplayNameFor(model => model.PhoneNr)
+        </dt>
+        <dd class="col-sm-9 col-lg-10">
+            @Html.DisplayFor(model => model.PhoneNr)
+        </dd>
+        <dt class="col-sm-3 col-lg-2 mb-3">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-9 col-lg-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-3 col-lg-2 mb-5">
+            Įmonės vadovas
+        </dt>
+        <dd class="col-sm-9 col-lg-10">
+            @Html.DisplayFor(model => model.CompanyHeadName)
+            @Html.DisplayFor(model => model.CompanyHeadSurname)
+        </dd>
+        <dd>
+            <div class="float-start">
+                <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i>  Grįžti į sąrašą</a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary mx-3"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+            </div>
+            <div class="float-end">
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger mx-3"><i class="fas fa-trash pe-1"></i> Ištrinti</a>
+            </div>
+        </dd>
+    </dl>
+</div>

@@ -1,14 +1,14 @@
 ﻿@model KTU_SA_RO.Models.Event
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Renginio detali informacija";
 }
 
 <div class="container display-6 my-4 fw-bold">Plačiau apie renginį</div>
 
 @if (TempData["success"] != null)
 {
-    <div class="alert alert-success" role="alert">
+    <div class="alert alert-success mt-4" role="alert">
         @Html.Raw(TempData["success"].ToString())
     </div>
 }
@@ -118,16 +118,23 @@
                 @foreach (var requirement in Model.Requirements)
                 {
                     <div class="card mb-4 w-75">
-                        <div class="card-header d-flex justify-content-between fw-bold">
-                            <div>@requirement.Name</div>
-                            <div class="me-1">Vardenis Pavardenis</div>
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="fw-bold">@requirement.Name</div>
+                            @if(requirement.User != null){
+                                 <div class="me-1 px-2 rounded-3 text-white fw-light bg-dark">@requirement.User.Name @requirement.User.Surname</div>
+                            }
                         </div>
                         <div class="row m-3">
                             <div class="col-6">@requirement.Description</div>
                             <div class="col">
                                 <a asp-controller="Requirements" asp-action="Edit" asp-route-id="@requirement.Id"
-                           class="btn btn-outline-secondary mx-3 rounded-2"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
-                                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger mx-3 rounded-2"><i class="fas fa-trash pe-1"></i> Ištrinti</a>
+                           class="btn btn-outline-secondary mx-3 rounded-2">
+                                    <i class="fas fa-edit pe-1"></i> Redaguoti
+                                </a>
+                                <a asp-controller="Requirements" asp-action="Delete" asp-route-id="@requirement.Id"
+                           class="btn btn-outline-danger mx-3 rounded-2">
+                                    <i class="fas fa-trash pe-1"></i> Ištrinti
+                                </a>
                             </div>
                         </div>
                     </div>

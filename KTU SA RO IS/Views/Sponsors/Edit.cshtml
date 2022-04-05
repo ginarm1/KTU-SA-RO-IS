@@ -1,0 +1,65 @@
+﻿@model KTU_SA_RO.Models.Sponsor
+
+@{
+    ViewData["Title"] = "Redaguoti rėmėją";
+}
+
+<div class="row">
+    <div class="d-flex justify-content-center">
+        <form asp-action="Edit">
+            <div class="display-6 mt-4 mb-5 fw-bold">@ViewData["Title"]</div>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompanyVAT" class="control-label"></label>
+                <input asp-for="CompanyVAT" class="form-control" />
+                <span asp-validation-for="CompanyVAT" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-5 form-group">
+                    <label asp-for="PhoneNr" class="control-label"></label>
+                    <input asp-for="PhoneNr" class="form-control" />
+                    <span asp-validation-for="PhoneNr" class="text-danger"></span>
+                </div>
+                <div class="col-7 form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5 form-group">
+                    <label asp-for="CompanyHeadName" class="control-label"></label>
+                    <input asp-for="CompanyHeadName" class="form-control" />
+                    <span asp-validation-for="CompanyHeadName" class="text-danger"></span>
+                </div>
+                <div class="col-6 form-group">
+                    <label asp-for="CompanyHeadSurname" class="control-label"></label>
+                    <input asp-for="CompanyHeadSurname" class="form-control" />
+                    <span asp-validation-for="CompanyHeadSurname" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <a asp-action="Index" class="btn btn-outline-dark text-uppercase">← Grižti į sąrašą</a>
+                <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}

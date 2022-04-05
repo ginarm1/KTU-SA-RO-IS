@@ -46,6 +46,8 @@ namespace KTU_SA_RO.Controllers
             }
 
             var requirement = await _context.Requirements
+                .Include(e => e.Event)
+                .Include(u => u.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (requirement == null)
             {
@@ -76,9 +78,18 @@ namespace KTU_SA_RO.Controllers
         [HttpPost]
         [Route("Requirements/Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Comment,Is_general,Is_fulfilled")] Requirement requirement, int? eventId)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Comment,Is_general,Is_fulfilled")] Requirement requirement, int? eventId,
+            string responsibleUserName, string responsibleUserSurname)
         {
             var reqLabel = "Bendrinis reikalavimas: <b> ";
+
+            ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(responsibleUserName) && u.Surname.Equals(responsibleUserSurname));
+
+            if (user == null)
+            {
+                TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nebuvo rastas sistemoje";
+                return RedirectToAction(nameof(Create));
+            }
 
             if (ModelState.IsValid)
             {
@@ -97,6 +108,7 @@ namespace KTU_SA_RO.Controllers
                     }
                     requirement.Event = @event;
                 }
+                requirement.User = user;
                 _context.Add(requirement);
                 await _context.SaveChangesAsync();
                 if (eventId != null)
@@ -126,7 +138,9 @@ namespace KTU_SA_RO.Controllers
 
             var requirement = await _context.Requirements
                 .Include(e => e.Event)
+                .Include(u => u.User)
                 .FirstOrDefaultAsync(r => r.Id == id);
+
             if (requirement == null)
             {
                 return NotFound();
@@ -139,11 +153,20 @@ namespace KTU_SA_RO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Comment,Is_general,Is_fulfilled")] Requirement requirement, int? EventId)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Comment,Is_general,Is_fulfilled")] Requirement requirement, int? EventId,
+            string responsibleUserName, string responsibleUserSurname)
         {
             if (id != requirement.Id)
             {
                 return NotFound();
+            }
+
+            ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(responsibleUserName) && u.Surname.Equals(responsibleUserSurname));
+
+            if (user == null)
+            {
+                TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nebuvo rastas sistemoje";
+                return RedirectToAction(nameof(Edit));
             }
 
             if (ModelState.IsValid)
@@ -155,6 +178,7 @@ namespace KTU_SA_RO.Controllers
                     {
                         reqLabel = "Specifinis reikalavimas: <b> ";
                     }
+                    requirement.User = user;
                     _context.Update(requirement);
                     await _context.SaveChangesAsync();
 
