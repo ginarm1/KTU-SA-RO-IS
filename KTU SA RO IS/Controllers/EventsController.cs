@@ -22,9 +22,20 @@ namespace KTU_SA_RO.Controllers
         }
 
         // GET: Events
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageIndex = 1)
         {
-            return View(await _context.Events.OrderByDescending(e => e.Id).ToListAsync());
+            /*Pagination*/
+            var pageSize = 10;
+            var totalPages = (int)Math.Ceiling(_context.Events
+                .Count() / (double)pageSize);
+
+            ViewData["totalPages"] = totalPages;
+            ViewData["pageIndex"] = pageIndex;
+
+            return View(await _context.Events
+                .OrderByDescending(e => e.Id)
+                .Skip((pageIndex - 1) * pageSize).Take(pageSize)
+                .ToListAsync());
         }
 
         // GET: Events/Details/5

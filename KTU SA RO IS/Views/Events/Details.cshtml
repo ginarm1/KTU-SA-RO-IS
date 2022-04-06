@@ -50,7 +50,7 @@
         <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.Has_coordinator)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-8 col-lg-2" style="border-right:1px solid #E1E1E1;">
             @if (!Model.Has_coordinator)
             {
                 <span><i class="fas fa-times"></i></span>
@@ -63,14 +63,14 @@
         <dt class="col-sm-3 col-lg-2 mb-3">
             Renginio koordinatorius
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-2" style="border-right:1px solid #E1E1E1;">
             @Html.DisplayFor(model => model.CoordinatorName) <span class="ms-2">@Html.DisplayFor(model => model.CoordinatorSurname)</span>
         </dd>
-        <dd><hr /></dd>
-        <dt class="col-sm-3 col-lg-2 mb-32">
+       
+        <dt class="col-sm-3 col-lg-2 mb-2">
             @Html.DisplayNameFor(model => model.Is_canceled)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-1">
             @if (!Model.Is_canceled)
             {
                 <span><i class="fas fa-times"></i></span>
@@ -80,10 +80,11 @@
                 <span><i class="fas fa-check"></i></span>
             }
         </dd>
+        @*<dd><hr /></dd>*@
         <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.Is_live)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-2" style="border-right:1px solid #E1E1E1;">
             @if (!Model.Is_live)
             {
                 <span><i class="fas fa-times"></i></span>
@@ -96,17 +97,25 @@
         <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.PlannedPeopleCount)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-9 col-lg-2" style="border-right:1px solid #E1E1E1;">
             @Html.DisplayFor(model => model.PlannedPeopleCount)
         </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-3 col-lg-2 mb-4">
             @Html.DisplayNameFor(model => model.PeopleCount)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
-            @Html.DisplayFor(model => model.PeopleCount)
+        <dd class="col-sm-9 col-lg-1">
+            @if (Model.PeopleCount == 0)
+            {
+                <span>-</span>
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.PeopleCount)
+            }
         </dd>
+        <dd><hr /></dd>
         <dd>
-            <div class="d-flex mb-2 justify-content-between">
+            <div class="d-flex mt-4 mb-2 justify-content-between">
                 <h3 class="my-4 fw-bold">Specifiniai reikalavimai</h3>
                 <a asp-controller="Requirements" asp-route-eventId="@Model.Id" asp-action="Create" class="btn btn-primary my-3 col-3">
                     <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i>
