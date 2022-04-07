@@ -38,6 +38,32 @@ namespace KTU_SA_RO.Controllers
                 .ToListAsync());
         }
 
+        // GET: Events/UserEvents/{userId}
+        [Route("Events/UserEvents/{userId}")]
+        public async Task<IActionResult> UserEvents(string userId, int pageIndex = 1)
+        {
+            var userTeams = await _context.EventTeams.Where(u => u.UserId.Equals(userId)).ToListAsync();
+            var events = await _context.Events.ToListAsync();
+
+            var userEvents = new List<Event>();
+
+            foreach (var @event in events)
+            {
+                foreach (var userTeam in userTeams)
+                {
+                    if (@event.Id.Equals(userTeam.EventId))
+                    {
+                        userEvents.Add(@event);
+                    }
+                }
+
+            }
+
+            ViewData["userEvents"] = userEvents;
+
+            return View(nameof(Index));
+        }
+
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -70,7 +96,7 @@ namespace KTU_SA_RO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,StartDate,EndDate,Location,Description,Has_coordinator,CoordinatorName,CoordinatorSurname,Is_canceled,Is_public,Is_live,PlannedPeopleCount,PeopleCount")] 
+        public async Task<IActionResult> Create([Bind("Id,Title,StartDate,EndDate,Location,Description,Has_coordinator,CoordinatorName,CoordinatorSurname,Is_canceled,Is_public,Is_live,PlannedPeopleCount,PeopleCount")]
             Event @event, EventType eventType)
         {
 
@@ -79,7 +105,7 @@ namespace KTU_SA_RO.Controllers
                 @event.EventType = await _context.EventTypes.FirstOrDefaultAsync(et => et.Name.Equals(eventType.Name));
 
                 ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(@event.CoordinatorName) && u.Surname.Equals(@event.CoordinatorSurname));
-                
+
                 if (user == null)
                 {
                     TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nebuvo rastas sistemoje";
@@ -130,7 +156,7 @@ namespace KTU_SA_RO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,StartDate,EndDate,Location,Description,Has_coordinator,CoordinatorName,CoordinatorSurname,Is_canceled,Is_public,Is_live,PlannedPeopleCount,PeopleCount")] 
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,StartDate,EndDate,Location,Description,Has_coordinator,CoordinatorName,CoordinatorSurname,Is_canceled,Is_public,Is_live,PlannedPeopleCount,PeopleCount")]
             Event @event, EventType eventType)
         {
             if (id != @event.Id)

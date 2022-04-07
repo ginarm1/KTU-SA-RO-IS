@@ -20,9 +20,19 @@ namespace KTU_SA_RO.Controllers
         }
 
         // GET: Sponsors
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageIndex = 1)
         {
-            return View(await _context.Sponsors.ToListAsync());
+            /*Pagination*/
+            var pageSize = 10;
+            var totalPages = (int)Math.Ceiling(_context.Sponsors
+                .Count() / (double)pageSize);
+
+            ViewData["totalPages"] = totalPages;
+            ViewData["pageIndex"] = pageIndex;
+
+            return View(await _context.Sponsors
+                .Skip((pageIndex - 1) * pageSize).Take(pageSize)
+                .ToListAsync());
         }
 
         // GET: Sponsors/Details/5

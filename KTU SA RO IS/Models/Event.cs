@@ -20,11 +20,13 @@ namespace KTU_SA_RO.Models
 
         [Required(ErrorMessage = "Renginio pradžios data yra privaloma")]
         [DisplayName("Renginio pradžia")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
         [Required(ErrorMessage = "Renginio pabaigos data yra privaloma")]
         [DisplayName("Renginio pabaiga")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 

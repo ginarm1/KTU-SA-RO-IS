@@ -1,8 +1,12 @@
 ﻿@model IEnumerable<KTU_SA_RO.Models.Event>
 
 @{
-    ViewData["Title"] = "Visi renginiai";
+    var userEvents = ViewData["userEvents"] as List<Event>;
 
+    @if (userEvents != null)
+        ViewData["Title"] = "Mano renginiai";
+    else
+        ViewData["Title"] = "Visi renginiai";
     /*Pagination*/
     var currentPage = 0;
     if (ViewData["pageIndex"] != null)
@@ -23,8 +27,8 @@
     </div>
 }
 
-<a asp-action="Create" class="btn btn-primary my-3 col-3"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują renginį</a>
-<table class="table">
+<a asp-action="Create" class="btn btn-primary my-3 col-sm-5 col-lg-3"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują renginį</a>
+<table class="table table-responsive">
     <thead>
         <tr>
             <th>
@@ -45,136 +49,108 @@
             <th>
             </th>
 
-            <th>
+            <th class="text-end">
                 @Html.DisplayNameFor(model => model.PlannedPeopleCount)
             </th>
-            <th>
+            <th class="text-end">
                 @Html.DisplayNameFor(model => model.PeopleCount)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (userEvents != null)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
+            @foreach (var userEvent in userEvents)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => userEvent.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => userEvent.StartDate)
+                        @Html.DisplayFor(modelItem => userEvent.EndDate)
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.Location)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CoordinatorName) @Html.DisplayFor(modelItem => item.CoordinatorSurname)
-                </td>
-                <td>
-                </td>
+                    <td>
+                        @if (userEvent.Location == null)
+                        {
+                            <span>-</span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => userEvent.Location)
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => userEvent.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => userEvent.CoordinatorName) @Html.DisplayFor(modelItem => userEvent.CoordinatorSurname)
+                    </td>
+                    <td>
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.PlannedPeopleCount)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PeopleCount)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-dark d-flex"><i class="mt-1 mr-2 fas fa-info-circle"></i> Plačiau</a>
-                </td>
-            </tr>
+                    <td class="text-end">
+                        @Html.DisplayFor(modelItem => userEvent.PlannedPeopleCount)
+                    </td>
+                    <td class="text-end">
+                        @Html.DisplayFor(modelItem => userEvent.PeopleCount)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@userEvent.Id" class="btn btn-dark d-flex ms-3"><i class="mt-1 mr-2 fas fa-info-circle"></i> Plačiau</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+
+                    <td>
+                        @if (item.Location == null)
+                        {
+                            <span>-</span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => item.Location)
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CoordinatorName) @Html.DisplayFor(modelItem => item.CoordinatorSurname)
+                    </td>
+                    <td>
+                    </td>
+
+                    <td class="text-end">
+                        @Html.DisplayFor(modelItem => item.PlannedPeopleCount)
+                    </td>
+                    <td class="text-end">
+                        @Html.DisplayFor(modelItem => item.PeopleCount)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-dark d-flex ms-3"><i class="mt-1 mr-2 fas fa-info-circle"></i> Plačiau</a>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
-
-@*Pagination*@
-<div class="d-flex justify-content-center">
-    @for (int i = 1; i <= totalPages; i++)
-    {
-        if (i == 1 && currentPage != 1 || i + showCount <= currentPage || i == totalPages || i <= currentPage + showCount && i != currentPage)
-        {
-            if (i != 1 && i + showCount <= currentPage)
-            {
-                // Kaireje puseje
-                if (i == currentPage - showCount)
-                {
-                    <h4 class="mx-2">...</h4>
-                }
-            }
-            // Desineje puseje
-            else if (currentPage + showCount == i && i != totalPages)
-            {
-                <h4 class="mx-2">...</h4>
-            }
-            else
-            {
-                if (currentPage - 1 == i)
-                {
-                    <form asp-action="Index" method="post">
-                        <input type="number" name="pageIndex" hidden value="@i" />
-                        @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                        {
-                            <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                            <input type="text" name="baseProductSku" hidden value="@ViewData["pickedBaseProductSku"]" />
-                        }
-                        <input type="submit" class="btn btn-outline-dark" value="@i" />
-                    </form>
-                    <form asp-action="Index" method="post">
-                        <input type="number" name="pageIndex" hidden value="@i" />
-                        @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                        {
-                            <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                            <input type="text" name="baseProductSku" hidden value="@ViewData["pickedBaseProductSku"]" />
-                        }
-                        <button type="submit" class="btn btn-outline-dark ms-3"><i class="bi bi-arrow-left"></i> Atgal</button>
-                    </form>
-                }
-                else if (currentPage + 1 == i)
-                {
-                    <form asp-action="Index" method="post">
-                        <input type="number" name="pageIndex" hidden value="@i" />
-                        @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                        {
-                            <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                            <input type="text" name="baseProductSku" hidden value="@ViewData["pickedBaseProductSku"]" />
-                        }
-                        <button type="submit" class="btn btn-outline-dark me-3">Kitas <i class="bi bi-arrow-right"></i></button>
-                    </form>
-                    <form asp-action="Index" method="post">
-                        <input type="number" name="pageIndex" hidden value="@i" />
-                        @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                        {
-                            <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                            <input type="text" name="baseProductSku" hidden value="@ViewData["pickedBaseProductSku"]" />
-                        }
-                        <input type="submit" class="btn btn-outline-dark" value="@i" />
-                    </form>
-                }
-                else
-                {
-                    if (currentPage != totalPages || i != totalPages)
-                    {
-                        <form asp-action="Index" method="post">
-                            <input type="number" name="pageIndex" hidden value="@i" />
-                        @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                        {
-                            <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                            <input type="text" name="store" hidden value="@ViewData["pickedBaseProductSku"]" />
-                        }
-                            <input type="submit" class="btn btn-outline-dark" value="@i" />
-                        </form>
-                    }
-                }
-            }
-        }
-        if (i == currentPage)
-        {
-            <button class="btn btn-dark mx-3" disabled>@currentPage</button>
-        }
-    }
-</div>
+@if (userEvents == null)
+{
+    @*Pagination*@
+    @await Html.PartialAsync("~/Views/Shared/_Pagination.cshtml")
+}

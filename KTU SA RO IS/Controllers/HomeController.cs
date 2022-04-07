@@ -1,6 +1,7 @@
 ﻿using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace KTU_SA_RO.Controllers
@@ -17,16 +19,21 @@ namespace KTU_SA_RO.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            var a = await _context.Events
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["userId"] = userId;
+
+            var events = await _context.Events
                 .Include(et => et.EventType)
                 .Include(et => et.EventTeam)
                     .ThenInclude(u => u.Users)
@@ -36,42 +43,42 @@ namespace KTU_SA_RO.Controllers
             var repList = new Dictionary<int,string>();
             var eventIds = new List<int>();
 
-            foreach (var Event in a)
+            foreach (var @event in events)
             {
                 foreach (var ur in userRepresent)
                 {
-                    if (Event.EventTeam.UserId.Equals(ur.Id) && Event.EventTeam.Is_event_coord)
+                    if (@event.EventTeam.UserId.Equals(ur.Id) && @event.EventTeam.Is_event_coord)
                     {
-                        eventIds.Add(Event.EventTeam.EventId);
+                        eventIds.Add(@event.EventTeam.EventId);
 
                         switch (ur.Representative.ToString())
                         {
                             case "infosa":
-                                repList.Add(Event.EventTeam.EventId, "#03afd7");
+                                repList.Add(@event.EventTeam.EventId, "#03afd7");
                                 break;
                             case "csa":
-                                repList.Add(Event.EventTeam.EventId, "#2B2B2B");
+                                repList.Add(@event.EventTeam.EventId, "#2B2B2B");
                                 break;
                             case "vivat":
-                                repList.Add(Event.EventTeam.EventId, "#ea6c32");
+                                repList.Add(@event.EventTeam.EventId, "#ea6c32");
                                 break;
                             case "indi":
-                                repList.Add(Event.EventTeam.EventId, "#332c75");
+                                repList.Add(@event.EventTeam.EventId, "#332c75");
                                 break;
                             case "vfsa":
-                                repList.Add(Event.EventTeam.EventId, "#3b3c5a");
+                                repList.Add(@event.EventTeam.EventId, "#3b3c5a");
                                 break;
                             case "esa":
-                                repList.Add(Event.EventTeam.EventId, "#27395b");
+                                repList.Add(@event.EventTeam.EventId, "#27395b");
                                 break;
                             case "shm":
-                                repList.Add(Event.EventTeam.EventId, "#78274b");
+                                repList.Add(@event.EventTeam.EventId, "#78274b");
                                 break;
                             case "statius":
-                                repList.Add(Event.EventTeam.EventId, "#1a5d33");
+                                repList.Add(@event.EventTeam.EventId, "#1a5d33");
                                 break;
                             case "fumsa":
-                                repList.Add(Event.EventTeam.EventId, "#ea3c3b");
+                                repList.Add(@event.EventTeam.EventId, "#ea3c3b");
                                 break;
 
                             default:

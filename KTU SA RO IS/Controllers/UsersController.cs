@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,10 +25,21 @@ namespace KTU_SA_RO.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageIndex = 1)
         {
             ViewData["roles"] = await GetUsersRole();
-            return View(await _context.Users.ToListAsync());
+
+            /*Pagination*/
+            var pageSize = 10;
+            var totalPages = (int)Math.Ceiling(_context.Users
+                .Count() / (double)pageSize);
+
+            ViewData["totalPages"] = totalPages;
+            ViewData["pageIndex"] = pageIndex;
+
+            return View(await _context.Users
+                .Skip((pageIndex - 1) * pageSize).Take(pageSize)
+                .ToListAsync());
         }
 
         // Get users roles

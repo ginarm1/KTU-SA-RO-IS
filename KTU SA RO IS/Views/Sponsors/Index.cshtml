@@ -2,6 +2,16 @@
 
 @{
     ViewData["Title"] = "Visi rėmėjai";
+
+    /*Pagination*/
+    var currentPage = 0;
+    if (ViewData["pageIndex"] != null)
+    {
+        currentPage = Convert.ToInt32(ViewData["pageIndex"]);
+    }
+    var totalPages = Convert.ToInt32(ViewData["totalPages"]);
+    // Show 5 pages buttons
+    var showCount = 5;
 }
 
 <div class="display-6 m-2 mt-4 fw-bold">@ViewData["Title"]</div>
@@ -13,8 +23,8 @@
     </div>
 }
 
-<a asp-action="Create" class="btn btn-primary my-3 col-3"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują rėmėją</a>
-<table class="table">
+<a asp-action="Create" class="btn btn-primary my-3 col-sm-5 col-lg-3"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują rėmėją</a>
+<table class="table table-responsive">
     <thead>
         <tr>
             <th>
@@ -68,3 +78,6 @@
         }
     </tbody>
 </table>
+
+@*Pagination*@
+@await Html.PartialAsync("~/Views/Shared/_Pagination.cshtml")

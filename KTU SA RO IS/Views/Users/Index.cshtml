@@ -4,6 +4,16 @@
 @{
     ViewData["Title"] = "Registruoti naudotojai";
     var UsersRoles = ViewData["roles"] as Dictionary<string, IdentityRole>;
+
+    /*Pagination*/
+    var currentPage = 0;
+    if (ViewData["pageIndex"] != null)
+    {
+        currentPage = Convert.ToInt32(ViewData["pageIndex"]);
+    }
+    var totalPages = Convert.ToInt32(ViewData["totalPages"]);
+    // Show 5 pages buttons
+    var showCount = 5;
 }
 @if (TempData["success"] != null)
 {
@@ -19,7 +29,7 @@
 }
 <div class="container display-6 my-4 fw-bold">@ViewData["Title"]</div>
 
-<table class="table">
+<table class="table table-responsive">
     <thead>
         <tr>
             <th>
@@ -61,3 +71,6 @@
         }
     </tbody>
 </table>
+
+@*Pagination*@
+@await Html.PartialAsync("~/Views/Shared/_Pagination.cshtml")

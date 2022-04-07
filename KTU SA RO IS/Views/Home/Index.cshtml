@@ -1,13 +1,11 @@
 ﻿@model IEnumerable<KTU_SA_RO.Models.Event>
-@using Microsoft.AspNetCore.Identity
-
-@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Pagrindinis puslapis";
     var rep = ViewData["represantatives"] as Dictionary<int, string>;
     var eventIds = ViewData["eventIds"] as List<int>;
     int i = 0;
+    var userId = ViewData["userId"];
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.css">
 
@@ -31,6 +29,13 @@
         </tr>
     }
 </table>
+@if (userId != null)
+{
+   <div class="container">
+      <a asp-action="userEvents" asp-controller="Events" asp-route-id="@userId" class="btn btn-dark mt-4"><i class="mt-1 mr-2 fas fa-info-circle"></i> Mano renginiai</a>
+   </div> 
+}
+
 <div id="calendar" class="mt-4"></div>
 
 @foreach (var item in Model)
@@ -67,17 +72,26 @@
                 {
                     <p class="col-6">@item.CoordinatorName @item.CoordinatorSurname</p>
                 }
-
             </div>
             <div class="row mt-1">
                 <h5 class="col-sm-7 col-md-6 col-lg-4">Tipas:</h5>
                 <p class="col-6">@item.EventType.Name</p>
             </div>
             <div class="row mt-1">
-                <h5 class="col-sm-7 col-md-6 col-lg-4">Dalyvių skaičius:</h5>
-                <p class="col-2">@item.PlannedPeopleCount</p>
+                @if (@item.PeopleCount == 0)
+                {
+                    <h5 class="col-sm-7 col-md-6 col-lg-4">Planuojamas dalyvių skaičius:</h5>
+                    <p class="col-2">@item.PlannedPeopleCount</p>
+                }
+                else
+                {
+                    <h5 class="col-sm-7 col-md-6 col-lg-4">Dalyvių skaičius:</h5>
+                    <p class="col-2">@item.PeopleCount</p>
+                }
             </div>
+            <div class="row mt-1 mb-4 pt-4 bg-light rounded-2">
             <p id="eventDetails-@item.Id" class="mt-0 mb-4 ms-3">@item.Description</p>
+            </div>
             @if (User.IsInRole("admin") || User.IsInRole("eventCoord") || User.IsInRole("orgCoord"))
             {
                 <a asp-action="Edit" asp-controller="Events" asp-route-id="@item.Id" class="btn btn-secondary"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
