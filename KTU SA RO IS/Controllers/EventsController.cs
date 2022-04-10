@@ -299,19 +299,19 @@ namespace KTU_SA_RO.Controllers
             var successMsg = "Renginys:" + @event.Title;
             if (@event.EventTeamMembers != null && @event.Requirements != null)
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> ir <u>specifiniais reikalavimais</u> sėkmingai pašalintas";
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> ir <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
             }
             else if (@event.EventTeamMembers != null)
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> sėkmingai pašalintas";
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> sėkmingai pašalintas!";
             }
             else if (@event.Requirements != null)
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> su <u>specifiniais reikalavimais</u> sėkmingai pašalintas";
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
             }
             else
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> sėkmingai pašalintas";
+                TempData["success"] = "<b>" + successMsg + "<b/> sėkmingai pašalintas!";
             }
             return RedirectToAction(nameof(Index));
         }

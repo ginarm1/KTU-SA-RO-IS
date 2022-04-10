@@ -44,9 +44,10 @@
             </dd>
             <div class="form-group mt-4">
                 <a asp-action="Index" class="btn btn-outline-dark text-uppercase"><i class="fas fa-arrow-left"></i> Grižti į sąrašą</a>
-                <button type="button" class="btn btn-danger rounded-2" data-toggle="modal" data-target="#exampleModal">
+                <button type="submit"  asp-action="ChangeUserRole" asp-route-id="@Model.Id"  class="btn btn-primary"> Patvirtinti</button>
+@*                <button type="button" class="btn btn-danger rounded-2" data-toggle="modal" data-target="#exampleModal">
                     <i class="fas fa-trash pe-1"></i> Pašalinti naudotoją
-                </button>                    
+                </button>    *@                
                 <!-- Modal -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog" role="document">

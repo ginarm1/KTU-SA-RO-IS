@@ -134,7 +134,7 @@ namespace KTU_SA_RO.Controllers
             var sponsor = await _context.Sponsors.FindAsync(id);
             _context.Sponsors.Remove(sponsor);
             await _context.SaveChangesAsync();
-            TempData["success"] = "Rėmėjas: <b>" + sponsor.Title + "</b> sėkmingai pašalintas";
+            TempData["success"] = "Rėmėjas: <b>" + sponsor.Title + "</b> sėkmingai pašalintas!";
             return RedirectToAction(nameof(Index));
         }
 

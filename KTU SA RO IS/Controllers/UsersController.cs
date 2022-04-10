@@ -189,15 +189,15 @@ namespace KTU_SA_RO.Controllers
             var successMsg = "Naudotojas:" + DeleteUser.Name + " " + DeleteUser.Surname;
             if (userEventTeams != null && userRequirements != null)
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> iš <u>renginio komandos</u> ir <u>specifiniais reikalavimais</u> sėkmingai pašalintas";
+                TempData["success"] = "<b>" + successMsg + "<b/> iš <u>renginio komandos</u> ir <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
             }
             else if (userEventTeams != null)
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> sėkmingai pašalintas";
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> sėkmingai pašalintas!";
             }
             else if (userRequirements != null)
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> su <u>specifiniais reikalavimais</u> sėkmingai pašalintas";
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
             }
             else
             {
