@@ -2,9 +2,12 @@
 
 @{
     ViewData["Title"] = "Renginio detali informacija";
+    var positions = ViewData["positions"] as List<string>;
+    var eventTeam = ViewData["eventTeam"] as Dictionary<int, ApplicationUser>;
+    var membersRole = ViewData["membersRole"] as Dictionary<int, string>;
 }
 
-<div class="container display-6 my-4 fw-bold">Plačiau apie renginį</div>
+<div class="container display-5 my-4 fw-bold">Plačiau apie renginį</div>
 
 @if (TempData["success"] != null)
 {
@@ -15,49 +18,149 @@
 
 <div>
     <hr />
-    <dl class="container row">
-        <dt class="col-sm-3 col-lg-2 mb-3">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-9 col-lg-10 fw-bold">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class="col-sm-9 col-lg-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class="col-sm-9 col-lg-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
-            @Html.DisplayNameFor(model => model.Location)
-        </dt>
-        <dd class="col-sm-9 col-lg-10">
-            @if (Model.Location == null)
+    <div class="container row">
+        <div class="col-lg-6" style="border-right:1px solid #E1E1E1;">
+            <h5 class="display-6 mb-4">
+                Pagrindinė info
+            </h5>
+            <div class="row">
+                <div class="col-sm-3 col-lg-4 mb-3 fw-bold">
+                    @Html.DisplayNameFor(model => model.Title)
+                </div>
+                <div class="col-sm-9 col-lg-8 fw-bold">
+                    @Html.DisplayFor(model => model.Title)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-lg-4 mb-3 fw-bold">
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </div>
+                <div class="col-sm-9 col-lg-8">
+                    @Html.DisplayFor(model => model.StartDate)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-lg-4 mb-3 fw-bold">
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </div>
+                <div class="col-sm-9 col-lg-8">
+                    @Html.DisplayFor(model => model.EndDate)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-lg-4 mb-3 fw-bold">
+                    @Html.DisplayNameFor(model => model.Location)
+                </div>
+                <div class="col-sm-9 col-lg-8">
+                    @if (Model.Location == null)
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(model => model.Location)
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-lg-4 mb-5 fw-bold">
+                    @Html.DisplayNameFor(model => model.Description)
+                </div>
+                <div class="col-sm-9 col-lg-8">
+                    @Html.DisplayFor(model => model.Description)
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            @if (TempData["danger"] != null)
             {
-                <span>-</span>
+                <div class="alert alert-danger mt-4" role="alert">
+                    @Html.Raw(TempData["danger"].ToString())
+                </div>
+            }
+            <div class="d-flex justify-content-between">
+                <h5 class="display-6 mb-4">
+                    Renginio komanda
+                </h5>
+                <div class="btn btn-primary mt-3 mb-4 col-sm-5 col-lg-3" id="addUserBtn"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti narį</div>
+            </div>
+            @*Add user to an event team*@
+
+            <div class="row" id="containerAddUser">
+                <form asp-action="Create" asp-controller="EventTeamMembers">
+                    <input name="eventId" class="form-control" value="@Model.Id" hidden />
+                    <div class="d-flex justify-content-between">
+                        <input name="userName" class="form-control me-3" placeholder="Vardas" required />
+                        <input name="userSurname" class="form-control" placeholder="Pavardė" required />
+                    </div>
+                    <div class="d-flex justify-content-between my-4">
+                        <input name="userEmail" class="form-control w-50" type="email" placeholder="El. paštas (neprivaloma)" />
+                        <div class="form-label mt-1">Pozicija:</div>
+                        <select name="pickedPosition" class="form-control w-25" asp-items="@(new SelectList(positions,"",""))" required>
+                            <option value=""></option>
+                        </select>
+                    </div>
+                    <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4" id="submit" />
+                </form>
+            </div>
+            @******@
+            @if (eventTeam != null)
+            {
+                for (int i = 0; i < eventTeam.Count(); i++)
+                {
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="fw-bold">@eventTeam.ElementAt(i).Value.Name @eventTeam.ElementAt(i).Value.Surname</div>
+                            <div class="me-1 px-2 rounded-3 text-white fw-light bg-dark">@eventTeam.ElementAt(i).Value.Email</div>
+                        </div>
+                        <div class="row my-3 mx-2 ">
+                            <div class="col-8" >@membersRole.ElementAt(i).Value</div>
+                            <div class="col-4 align-items-end">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-dark rounded-2" data-toggle="modal" data-target="#exampleModal-@eventTeam.ElementAt(i).Key">
+                                  <i class="fas fa-trash pe-1"></i> Ištrinti
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal-@eventTeam.ElementAt(i).Key" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        Pašalinsite <b>@eventTeam.ElementAt(i).Value.Name @eventTeam.ElementAt(i).Value.Surname</b> iš komandos
+                                      </div>
+                                      <div class="modal-footer">
+                                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                                        <form asp-action="Delete">
+                                            <input type="submit" asp-action="Delete" asp-controller="EventTeamMembers" asp-route-id="@eventTeam.ElementAt(i).Key"  value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase" />
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!----->
+                            </div>
+                        </div>
+                    </div>
+                }
             }
             else
             {
-                @Html.DisplayFor(model => model.Location)
+                <div class="alert alert-danger mt-4" role="alert">
+                    Komadoje narių nerasta
+                </div>
             }
-        </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-9 col-lg-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dd><hr /></dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        </div>
+        <div><hr /></div>
+        <div class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.Has_coordinator)
-        </dt>
-        <dd class="col-sm-8 col-lg-2" style="border-right:1px solid #E1E1E1;">
+        </div>
+        <div class="col-sm-8 col-lg-2" style="border-right:1px solid #E1E1E1;">
             @if (!Model.Has_coordinator)
             {
                 <span><i class="fas fa-times"></i></span>
@@ -66,18 +169,18 @@
             {
                 <i class="fas fa-check"></i>
             }
-        </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        </div>
+        <div class="col-sm-3 col-lg-2 mb-3">
             Renginio koordinatorius
-        </dt>
-        <dd class="col-sm-9 col-lg-2" style="border-right:1px solid #E1E1E1;">
+        </div>
+        <div class="col-sm-9 col-lg-2" style="border-right:1px solid #E1E1E1;">
             @Html.DisplayFor(model => model.CoordinatorName) <span class="ms-2">@Html.DisplayFor(model => model.CoordinatorSurname)</span>
-        </dd>
-       
-        <dt class="col-sm-3 col-lg-2 mb-2">
+        </div>
+
+        <div class="col-sm-3 col-lg-2 mb-2">
             @Html.DisplayNameFor(model => model.Is_canceled)
-        </dt>
-        <dd class="col-sm-9 col-lg-1">
+        </div>
+        <div class="col-sm-9 col-lg-1">
             @if (!Model.Is_canceled)
             {
                 <span><i class="fas fa-times"></i></span>
@@ -86,12 +189,12 @@
             {
                 <span><i class="fas fa-check"></i></span>
             }
-        </dd>
-        @*<dd><hr /></dd>*@
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        </div>
+        <div class="my-3"></div>
+        <div class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.Is_live)
-        </dt>
-        <dd class="col-sm-9 col-lg-2" style="border-right:1px solid #E1E1E1;">
+        </div>
+        <div class="col-sm-9 col-lg-2" style="border-right:1px solid #E1E1E1;">
             @if (!Model.Is_live)
             {
                 <span><i class="fas fa-times"></i></span>
@@ -100,17 +203,17 @@
             {
                 <i class="fas fa-check"></i>
             }
-        </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        </div>
+        <div class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.PlannedPeopleCount)
-        </dt>
-        <dd class="col-sm-9 col-lg-2" style="border-right:1px solid #E1E1E1;">
+        </div>
+        <div class="col-sm-9 col-lg-2" style="border-right:1px solid #E1E1E1;">
             @Html.DisplayFor(model => model.PlannedPeopleCount)
-        </dd>
-        <dt class="col-sm-3 col-lg-2 mb-4">
+        </div>
+        <div class="col-sm-3 col-lg-2 mb-4">
             @Html.DisplayNameFor(model => model.PeopleCount)
-        </dt>
-        <dd class="col-sm-9 col-lg-1">
+        </div>
+        <div class="col-sm-9 col-lg-1">
             @if (Model.PeopleCount == 0)
             {
                 <span>-</span>
@@ -119,9 +222,9 @@
             {
                 @Html.DisplayFor(model => model.PeopleCount)
             }
-        </dd>
-        <dd><hr /></dd>
-        <dd>
+        </div>
+        <div><hr /></div>
+        <div>
             <div class="d-flex mt-4 mb-2 justify-content-between">
                 <h3 class="my-4 fw-bold">Specifiniai reikalavimai</h3>
                 <a asp-controller="Requirements" asp-route-eventId="@Model.Id" asp-action="Create" class="btn btn-primary my-3 col-3">
@@ -136,21 +239,53 @@
                     <div class="card mb-4 w-75">
                         <div class="card-header d-flex justify-content-between">
                             <div class="fw-bold">@requirement.Name</div>
-                            @if(requirement.User != null){
-                                 <div class="me-1 px-2 rounded-3 text-white fw-light bg-dark">@requirement.User.Name @requirement.User.Surname</div>
+                            @if (requirement.User != null)
+                            {
+                                <div>
+                                    <span class="me-1 px-2 rounded-3 text-white fw-light bg-dark">@requirement.User.Name @requirement.User.Surname</span>
+                                    @if(requirement.Is_fulfilled)
+                                    {
+                                         <span><i class="ms-2 fas fa-check text-success"></i></span>
+                                    }
+                                </div>
                             }
                         </div>
                         <div class="row m-3">
                             <div class="col-6">@requirement.Description</div>
                             <div class="col">
                                 <a asp-controller="Requirements" asp-action="Edit" asp-route-id="@requirement.Id"
-                           class="btn btn-outline-secondary mx-3 rounded-2">
+                                    class="btn btn-outline-secondary mx-3 rounded-2">
                                     <i class="fas fa-edit pe-1"></i> Redaguoti
                                 </a>
-                                <a asp-controller="Requirements" asp-action="Delete" asp-route-id="@requirement.Id"
-                           class="btn btn-outline-danger mx-3 rounded-2">
-                                    <i class="fas fa-trash pe-1"></i> Ištrinti
-                                </a>
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#exampleModal-@requirement.Id">
+                                  <i class="fas fa-trash pe-1"></i> Ištrinti
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal-@requirement.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        Pašalinsite specifinį reikalavimą: <b>@requirement.Name</b> iš renginio
+                                      </div>
+                                      <div class="modal-footer">
+                                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                                        <form asp-action="Delete">
+                                            <input type="submit" asp-action="Delete" asp-route-id="@requirement.Id"  value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase" />
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!----->
+
                             </div>
                         </div>
                     </div>
@@ -163,8 +298,8 @@
                 </div>
             }
             <hr />
-        </dd>
-        <dd>
+        </div>
+        <div>
             <div class="float-start">
                 <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i>  Grįžti į sąrašą</a>
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary mx-3"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
@@ -172,6 +307,18 @@
             <div class="float-end">
                 <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger mx-3"><i class="fas fa-trash pe-1"></i> Ištrinti</a>
             </div>
-        </dd>
-    </dl>
+        </div>
+    </div>
 </div>
+
+@section Scripts
+{
+<script>
+    $('#containerAddUser').hide();
+
+    $('#addUserBtn').click(function(){
+        $('#containerAddUser').toggle("slow");
+    });
+
+</script>
+}

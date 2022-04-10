@@ -35,58 +35,56 @@ namespace KTU_SA_RO.Controllers
 
             var events = await _context.Events
                 .Include(et => et.EventType)
-                .Include(et => et.EventTeam)
-                    .ThenInclude(u => u.Users)
+                .Include(et => et.EventTeamMembers)
                 .ToListAsync();
 
-            var userRepresent = await _context.Users.ToListAsync();
-            var repList = new Dictionary<int,string>();
+            var eventTeamMembers = await _context.EventTeamMembers
+                .ToListAsync();
+            var users = await _context.Users.ToListAsync();
+            var repList = new Dictionary<int, string>();
             var eventIds = new List<int>();
 
-            foreach (var @event in events)
+            foreach (var eventTeamMember in eventTeamMembers)
             {
-                foreach (var ur in userRepresent)
+                if (eventTeamMember.UserId != null && eventTeamMember.Is_event_coord)
                 {
-                    if (@event.EventTeam.UserId.Equals(ur.Id) && @event.EventTeam.Is_event_coord)
+                    eventIds.Add(eventTeamMember.EventId);
+                    var user = users.FirstOrDefault(u => u.Id.Equals(eventTeamMember.UserId));
+
+                    switch (user.Representative.ToString())
                     {
-                        eventIds.Add(@event.EventTeam.EventId);
+                        case "infosa":
+                            repList.Add(eventTeamMember.EventId, "#03afd7");
+                            break;
+                        case "csa":
+                            repList.Add(eventTeamMember.EventId, "#2B2B2B");
+                            break;
+                        case "vivat":
+                            repList.Add(eventTeamMember.EventId, "#ea6c32");
+                            break;
+                        case "indi":
+                            repList.Add(eventTeamMember.EventId, "#332c75");
+                            break;
+                        case "vfsa":
+                            repList.Add(eventTeamMember.EventId, "#3b3c5a");
+                            break;
+                        case "esa":
+                            repList.Add(eventTeamMember.EventId, "#27395b");
+                            break;
+                        case "shm":
+                            repList.Add(eventTeamMember.EventId, "#78274b");
+                            break;
+                        case "statius":
+                            repList.Add(eventTeamMember.EventId, "#1a5d33");
+                            break;
+                        case "fumsa":
+                            repList.Add(eventTeamMember.EventId, "#ea3c3b");
+                            break;
 
-                        switch (ur.Representative.ToString())
-                        {
-                            case "infosa":
-                                repList.Add(@event.EventTeam.EventId, "#03afd7");
-                                break;
-                            case "csa":
-                                repList.Add(@event.EventTeam.EventId, "#2B2B2B");
-                                break;
-                            case "vivat":
-                                repList.Add(@event.EventTeam.EventId, "#ea6c32");
-                                break;
-                            case "indi":
-                                repList.Add(@event.EventTeam.EventId, "#332c75");
-                                break;
-                            case "vfsa":
-                                repList.Add(@event.EventTeam.EventId, "#3b3c5a");
-                                break;
-                            case "esa":
-                                repList.Add(@event.EventTeam.EventId, "#27395b");
-                                break;
-                            case "shm":
-                                repList.Add(@event.EventTeam.EventId, "#78274b");
-                                break;
-                            case "statius":
-                                repList.Add(@event.EventTeam.EventId, "#1a5d33");
-                                break;
-                            case "fumsa":
-                                repList.Add(@event.EventTeam.EventId, "#ea3c3b");
-                                break;
-
-                            default:
-                                break;
-                        }
+                        default:
+                            break;
                     }
                 }
-                
             }
             ViewData["represantatives"] = repList;
             ViewData["eventIds"] = eventIds;
@@ -106,20 +104,5 @@ namespace KTU_SA_RO.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        //[Route("getCalendarEvents")]
-        //public IActionResult Calendar()
-        //{
-        //    var events = _context.Events.Select( e => new
-        //    {
-        //        id = e.Id,
-        //        title = e.Title,
-        //        description = e.Description,
-        //        start = e.StartDate.ToString("yyyy-MM-dd"),
-        //        end = e.EndDate.ToString("yyyy-MM-dd"),
-        //    }).ToList();
-        //    return new JsonResult(events);
-
-        //}
     }
 }

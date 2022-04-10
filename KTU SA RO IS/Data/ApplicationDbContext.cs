@@ -17,7 +17,7 @@ namespace KTU_SA_RO.Data
 
         public DbSet<Event> Events { get; set; }
         public DbSet<EventType> EventTypes { get; set; }
-        public DbSet<EventTeam> EventTeams { get; set; }
+        public DbSet<EventTeamMember> EventTeamMembers { get; set; }
         public DbSet<Requirement> Requirements { get; set; }
         public DbSet<Sponsor> Sponsors { get; set; }
         public DbSet<Sponsorship> Sponsorships { get; set; }

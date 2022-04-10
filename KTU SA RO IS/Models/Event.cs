@@ -70,10 +70,10 @@ namespace KTU_SA_RO.Models
 
         public EventType EventType { get; set; }
 
-        [DisplayName("Organizatorius")]
-        public ICollection<ApplicationUser> Users { get; set; }
+        //[DisplayName("Organizatorius")]
+        //public ICollection<ApplicationUser> Users { get; set; }
 
-        public EventTeam EventTeam { get; set; }
+        public ICollection<EventTeamMember> EventTeamMembers { get; set; }
 
         [DisplayName("Spec. reikalavimai")]
         public ICollection<Requirement> Requirements { get; set; }

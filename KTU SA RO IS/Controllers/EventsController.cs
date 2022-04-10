@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace KTU_SA_RO.Controllers
 {
@@ -42,7 +43,7 @@ namespace KTU_SA_RO.Controllers
         [Route("Events/UserEvents/{userId}")]
         public async Task<IActionResult> UserEvents(string userId, int pageIndex = 1)
         {
-            var userTeams = await _context.EventTeams.Where(u => u.UserId.Equals(userId)).ToListAsync();
+            var userTeams = await _context.EventTeamMembers.Where(u => u.UserId.Equals(userId)).ToListAsync();
             var events = await _context.Events.ToListAsync();
 
             var userEvents = new List<Event>();
@@ -72,16 +73,75 @@ namespace KTU_SA_RO.Controllers
                 return NotFound();
             }
 
+            var positions = new List<string>();
+
+            // convert user roles to positions
+            foreach (var role in Enum.GetValues(typeof(Role)))
+            {
+                if(!role.Equals("admin"))
+                    positions.Add(setUserPosition(role.ToString()));
+            }
+            ViewData["positions"] = positions;
+
             var @event = await _context.Events
                 .Include(r => r.Requirements.Where(e => e.Event.Id == id))
                     .ThenInclude(u => u.User)
+                .Include(et => et.EventTeamMembers)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var eventTeam = new Dictionary<int,ApplicationUser>();
+            var membersRole = new Dictionary<int,string>();
+            int i = 0;
+
+            foreach (var eventTeamMember in @event.EventTeamMembers)
+            {
+                i = eventTeamMember.Id;
+                if (eventTeamMember.EventId == id)
+                {
+                    var user = _context.Users.FirstOrDefault( u => u.Id.Equals(eventTeamMember.UserId));
+                    if (user != null)
+                    {
+                        eventTeam.Add(i,user);
+                        membersRole.Add(i,setUserPosition(eventTeamMember.RoleName));
+                    }
+                    else
+                    {
+                        TempData["danger"] = "Naudotojas nerastas";
+                        return View();
+                    }
+                }
+            }
+
             if (@event == null)
             {
                 return NotFound();
             }
 
+            ViewData["eventTeam"] = eventTeam;
+            ViewData["membersRole"] = membersRole;
+
             return View(@event);
+        }
+
+        public string setUserPosition(string roleName)
+        {
+            if (roleName.Equals("registered"))
+                return "Registruotas naudotojas";
+            if (roleName.Equals("eventCoord"))
+                return "Renginio koordinatorius";
+            if (roleName.Equals("fsaOrgCoord"))
+                return "ORK koordinatorius";
+            if (roleName.Equals("fsaBussinesCoord"))
+                return "VIP koordinatorius";
+            if (roleName.Equals("fsaPrCoord"))
+                return "RSV koordinatorius"; 
+            if (roleName.Equals("orgCoord"))
+                return "CSA ORK koordinatorius";
+            if (roleName.Equals("admin"))
+                return "Administratorius";
+            else
+                return null;
         }
 
         // GET: Events/Create
@@ -115,7 +175,7 @@ namespace KTU_SA_RO.Controllers
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
 
-                EventTeam team = new()
+                EventTeamMember team = new()
                 {
                     EventId = @event.Id,
                     UserId = user.Id,
@@ -175,7 +235,7 @@ namespace KTU_SA_RO.Controllers
                     _context.Update(@event);
                     await _context.SaveChangesAsync();
 
-                    EventTeam team = await _context.EventTeams.Where(t => t.EventId == @event.Id).FirstOrDefaultAsync();
+                    EventTeamMember team = await _context.EventTeamMembers.Where(t => t.EventId == @event.Id).FirstOrDefaultAsync();
                     team.UserId = user.Id;
 
                     _context.Update(team);

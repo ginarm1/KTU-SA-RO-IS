@@ -23,7 +23,7 @@ namespace KTU_SA_RO.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["GeneralReq"] = await _context.Requirements.Where(r => r.Is_general).ToListAsync();
-            ViewData["AdditionalReq"] = await _context.Requirements.Where(r => !r.Is_general).ToListAsync();
+            ViewData["AdditionalReq"] = await _context.Requirements.Include(u => u.User).Where(r => !r.Is_general).ToListAsync();
             return View(await _context.Requirements.ToListAsync());
         }
 
@@ -90,6 +90,12 @@ namespace KTU_SA_RO.Controllers
                 TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nebuvo rastas sistemoje";
                 return RedirectToAction(nameof(Create));
             }
+            //check if user doesn't exist in a team
+            else if (_context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id)).FirstOrDefault() == null)
+            {
+                TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nėra renginio komandoje";
+                return RedirectToAction(nameof(Create));
+            }
 
             if (ModelState.IsValid)
             {
@@ -153,7 +159,7 @@ namespace KTU_SA_RO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Comment,Is_general,Is_fulfilled")] Requirement requirement, int? EventId,
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Comment,Is_general,Is_fulfilled")] Requirement requirement, int? eventId,
             string responsibleUserName, string responsibleUserSurname)
         {
             if (id != requirement.Id)
@@ -168,13 +174,19 @@ namespace KTU_SA_RO.Controllers
                 TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nebuvo rastas sistemoje";
                 return RedirectToAction(nameof(Edit));
             }
+            //check if user doesn't exist in a team
+            else if (_context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id)).FirstOrDefault() == null)
+            {
+                TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nėra renginio komandoje";
+                return RedirectToAction(nameof(Edit));
+            }
 
             if (ModelState.IsValid)
             {
                 var reqLabel = "Bendrinis reikalavimas: <b> ";
                 try
                 {
-                    if (EventId != null)
+                    if (eventId != null)
                     {
                         reqLabel = "Specifinis reikalavimas: <b> ";
                     }
@@ -183,8 +195,8 @@ namespace KTU_SA_RO.Controllers
                     await _context.SaveChangesAsync();
 
                     TempData["success"] = reqLabel + requirement.Name + " </b> sėkmingai atnaujintas!";
-                    if (EventId != null)
-                        return RedirectToAction("Details", "Events", new { Id = EventId });
+                    if (eventId != null)
+                        return RedirectToAction("Details", "Events", new { Id = eventId });
                 }
                 catch (DbUpdateConcurrencyException)
                 {

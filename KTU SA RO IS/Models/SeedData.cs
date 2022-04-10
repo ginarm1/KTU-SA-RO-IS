@@ -75,6 +75,15 @@ namespace KTU_SA_RO.Models
                 await userStore.AddToRoleAsync(user, "ADMIN");
             }
 
+            if (_context.EventTypes.Count() == 0)
+            {
+                _context.Add(new EventType { Name = "Vidinis" });
+                _context.Add(new EventType { Name = "Masinis" });
+                _context.Add(new EventType { Name = "Komercinis" });
+                _context.Add(new EventType { Name = "Fakultetinis" });
+                _context.Add(new EventType { Name = "Tarpastovybinis" });
+            }
+
             await _context.SaveChangesAsync();
             return true;
         }
