@@ -32,7 +32,7 @@
 @if (userId != null)
 {
    <div class="container">
-      <a asp-action="userEvents" asp-controller="Events" asp-route-id="@userId" class="btn btn-dark mt-4"><i class="mt-1 mr-2 fas fa-info-circle"></i> Mano renginiai</a>
+      <a asp-action="userEvents" asp-controller="Events" asp-route-id="@userId" class="btn btn-dark mt-4 rounded-2"><i class="mt-1 mr-2 fas fa-info-circle"></i> Mano renginiai</a>
    </div> 
 }
 
@@ -94,7 +94,7 @@
             </div>
             @if (User.IsInRole("admin") || User.IsInRole("eventCoord") || User.IsInRole("orgCoord"))
             {
-                <a asp-action="Edit" asp-controller="Events" asp-route-id="@item.Id" class="btn btn-secondary"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+                <a asp-action="Edit" asp-controller="Events" asp-route-id="@item.Id" class="btn btn-secondary rounded-2"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
             }
             <button type="button" class="btn btn-light float-end mb-4 rounded-lg" onclick=toggleEvent(@item.Id)>X</button>
         </div>
