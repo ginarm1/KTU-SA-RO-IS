@@ -126,24 +126,6 @@ namespace KTU_SA_RO.Controllers
             return View(sponsor);
         }
 
-        // GET: Sponsors/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var sponsor = await _context.Sponsors
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (sponsor == null)
-            {
-                return NotFound();
-            }
-
-            return View(sponsor);
-        }
-
         // POST: Sponsors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -152,6 +134,7 @@ namespace KTU_SA_RO.Controllers
             var sponsor = await _context.Sponsors.FindAsync(id);
             _context.Sponsors.Remove(sponsor);
             await _context.SaveChangesAsync();
+            TempData["success"] = "Rėmėjas: <b>" + sponsor.Title + "</b> sėkmingai pašalintas";
             return RedirectToAction(nameof(Index));
         }
 

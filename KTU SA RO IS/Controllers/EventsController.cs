@@ -260,31 +260,59 @@ namespace KTU_SA_RO.Controllers
         }
 
         // GET: Events/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var @event = await _context.Events
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@event == null)
-            {
-                return NotFound();
-            }
+        //    var @event = await _context.Events
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (@event == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(@event);
-        }
+        //    return View(@event);
+        //}
 
         // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = await _context.Events.FindAsync(id);
-            _context.Events.Remove(@event);
+            var @event = await _context.Events
+                .Include(et => et.EventTeamMembers)
+                .Include(r => r.Requirements)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (@event != null)
+                _context.Events.Remove(@event);
+            if(@event.EventTeamMembers != null)
+                _context.EventTeamMembers.RemoveRange(@event.EventTeamMembers);
+            if(@event.Requirements != null)
+                _context.Requirements.RemoveRange(@event.Requirements);
+
             await _context.SaveChangesAsync();
+
+            var successMsg = "Renginys:" + @event.Title;
+            if (@event.EventTeamMembers != null && @event.Requirements != null)
+            {
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> ir <u>specifiniais reikalavimais</u> sėkmingai pašalintas";
+            }
+            else if (@event.EventTeamMembers != null)
+            {
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> sėkmingai pašalintas";
+            }
+            else if (@event.Requirements != null)
+            {
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>specifiniais reikalavimais</u> sėkmingai pašalintas";
+            }
+            else
+            {
+                TempData["success"] = "<b>" + successMsg + "<b/> sėkmingai pašalintas";
+            }
             return RedirectToAction(nameof(Index));
         }
 

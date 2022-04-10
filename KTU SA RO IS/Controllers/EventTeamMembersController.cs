@@ -194,22 +194,22 @@ namespace KTU_SA_RO.Controllers
         }
 
         // GET: EventTeams/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var eventTeamMember = await _context.EventTeamMembers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (eventTeamMember == null)
-            {
-                return NotFound();
-            }
+        //    var eventTeamMember = await _context.EventTeamMembers
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (eventTeamMember == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(eventTeamMember);
-        }
+        //    return View(eventTeamMember);
+        //}
 
         // POST: EventTeams/Delete/5
         [HttpPost,ActionName("Delete")]

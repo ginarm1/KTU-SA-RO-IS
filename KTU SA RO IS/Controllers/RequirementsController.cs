@@ -215,22 +215,22 @@ namespace KTU_SA_RO.Controllers
         }
 
         // GET: Requirements/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var requirement = await _context.Requirements
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (requirement == null)
-            {
-                return NotFound();
-            }
+        //    var requirement = await _context.Requirements
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (requirement == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(requirement);
-        }
+        //    return View(requirement);
+        //}
 
         // POST: Requirements/Delete/5
         [HttpPost, ActionName("Delete")]

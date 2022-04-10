@@ -89,11 +89,11 @@ namespace KTU_SA_RO.Controllers
             return roleName;
         }
 
-        [Route("Users/Role/")]
-        public async Task<IActionResult> UserRole(string email)
+        [Route("Users/UserRole/{userId}")]
+        public async Task<IActionResult> UserRole(string userId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email));
-            ViewData["userRoleName"] = await GetUserRole(email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(userId));
+            ViewData["userRoleName"] = await GetUserRole(user.Email);
             var userRole = await _context.UserRoles.Where(u => u.UserId.Equals(user.Id)).FirstOrDefaultAsync();
             if (userRole == null)
             {
@@ -154,24 +154,55 @@ namespace KTU_SA_RO.Controllers
         }
 
 
-        // GET: Users/Delete/5
+        //POST: Users/UserRole/{userName}
+        [Route("Users/UserRole/{userName}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteUser(string userName)
+        public async Task<IActionResult> DeleteUser(string userId)
         {
-            if (userName == null)
+            if (userId == null)
             {
                 return NotFound($"Unable to find user.");
             }
 
-            var DeleteUser = await _userManager.FindByNameAsync(userName);
+            var DeleteUser = await _userManager.FindByNameAsync(userId);
             if (DeleteUser == null)
             {
-                TempData["danger"] = "Nerandamas naudotojas: " + DeleteUser.UserName + ".";
+                TempData["danger"] = "Naudotojas su ID: " + userId + " nerastas";
                 return RedirectToAction(nameof(Index));
             }
 
+            //var userCoordEvents = await _context.Events
+            //    .Where(e => e.CoordinatorName.Equals(DeleteUser.Name) && e.CoordinatorSurname.Equals(DeleteUser.Surname)).ToListAsync();
+            var userEventTeams = await _context.EventTeamMembers
+                .Where(e => e.UserId.Equals(userId)).ToListAsync();
+            var userRequirements = await _context.Requirements
+                .Where(e => e.User.Equals(DeleteUser)).ToListAsync();
+
+            if (userEventTeams != null)
+                _context.EventTeamMembers.RemoveRange(userEventTeams);
+            if (userRequirements != null)
+                _context.Requirements.RemoveRange(userRequirements);
+
             await _userManager.DeleteAsync(DeleteUser);
+
+            var successMsg = "Naudotojas:" + DeleteUser.Name + " " + DeleteUser.Surname;
+            if (userEventTeams != null && userRequirements != null)
+            {
+                TempData["success"] = "<b>" + successMsg + "<b/> iš <u>renginio komandos</u> ir <u>specifiniais reikalavimais</u> sėkmingai pašalintas";
+            }
+            else if (userEventTeams != null)
+            {
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> sėkmingai pašalintas";
+            }
+            else if (userRequirements != null)
+            {
+                TempData["success"] = "<b>" + successMsg + "<b/> su <u>specifiniais reikalavimais</u> sėkmingai pašalintas";
+            }
+            else
+            {
+                TempData["success"] = "<b>" + successMsg + "<b/> sėkmingai pašalintas";
+            }
             TempData["success"] = "Naudotojas <b>" + DeleteUser.Name + DeleteUser.Surname + "</b> sėkmingai pašalintas!";
             return RedirectToAction(nameof(Index));
         }

@@ -149,7 +149,7 @@ namespace KTU_SA_RO.Controllers
             file.Delete();
 
             TempData["success"] = "Renginio šablonas sėkmingai pašalintas";
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }
