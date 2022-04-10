@@ -38,30 +38,33 @@
                 <textarea asp-for="Comment" class="form-control"></textarea>
                 <span asp-validation-for="Comment" class="text-danger"></span>
             </div>
-            <div class="form-group mt-2 mb-4 form-check">
-                @if (!User.IsInRole("admin") || User.IsInRole("orgCoord"))
-                {
-                    <label class="col-6 form-check-label">
-                        <input class="form-check-input" asp-for="Is_general" id="generalBox" /> @Html.DisplayNameFor(model => model.Is_general)
+            @if (!Model.Is_general)
+            {
+                <div class="form-group mt-2 mb-4 form-check">
+                    @if (!User.IsInRole("admin") || User.IsInRole("orgCoord"))
+                    {
+                        <label class="col-6 form-check-label">
+                            <input class="form-check-input" asp-for="Is_general" id="generalBox" /> @Html.DisplayNameFor(model => model.Is_general)
+                        </label>
+                    }
+                    <label class="ms-2 form-check-label" id="fulfilled">
+                        <input class="form-check-input" asp-for="Is_fulfilled" id="fulfilledBox" /> @Html.DisplayNameFor(model => model.Is_fulfilled)
                     </label>
-                }
-                <label class="ms-2 form-check-label" id="fulfilled">
-                    <input class="form-check-input" asp-for="Is_fulfilled" id="fulfilledBox" /> @Html.DisplayNameFor(model => model.Is_fulfilled)
-                </label>
-            </div>
-            <div class="container mb-4 fw-bold bg-light py-3 rounded-2">
-                <h5 class="display-6 d-flex justify-content-center">Atsakingas asmuo</h5>
-                <div class="m-3 mt-4 d-flex justify-content-between">
-                    <div class="form-group me-3">
-                        <label>Vardas</label>
-                        <input asp-for="User.Name" class="form-control" name="responsibleUserName" />
-                    </div>
-                    <div class="form-group">
-                        <label>Pavardė</label>
-                        <input asp-for="User.Surname" class="form-control" name="responsibleUserSurname" />
-                    </div>
                 </div>
-            </div>
+                <div class="container mb-4 fw-bold bg-light py-3 rounded-2">
+                    <h5 class="display-6 d-flex justify-content-center">Atsakingas asmuo</h5>
+                    <div class="m-3 mt-4 d-flex justify-content-between">
+                        <div class="form-group me-3">
+                            <label>Vardas</label>
+                            <input asp-for="User.Name" class="form-control" name="responsibleUserName" />
+                        </div>
+                        <div class="form-group">
+                            <label>Pavardė</label>
+                            <input asp-for="User.Surname" class="form-control" name="responsibleUserSurname" />
+                        </div>
+                    </div>
+                </div>                
+            }
             <div class="form-group mt-2 mb-4">
                 @if (Model.Event != null)
                 {

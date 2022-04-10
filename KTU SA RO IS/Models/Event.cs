@@ -68,6 +68,7 @@ namespace KTU_SA_RO.Models
         [DisplayName("Atvykusių dalyvių kiekis")]
         public int PeopleCount { get; set; }
 
+        [Required]
         public EventType EventType { get; set; }
 
         //[DisplayName("Organizatorius")]
@@ -81,5 +82,12 @@ namespace KTU_SA_RO.Models
         [DisplayName("Rėmimai")]
         public ICollection<Sponsorship> Sponsorships { get; set; }
 
+        [DisplayName("Pajamos")]
+        public ICollection<Revenue> Revenues { get; set; }
+
+        [DisplayName("Išlaidos")]
+        public ICollection<Cost> Costs { get; set; }
+        [DisplayName("Bilietacijos")]
+        public ICollection<Ticketing> Ticketings { get; set; }
     }
 }

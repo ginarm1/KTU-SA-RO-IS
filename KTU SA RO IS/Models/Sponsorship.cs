@@ -25,9 +25,11 @@ namespace KTU_SA_RO.Models
         public double CostTotal { get; set; }
 
         [DisplayName("Rėmėjas")]
+        [Required]
         public Sponsor Sponsor { get; set; }
 
         [DisplayName("Renginys")]
+        [Required]
         public Event Event { get; set; }
     }
 }
