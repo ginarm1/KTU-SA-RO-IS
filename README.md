@@ -8,4 +8,4 @@ Event management system built with:
 * NUnit testing;
 
 
-![image](https://user-images.githubusercontent.com/60450573/159141387-aa7cd640-704a-4842-96fe-9febe8cbe352.png)
+![image](https://user-images.githubusercontent.com/60450573/162620287-fce4e9c6-18b9-44e6-93a8-c42e56a8790c.png)
