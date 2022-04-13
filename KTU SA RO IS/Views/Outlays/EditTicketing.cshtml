@@ -1,0 +1,42 @@
+﻿@model KTU_SA_RO.Models.Ticketing
+
+@{
+    ViewData["Title"] = "Redaguoti bilietaciją";
+}
+
+<div class="row">
+   <div class="d-flex justify-content-center">
+        <form asp-action="EditTicketing">
+            <div class="display-6 mt-4 mb-5 fw-bold">@ViewData["Title"]</div>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Event.Id" />
+            <div class="row d-flex justify-content-start">
+                <div class="col-4 form-group">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" type="number" step="0.01" min='0' max='999999' class="form-control w-75"  />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="col-7 form-group">
+                    <label asp-for="Quantity" class="control-label"></label>
+                    <input asp-for="Quantity" type="number" step="1" min='0' max='99999' class="form-control w-50" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <a asp-action="Details" asp-controller="Events" asp-route-id="@Model.Event.Id" class="btn btn-outline-dark text-uppercase">← Grižti į renginio detales</a>
+                <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase rounded-2" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts 
+{
+<script>
+    // max date input is today
+    datePickerId.max = new Date().toISOString().split("T")[0];
+</script>
+}
+

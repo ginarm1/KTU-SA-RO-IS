@@ -46,7 +46,7 @@ namespace KTU_SA_RO.Controllers
             if (file == null || file.Length == 0)
             {
                 TempData["name_danger"] = "Nepasirinktas dokumentas";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             //return Content("file not selected");
 
@@ -55,7 +55,7 @@ namespace KTU_SA_RO.Controllers
             if (file.FileName == null)
             {
                 TempData["name_danger"] = "Dokumento vardo nėra";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             //return Content("filename not present");
 
@@ -67,7 +67,7 @@ namespace KTU_SA_RO.Controllers
             else if (file.FileName != "Renginio-šablonas.xlsx")
             {
                 TempData["name_danger"] = "Dokumento pavadinimas privalo turėti pavadinimą: Renginio-šablonas";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             var path = Path.Combine("Renginio_šablonas.xlsx",
@@ -77,7 +77,7 @@ namespace KTU_SA_RO.Controllers
 
             if (GetContentType(path) == null)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
 
@@ -88,7 +88,7 @@ namespace KTU_SA_RO.Controllers
 
             TempData["success"] = "Dokumentas sėkmingai patalpintas";
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Download(string filename)

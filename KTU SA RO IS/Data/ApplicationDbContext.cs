@@ -21,5 +21,8 @@ namespace KTU_SA_RO.Data
         public DbSet<Requirement> Requirements { get; set; }
         public DbSet<Sponsor> Sponsors { get; set; }
         public DbSet<Sponsorship> Sponsorships { get; set; }
+        public DbSet<Revenue> Revenues { get; set; }
+        public DbSet<Cost> Costs { get; set; }
+        public DbSet<Ticketing> Ticketings { get; set; }
     }
 }

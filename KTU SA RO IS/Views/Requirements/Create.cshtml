@@ -4,8 +4,8 @@
 @inject UserManager<ApplicationUser> UserManager
 
 @{
-    var eventTitle = ViewData["eventTitle"];
-    if (eventTitle != null)
+    var Event = ViewData["event"] as Event;
+    if (Event != null)
         ViewData["Title"] = "Sukurti specifinį reikalavimą";
     else
         ViewData["Title"] = "Sukurti bendrinį reikalavimą";
@@ -22,9 +22,9 @@
                     @Html.Raw(TempData["danger"].ToString())
                 </div>
             }
-            @if (eventTitle != null)
+            @if (Event != null)
             {
-                <div class="container d-flex justify-content-center fw-bold bg-light py-3 rounded-2">Renginys: @eventTitle</div>
+                <div class="container d-flex justify-content-center fw-bold bg-light py-3 rounded-2">Renginys: @Event.Title</div>
                 <hr />
             }
 
@@ -73,7 +73,13 @@
                 </div>
             }
             <div class="form-group mt-2 mb-4">
-                <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i> Grižti į sąrašą</a>
+                @if(Event != null){
+                    <a asp-action="Details" asp-controller="Events" asp-route-id="@Event.Id" class="btn btn-outline-dark text-uppercase">← Grižti į renginio detales</a>
+                }
+                else
+                {
+                     <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i> Grižti į sąrašą</a>
+                }
                 <input type="submit" value="Patvirtinti" asp-action="Create" class="btn btn-primary text-uppercase rounded-2" id="submit" />
             </div>
         </form>

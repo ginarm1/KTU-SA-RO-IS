@@ -58,14 +58,13 @@ namespace KTU_SA_RO.Controllers
         }
 
         // GET:
-        [Route("Requirements/Create")]
         [Route("Requirements/Create/{eventId}")]
         public IActionResult Create(int? eventId)
         {
             if (eventId != null)
             {
                 var @event = _context.Events.FirstOrDefault(e => e.Id == eventId);
-                ViewData["eventTitle"] = @event.Title;
+                ViewData["event"] = @event;
             }
             return View();
         }

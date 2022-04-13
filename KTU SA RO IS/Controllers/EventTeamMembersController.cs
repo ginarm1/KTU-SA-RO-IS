@@ -75,7 +75,7 @@ namespace KTU_SA_RO.Controllers
                 if (user == null)
                 {
                     TempData["danger"] = "Naudotojas nerastas";
-                    return Redirect("../Events/Details/" + eventId.ToString());
+                    return RedirectToAction(nameof(EventsController.Details),nameof(EventsController).Replace("Controller",""), new { id = eventId.ToString()});
                 }
                 var userRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
                 var a = setUserRole(pickedPosition);
@@ -84,20 +84,20 @@ namespace KTU_SA_RO.Controllers
                     && userRole.Equals(setUserRole(pickedPosition))).FirstOrDefault() != null)
                 {
                     TempData["danger"] = "Naudotojas su tokiais duomenimis ir pozicija jau egzistuoja komandoje";
-                    return Redirect("../Events/Details/" + eventId.ToString());
+                    return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
                 }
                 if (_context.EventTeamMembers.Where(et =>  et.UserId.Equals(user.Id)
                     && userRole.Equals(setUserRole(pickedPosition))).FirstOrDefault() == null)
                 {
                     TempData["danger"] = "Pasirinktas naudotojas neturi tokios rolės";
-                    return Redirect("../Events/Details/" + eventId.ToString());
+                    return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
                 }
                 // if event coordinator already exists
                 if (_context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id)
                     && et.RoleName.Equals("eventCoord")).FirstOrDefault() != null)
                 {
                     TempData["danger"] = "Renginio koordinatorius gali būti tik vienas";
-                    return Redirect("../Events/Details/" + eventId.ToString());
+                    return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
                 }
 
                 var eventTeamMember = new EventTeamMember()
@@ -112,7 +112,7 @@ namespace KTU_SA_RO.Controllers
 
                 TempData["success"] = "Narys <b> " + user.Name + " " + user.Surname + 
                     "</b> sėkmingai pridėtas į komandą! Jo pozicija: <b>" + pickedPosition + "</b>";
-                return Redirect("../Events/Details/" + eventId.ToString());
+                return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
             }
             return NotFound();
         }

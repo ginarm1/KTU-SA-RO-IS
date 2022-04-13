@@ -21,7 +21,6 @@ namespace KTU_SA_RO.Models
 
         public Representative Representative { get; set; }
 
-        public ICollection<Event> Events { get; set; }
         public EventTeamMember EventTeamMember { get; set; }
     }
 }

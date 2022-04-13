@@ -23,6 +23,7 @@ namespace KTU_SA_RO.Models
         {
             var user = new ApplicationUser
             {
+                Id = "745cb9fa-0f03-44a8-b266-af578118b2c1",
                 Name = "Gintaras",
                 Surname = "Armonaitis",
                 UserName = "gintaras.armonaitis@gmail.com",

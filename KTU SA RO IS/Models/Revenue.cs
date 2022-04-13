@@ -16,7 +16,7 @@ namespace KTU_SA_RO.Models
         public string Title { get; set; }
 
         [Required(ErrorMessage = "Pajamos uždarbis yra privaloma")]
-        [Range(0, 9999)]
+        [Range(0, 999999)]
         [DisplayName("Uždarbis")]
         public double Earned { get; set; }
 

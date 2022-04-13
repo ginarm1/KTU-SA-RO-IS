@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KTU_SA_RO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220409093246_EventTeamMembersMultipleUsersAndEventsAndOneRoleName")]
-    partial class EventTeamMembersMultipleUsersAndEventsAndOneRoleName
+    [Migration("20220410194048_EventTeamMembersAndRevenueCostTicketing")]
+    partial class EventTeamMembersAndRevenueCostTicketing
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -103,14 +103,47 @@ namespace KTU_SA_RO.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("KTU_SA_RO.Models.Event", b =>
+            modelBuilder.Entity("KTU_SA_RO.Models.Cost", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("varchar(255)");
+                    b.Property<string>("Comment")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InvoiceNr")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Costs");
+                });
+
+            modelBuilder.Entity("KTU_SA_RO.Models.Event", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<string>("CoordinatorName")
                         .IsRequired()
@@ -159,11 +192,14 @@ namespace KTU_SA_RO.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("EventTypeId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Events");
                 });
@@ -249,6 +285,42 @@ namespace KTU_SA_RO.Migrations
                     b.ToTable("Requirements");
                 });
 
+            modelBuilder.Entity("KTU_SA_RO.Models.Revenue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double>("Earned")
+                        .HasColumnType("double");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InvoiceNr")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Revenues");
+                });
+
             modelBuilder.Entity("KTU_SA_RO.Models.Sponsor", b =>
                 {
                     b.Property<int>("Id")
@@ -309,13 +381,13 @@ namespace KTU_SA_RO.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<int?>("EventId")
+                    b.Property<int>("EventId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SponsorId")
+                    b.Property<int>("SponsorId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -325,6 +397,28 @@ namespace KTU_SA_RO.Migrations
                     b.HasIndex("SponsorId");
 
                     b.ToTable("Sponsorships");
+                });
+
+            modelBuilder.Entity("KTU_SA_RO.Models.Ticketing", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("double");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Ticketings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -468,17 +562,30 @@ namespace KTU_SA_RO.Migrations
                     b.Navigation("EventTeamMember");
                 });
 
+            modelBuilder.Entity("KTU_SA_RO.Models.Cost", b =>
+                {
+                    b.HasOne("KTU_SA_RO.Models.Event", "Event")
+                        .WithMany("Costs")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("KTU_SA_RO.Models.Event", b =>
                 {
-                    b.HasOne("KTU_SA_RO.Models.ApplicationUser", null)
-                        .WithMany("Events")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("KTU_SA_RO.Models.EventType", "EventType")
                         .WithMany("Event")
                         .HasForeignKey("EventTypeId");
 
+                    b.HasOne("KTU_SA_RO.Models.ApplicationUser", "User")
+                        .WithMany("Events")
+                        .HasForeignKey("UserId");
+
                     b.Navigation("EventType");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("KTU_SA_RO.Models.EventTeamMember", b =>
@@ -505,19 +612,45 @@ namespace KTU_SA_RO.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("KTU_SA_RO.Models.Revenue", b =>
+                {
+                    b.HasOne("KTU_SA_RO.Models.Event", "Event")
+                        .WithMany("Revenues")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("KTU_SA_RO.Models.Sponsorship", b =>
                 {
                     b.HasOne("KTU_SA_RO.Models.Event", "Event")
                         .WithMany("Sponsorships")
-                        .HasForeignKey("EventId");
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("KTU_SA_RO.Models.Sponsor", "Sponsor")
                         .WithMany("Sponsorships")
-                        .HasForeignKey("SponsorId");
+                        .HasForeignKey("SponsorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Event");
 
                     b.Navigation("Sponsor");
+                });
+
+            modelBuilder.Entity("KTU_SA_RO.Models.Ticketing", b =>
+                {
+                    b.HasOne("KTU_SA_RO.Models.Event", "Event")
+                        .WithMany("Ticketings")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -578,11 +711,17 @@ namespace KTU_SA_RO.Migrations
 
             modelBuilder.Entity("KTU_SA_RO.Models.Event", b =>
                 {
+                    b.Navigation("Costs");
+
                     b.Navigation("EventTeamMembers");
 
                     b.Navigation("Requirements");
 
+                    b.Navigation("Revenues");
+
                     b.Navigation("Sponsorships");
+
+                    b.Navigation("Ticketings");
                 });
 
             modelBuilder.Entity("KTU_SA_RO.Models.EventType", b =>

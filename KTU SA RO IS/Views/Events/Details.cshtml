@@ -5,6 +5,9 @@
     var positions = ViewData["positions"] as List<string>;
     var eventTeam = ViewData["eventTeam"] as Dictionary<int, ApplicationUser>;
     var membersRole = ViewData["membersRole"] as Dictionary<int, string>;
+    var revenue = ViewData["revenues"] as List<Revenue>;
+    var cost = ViewData["costs"] as List<Cost>;
+    var ticketing = ViewData["ticketings"] as List<Ticketing>;
 }
 
 <div class="container display-5 my-4 fw-bold">Plačiau apie renginį</div>
@@ -222,7 +225,7 @@
         @*Additional requirements container*@
         <div>
             <div class="d-flex mt-4 mb-2 justify-content-between">
-                <h3 class="my-4 fw-bold">Specifiniai reikalavimai</h3>
+                <h5 class="my-4 display-6">Specifiniai reikalavimai</h5>
                 <a asp-controller="Requirements" asp-route-eventId="@Model.Id" asp-action="Create" class="btn btn-primary my-3 col-3 rounded-2">
                     <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i>
                     Sukurti specifinį reikalavimą
@@ -297,8 +300,276 @@
         </div>
         @*Outlay*@
         <div>
+            @*Create revenue, ticketing, cost buttons*@
+            <h5 class="my-4 display-6">Sąmata</h5>
+            <div class="d-flex mt-4 mb-2 justify-content-end">
+                <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleRevenueBtn">
+                    <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti pajamas</div>
+                <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleTicketingBtn">
+                    <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti bilietaciją</div>
+                <div class="btn btn-primary mt-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleCostBtn">
+                    <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti išlaidas</div>
+            </div>
+            @*Add single revenue to an event*@
+            <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleRevenue">
+                <h4 class="my-4">Pajamos</h4>
+                <form asp-action="CreateRevenue" asp-controller="Outlay">
+                    <input name="eventId" class="form-control" value="@Model.Id" hidden />
+                    <div class="d-flex justify-content-between">
+                        <input name="title" class="form-control w-50 me-3" placeholder="Pavadinimas" required />
+                        <input name="earned" type="number" step="0.01" class="form-control w-25 me-3" placeholder="Uždirbta" min='0' max='999999' required />
+                        <input name="invoiceNr" class="form-control me-3 w-50" placeholder="Sąskaitos faktūros nr." required />
+                        <input name="date" type="date" class="form-control w-25 me-3" id="datePickerId" placeholder="Data" required />
+                    </div>
+                    <div class="d-flex justify-content-center my-4">
+                        <input name="comment" class="form-control w-50" placeholder="Komentaras" />
+                    </div>
+                    <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
+                </form> 
+            </div>
+           
+            @******@
+            @*Add single cost to an event*@
+            <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleCost">
+                <h4 class="my-4">Išlaidos</h4>
+                <form asp-action="CreateCost" asp-controller="Outlay">
+                    <input name="eventId" class="form-control" value="@Model.Id" hidden />
+                    <div class="d-flex justify-content-between">
+                        <input name="title" class="form-control w-50 me-3" placeholder="Pavadinimas" required />
+                        <input name="price" type="number" step="0.01" class="form-control w-25 me-3" placeholder="Kaina" min='0' max='999999' required />
+                        <input name="invoiceNr" class="form-control me-3 w-50" placeholder="Sąskaitos faktūros nr." required />
+                        <input name="date" type="date" class="form-control w-25 me-3" id="datePickerId2" placeholder="Data" required />
+                    </div>
+                    <div class="d-flex justify-content-center my-4">
+                        <input name="comment" class="form-control w-50" placeholder="Komentaras" />
+                    </div>
+                    <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
+                </form>
+            </div>
+            
+            @******@
+            @*Add single ticketing to an event*@
+            <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleTicketing">
+                <h4 class="my-4">Bilietacija</h4>
+                <form asp-action="CreateTicketing" asp-controller="Outlay">
+                    <input name="eventId" class="form-control" value="@Model.Id" hidden />
+                    <div class="d-flex justify-content-start">
+                        <input name="price" type="number" class="form-control w-25 me-3" min="0" max="9999" step="0.01" onchange="setTwoNumberDecimal" placeholder="Kaina" required />
+                        <input name="quantity" type="number" class="form-control w-25 me-3" placeholder="Kiekis"  min='1' max='99999' required />
+                    </div>
+                    <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
+                </form>
+            </div>
+            @******@
 
+            @if (revenue != null)
+            {
+                <h4 class="ms-2 mb-4">Pajamos</h4>
+                <div class="card card-body mb-4">
+                    <div class="row fw-bold">
+                        <div class="col-sm-9 col-lg-3 mb-3" >Pavadinimas</div>
+                        <div class="col-sm-9 col-lg-2 mb-3" >Uždirbta</div>
+                        <div class="col-sm-9 col-lg-3 mb-3" >Sąskaitos faktūra</div>
+                        <div class="col-sm-9 col-lg-2 mb-3" >Data</div>
+                        <div class="col-sm-9 col-lg-2 mb-3" >Komentaras</div>
+                    </div>
+                     @foreach (var singleRevenue in revenue)
+                     {
+                        <div class="row">
+                            <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
+                                @singleRevenue.Title
+                            </div>
+                            <div class="col-sm-9 col-lg-2 text-success mb-2" style="border-right:1px solid #E1E1E1;">
+                               € @singleRevenue.Earned
+                            </div>
+                            <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
+                               @singleRevenue.InvoiceNr
+                            </div>
+                            <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
+                                @singleRevenue.Date.ToString("yyyy/MM/dd")
+                            </div>
+                            @if(singleRevenue.Comment != null){
+                                <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
+                                    @singleRevenue.Comment
+                                </div>                            
+                            }
+                            <div class="row d-flex justify-content-end mt-3 mb-4">
+                                <div class="col-7 d-flex justify-content-end">
+                                    <a asp-controller="Outlays" asp-action="EditRevenue" asp-route-id="@singleRevenue.Id"
+                                        class="btn btn-outline-secondary mx-3 rounded-2">
+                                        <i class="fas fa-edit pe-1"></i> Redaguoti
+                                    </a>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#revenueModal-@singleRevenue.Id">
+                                      <i class="fas fa-trash pe-1"></i> Ištrinti
+                                    </button>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="revenueModal-@singleRevenue.Id" tabindex="-1" role="dialog" aria-labelledby="revenueModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="revenueModalLabel">Ar tikrai norite pašalinti?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                            Pašalinsite vieną iš pajamų: <b>@singleRevenue.Title</b> iš renginio
+                                      </div>
+                                      <div class="modal-footer">
+                                        <form asp-action="Delete">
+                                            <input type="hidden" asp-for="@Model.Id">
+                                            <input type="submit" asp-action="DeleteRevenue" asp-controller="Outlays" asp-route-id="@singleRevenue.Id"  value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!----->
+                            </div>
+
+                        </div>
+                     }   
+                </div>
+            }
+            @if (cost != null)
+            {
+                <h4 class="ms-2 mb-4">Išlaidos</h4>
+                <div class="card card-body mb-4">
+                    <div class="row fw-bold">
+                        <div class="col-sm-9 col-lg-3 mb-3" >Pavadinimas</div>
+                        <div class="col-sm-9 col-lg-2 mb-3" >Kaina</div>
+                        <div class="col-sm-9 col-lg-3 mb-3" >Sąskaitos faktūra</div>
+                        <div class="col-sm-9 col-lg-2 mb-3" >Data</div>
+                        <div class="col-sm-9 col-lg-2 mb-3" >Komentaras</div>
+                    </div>
+                     @foreach (var singleCost in cost)
+                     {
+                        <div class="row">
+                            <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
+                                @singleCost.Title
+                            </div>
+                            <div class="col-sm-9 col-lg-2 text-success mb-2" style="border-right:1px solid #E1E1E1;">
+                               € @singleCost.Price
+                            </div>
+                            <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
+                               @singleCost.InvoiceNr
+                            </div>
+                            <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
+                                @singleCost.Date.ToString("yyyy/MM/dd")
+                            </div>
+                            @if(singleCost.Comment != null){
+                                <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
+                                    @singleCost.Comment
+                                </div>                            
+                            }
+                            <div class="row d-flex justify-content-end mt-3 mb-4">
+                                <div class="col-7 d-flex justify-content-end">
+                                    <a asp-controller="Outlays" asp-action="EditCost" asp-route-id="@singleCost.Id"
+                                        class="btn btn-outline-secondary mx-3 rounded-2">
+                                        <i class="fas fa-edit pe-1"></i> Redaguoti
+                                    </a>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#costModal-@singleCost.Id">
+                                      <i class="fas fa-trash pe-1"></i> Ištrinti
+                                    </button>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="costModal-@singleCost.Id" tabindex="-1" role="dialog" aria-labelledby="costModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                            Pašalinsite vieną iš išlaidų: <b>@singleCost.Title</b> iš renginio
+                                      </div>
+                                      <div class="modal-footer">
+                                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                                        <form asp-action="Delete">
+                                            <input type="hidden" asp-for="@Model.Id">
+                                            <input type="submit" asp-action="DeleteCost" asp-controller="Outlays" asp-route-id="@singleCost.Id"  value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!----->
+                            </div>
+                        </div>
+                     }   
+                </div>
+            }
+            @if (ticketing != null)
+            {
+                <h4 class="ms-2 mb-4">Bilietacija</h4>
+                <div class="card card-body">
+                    <div class="row fw-bold">
+                        <div class="col-sm-9 col-lg-2 mb-3" >Kaina</div>
+                        <div class="col-sm-9 col-lg-2 mb-3" >Kiekis</div>
+                        <div class="col-sm-9 col-lg-3 mb-3" >Suma</div>
+                    </div>
+                     @foreach (var singleTicketing in ticketing)
+                     {
+                        <div class="row">
+                            <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
+                               € @singleTicketing.Price
+                            </div>
+                            <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
+                                @singleTicketing.Quantity
+                            </div>
+                            <div class="col-sm-9 col-lg-2 text-success mb-2">
+                               € @Decimal.Round((decimal)(singleTicketing.Price * singleTicketing.Quantity),2)
+                            </div>
+                            @*<div class="row d-flex justify-content-end mt-3 mb-4">*@
+                                <div class="col-6 d-flex justify-content-end">
+                                    <a asp-controller="Outlays" asp-action="EditTicketing" asp-route-id="@singleTicketing.Id"
+                                        class="btn btn-outline-secondary mx-3 rounded-2">
+                                        <i class="fas fa-edit pe-1"></i> Redaguoti
+                                    </a>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#ticketingModal-@singleTicketing.Id">
+                                      <i class="fas fa-trash pe-1"></i> Ištrinti
+                                    </button>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="ticketingModal-@singleTicketing.Id" tabindex="-1" role="dialog" aria-labelledby="ticketingModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                            Pašalinsite vieną iš bilietacijų (kaina: <b>@singleTicketing.Price</b>, kiekis: <b>@singleTicketing.Quantity</b> ) iš renginio
+                                      </div>
+                                      <div class="modal-footer">
+                                        <form asp-action="Delete">
+                                            <input type="hidden" asp-for="@Model.Id">
+                                            <input type="submit" asp-action="DeleteTicketing" asp-controller="Outlays" asp-route-id="@singleTicketing.Id"  value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!----->
+                            @*</div>*@
+                        </div>
+                     }    
+                </div>
+                <hr />
+            }
         </div>
+        @*Edit and delete event*@
         <div>
             <div class="float-start">
                 <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i>  Grįžti į sąrašą</a>
@@ -329,7 +600,6 @@
                             </ol>   
                         </div>
                         <div class="modal-footer">
-                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
                         <form asp-action="Delete">
                             <input type="submit" asp-action="Delete" asp-route-id="@Model.Id"  value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase rounded-2" />
                         </form>
@@ -346,10 +616,56 @@
 @section Scripts
 {
 <script>
+    // max date input is today
+    datePickerId.max = new Date().toISOString().split("T")[0];
+    datePickerId2.max = new Date().toISOString().split("T")[0];
+    function setTwoNumberDecimal(event) {
+        this.value = parseFloat(this.value).toFixed(2);
+    }
+
     $('#containerAddUser').hide();
+    $('#containerAddSingleRevenue').hide();
+    $('#containerAddSingleTicketing').hide();
+    $('#containerAddSingleCost').hide();
+
+    $('#addUserBtn').click(function(){
+        $('#containerAddSingleRevenue').hide("slow");
+        $('#containerAddSingleCost').hide("slow");
+        $('#containerAddSingleTicketing').hide("slow");
+    });
+
+    $('#addSingleRevenueBtn').click(function(){
+        $('#containerAddUser').hide("slow")
+        $('#containerAddSingleCost').hide("slow");
+        $('#containerAddSingleTicketing').hide("slow");
+    });
+
+    $('#addSingleCostBtn').click(function(){
+        $('#containerAddSingleRevenue').hide("slow");
+        $('#containerAddUser').hide("slow")
+        $('#containerAddSingleTicketing').hide("slow");
+    });
+    
+    $('#addSingleTicketingBtn').click(function(){
+        $('#containerAddUser').hide("slow");
+        $('#containerAddSingleRevenue').hide("slow");
+        $('#containerAddSingleCost').hide("slow");
+    });
 
     $('#addUserBtn').click(function(){
         $('#containerAddUser').toggle("slow");
+    });
+
+    $('#addSingleRevenueBtn').click(function(){
+        $('#containerAddSingleRevenue').toggle("slow");
+    });
+
+    $('#addSingleCostBtn').click(function(){
+        $('#containerAddSingleCost').toggle("slow");
+    });
+    
+    $('#addSingleTicketingBtn').click(function(){
+        $('#containerAddSingleTicketing').toggle("slow");
     });
 
 </script>

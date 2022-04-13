@@ -68,11 +68,7 @@ namespace KTU_SA_RO.Models
         [DisplayName("Atvykusių dalyvių kiekis")]
         public int PeopleCount { get; set; }
 
-        [Required]
         public EventType EventType { get; set; }
-
-        //[DisplayName("Organizatorius")]
-        //public ICollection<ApplicationUser> Users { get; set; }
 
         public ICollection<EventTeamMember> EventTeamMembers { get; set; }
 

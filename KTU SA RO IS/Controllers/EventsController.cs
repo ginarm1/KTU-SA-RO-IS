@@ -9,6 +9,7 @@ using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace KTU_SA_RO.Controllers
 {
@@ -16,10 +17,12 @@ namespace KTU_SA_RO.Controllers
     public class EventsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public EventsController(ApplicationDbContext context)
+        public EventsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Events
@@ -87,6 +90,9 @@ namespace KTU_SA_RO.Controllers
                 .Include(r => r.Requirements.Where(e => e.Event.Id == id))
                     .ThenInclude(u => u.User)
                 .Include(et => et.EventTeamMembers)
+                .Include(rv => rv.Revenues)
+                .Include(c => c.Costs)
+                .Include(t => t.Ticketings)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -120,6 +126,9 @@ namespace KTU_SA_RO.Controllers
 
             ViewData["eventTeam"] = eventTeam;
             ViewData["membersRole"] = membersRole;
+            ViewData["revenues"] = @event.Revenues.Where(r => r.Event == @event).ToList();
+            ViewData["costs"] = @event.Costs.Where(r => r.Event == @event).ToList();
+            ViewData["ticketings"] = @event.Ticketings.Where(r => r.Event == @event).ToList();
 
             return View(@event);
         }
@@ -157,14 +166,15 @@ namespace KTU_SA_RO.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,StartDate,EndDate,Location,Description,Has_coordinator,CoordinatorName,CoordinatorSurname,Is_canceled,Is_public,Is_live,PlannedPeopleCount,PeopleCount")]
-            Event @event, EventType eventType)
+            Event @event, string eventTypeName)
         {
 
             if (ModelState.IsValid)
             {
-                @event.EventType = await _context.EventTypes.FirstOrDefaultAsync(et => et.Name.Equals(eventType.Name));
+                @event.EventType = await _context.EventTypes.FirstOrDefaultAsync(et => et.Name.Equals(eventTypeName));
 
                 ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(@event.CoordinatorName) && u.Surname.Equals(@event.CoordinatorSurname));
+                var role = await _userManager.GetRolesAsync(user);
 
                 if (user == null)
                 {
@@ -172,6 +182,7 @@ namespace KTU_SA_RO.Controllers
                     return RedirectToAction(nameof(Create));
                 }
 
+                //@event.User = user;
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
 
@@ -179,6 +190,7 @@ namespace KTU_SA_RO.Controllers
                 {
                     EventId = @event.Id,
                     UserId = user.Id,
+                    RoleName = role.FirstOrDefault(),
                     Is_event_coord = true
                 };
 

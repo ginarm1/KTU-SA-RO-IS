@@ -17,7 +17,7 @@ namespace KTU_SA_RO.Models
         [Required(ErrorMessage = "Parduotų bilietų kiekis yra privalomas")]
         [Range(0, 99999)]
         [DisplayName("Parduotų bilietų kiekis")]
-        public double Count { get; set; }
+        public double Quantity { get; set; }
 
         [Required]
         public Event Event { get; set; }
