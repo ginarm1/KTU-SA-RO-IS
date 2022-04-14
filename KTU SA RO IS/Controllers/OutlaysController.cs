@@ -26,7 +26,7 @@ namespace KTU_SA_RO.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateRevenue(/*[Bind("Id,Title,Earned,InvoiceNr,Date,Comment")]*/
-            int? eventId, string title, double earned, string invoiceNr, DateTime date, string comment)
+            int? eventId, string sponsorTitle, string title, double earned, string invoiceNr, DateTime date, string comment)
         {
             if (eventId != null && title != null && invoiceNr != null)
             {

@@ -82,7 +82,7 @@ namespace KTU_SA_RO.Controllers
             foreach (var role in Enum.GetValues(typeof(Role)))
             {
                 if(!role.Equals("admin"))
-                    positions.Add(setUserPosition(role.ToString()));
+                    positions.Add(SetUserPosition(role.ToString()));
             }
             ViewData["positions"] = positions;
 
@@ -93,8 +93,10 @@ namespace KTU_SA_RO.Controllers
                 .Include(rv => rv.Revenues)
                 .Include(c => c.Costs)
                 .Include(t => t.Ticketings)
+                .Include(s => s.Sponsorships)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            ViewData["sponsors"] = await _context.Sponsors.ToListAsync();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var eventTeam = new Dictionary<int,ApplicationUser>();
             var membersRole = new Dictionary<int,string>();
@@ -109,7 +111,7 @@ namespace KTU_SA_RO.Controllers
                     if (user != null)
                     {
                         eventTeam.Add(i,user);
-                        membersRole.Add(i,setUserPosition(eventTeamMember.RoleName));
+                        membersRole.Add(i,SetUserPosition(eventTeamMember.RoleName));
                     }
                     else
                     {
@@ -133,7 +135,7 @@ namespace KTU_SA_RO.Controllers
             return View(@event);
         }
 
-        public string setUserPosition(string roleName)
+        public string SetUserPosition(string roleName)
         {
             if (roleName.Equals("registered"))
                 return "Registruotas naudotojas";
@@ -244,16 +246,27 @@ namespace KTU_SA_RO.Controllers
 
                     ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(@event.CoordinatorName) && u.Surname.Equals(@event.CoordinatorSurname));
 
+                    if (user == null)
+                    {
+                        TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nebuvo rastas";
+                        return RedirectToAction(nameof(EventsController.Edit), nameof(EventsController).Replace("Controller", ""), new { id = @event.Id.ToString() });
+                    }
+
+                    EventTeamMember teamMember = await _context.EventTeamMembers.Where(t => t.EventId == @event.Id && t.UserId == user.Id).FirstOrDefaultAsync();
+                    if (teamMember == null)
+                    {
+                        TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde komandoje nebuvo rastas";
+                        return RedirectToAction(nameof(EventsController.Edit), nameof(EventsController).Replace("Controller", ""), new { id = @event.Id.ToString() });
+                    }
+                    teamMember.UserId = user.Id;
+
+
                     _context.Update(@event);
-                    await _context.SaveChangesAsync();
-
-                    EventTeamMember team = await _context.EventTeamMembers.Where(t => t.EventId == @event.Id).FirstOrDefaultAsync();
-                    team.UserId = user.Id;
-
-                    _context.Update(team);
+                    _context.Update(teamMember);
                     await _context.SaveChangesAsync();
 
                     TempData["success"] = "Renginys <b> " + @event.Title + " </b> sėkmingai atnaujintas!";
+                    return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = @event.Id.ToString() });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -266,7 +279,6 @@ namespace KTU_SA_RO.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(@event);
         }

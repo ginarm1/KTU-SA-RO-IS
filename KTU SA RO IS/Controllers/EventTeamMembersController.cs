@@ -78,16 +78,16 @@ namespace KTU_SA_RO.Controllers
                     return RedirectToAction(nameof(EventsController.Details),nameof(EventsController).Replace("Controller",""), new { id = eventId.ToString()});
                 }
                 var userRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
-                var a = setUserRole(pickedPosition);
+                var a = SetUserRole(pickedPosition);
                 // if wanted user has the same position 
                 if ( _context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id) 
-                    && userRole.Equals(setUserRole(pickedPosition))).FirstOrDefault() != null)
+                    && userRole.Equals(SetUserRole(pickedPosition))).FirstOrDefault() != null)
                 {
                     TempData["danger"] = "Naudotojas su tokiais duomenimis ir pozicija jau egzistuoja komandoje";
                     return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
                 }
                 if (_context.EventTeamMembers.Where(et =>  et.UserId.Equals(user.Id)
-                    && userRole.Equals(setUserRole(pickedPosition))).FirstOrDefault() == null)
+                    && userRole.Equals(SetUserRole(pickedPosition))).FirstOrDefault() == null)
                 {
                     TempData["danger"] = "Pasirinktas naudotojas neturi tokios rolės";
                     return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
@@ -103,7 +103,7 @@ namespace KTU_SA_RO.Controllers
                 var eventTeamMember = new EventTeamMember()
                 {
                     EventId = (int)eventId,
-                    RoleName = setUserRole(pickedPosition),
+                    RoleName = SetUserRole(pickedPosition),
                     UserId = user.Id
                 };
 
@@ -117,7 +117,7 @@ namespace KTU_SA_RO.Controllers
             return NotFound();
         }
 
-        public string setUserRole(string positionName)
+        public string SetUserRole(string positionName)
         {
             if (positionName.Equals("Registruotas naudotojas"))
                 return "registered";

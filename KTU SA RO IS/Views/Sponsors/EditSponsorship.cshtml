@@ -1,0 +1,47 @@
+﻿@model KTU_SA_RO.Models.Sponsorship
+
+@{
+    ViewData["Title"] = "Redaguoti renginio paramą";
+    var sponsors = ViewData["sponsors"] as List<Sponsor>;
+}
+<div class="row">
+        <div class="d-flex justify-content-center">
+            <div class="display-6 mt-4 pb-4 mb-4 fw-bold" style="border-bottom:1px solid #E1E1E1;">@ViewData["Title"]</div>
+        </div>
+        <div class="d-flex justify-content-center">
+        <form asp-action="EditSponsorship">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Event.Id" />
+            <input type="hidden" asp-for="Sponsor.Id" />
+            <div class="form-group">
+                <label class="control-label">Rėmėjo pavadinimas</label>
+                @if(Model.Sponsor != null){
+                    <label class="ms-2 row control-label">Dabar turimas rėmėjas: <b class="col-6">@Model.Sponsor.Title</b></label>
+                }
+                <select id="jquery-searchable-dropdown" name="sponsorId" class="form-control custom-select" asp-items="@(new SelectList(sponsors, "Id", "Title", Model.Sponsor.Title))"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="form-group col-4">
+                    <label asp-for="Quantity" class="control-label"></label>
+                    <input asp-for="Quantity" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                </div>
+                <div class="form-group col-4">
+                    <label asp-for="CostTotal" class="control-label"></label>
+                    <input asp-for="CostTotal" class="form-control" />
+                    <span asp-validation-for="CostTotal" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <a asp-action="Details" asp-controller="Events" asp-route-id="@Model.Event.Id" class="btn btn-outline-dark text-uppercase">← Grižti į renginio detales</a>
+                <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase rounded-2" />
+            </div>
+        </form>
+    </div>
+</div>

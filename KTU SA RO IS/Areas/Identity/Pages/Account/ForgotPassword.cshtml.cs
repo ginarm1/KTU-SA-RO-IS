@@ -60,7 +60,7 @@ namespace KTU_SA_RO.Areas.Identity.Pages.Account
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    $"Iš naujo nustatykite slaptažodį <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> paspausdami čia</a>.");
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

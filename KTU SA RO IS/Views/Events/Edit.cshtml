@@ -7,12 +7,16 @@
     ViewData["Title"] = "Redaguoti renginį";
 }
 
-<link rel="stylesheet" href="~/css/searchDrop.css" >
-
 <div class="row">
     <div class="d-flex justify-content-center">
         <form asp-action="Edit">
             <div class="display-6 mt-4 mb-5 fw-bold">@ViewData["Title"]</div>
+            @if (TempData["danger"] != null)
+            {
+                <div class="alert alert-danger mt-4" role="alert">
+                    @Html.Raw(TempData["danger"].ToString())
+                </div>
+            }
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -68,18 +72,21 @@
                 <label asp-for="Is_live" class="form-check-label"></label>
                 <span asp-validation-for="Is_live" class="text-danger"></span>
             </div>
-            <div class="form-group mt-2">
-                <label asp-for="PlannedPeopleCount" class="control-label"></label>
-                <input asp-for="PlannedPeopleCount" class="form-control w-25 text-end" min='1' max='200000' />
-                <span asp-validation-for="PlannedPeopleCount" class="text-danger"></span>
+            <div class="row mt-2">
+                <div class="col-6 form-group mt-2">
+                    <label asp-for="PlannedPeopleCount" class="control-label w-75"></label>
+                    <input asp-for="PlannedPeopleCount" class="form-control w- text-end" min='1' max='200000' />
+                    <span asp-validation-for="PlannedPeopleCount" class="text-danger"></span>
+                </div>
+                <div class="col-6 form-group mt-2 mb-4">
+                    <label asp-for="PeopleCount" class="control-label w-75"></label>
+                    <input asp-for="PeopleCount" class="form-control w-50 text-end" min='0' max='200000' />
+                    <span asp-validation-for="PeopleCount" class="text-danger"></span>
             </div>
-            <div class="form-group mt-2 mb-4">
-                <label asp-for="PeopleCount" class="control-label"></label>
-                <input asp-for="PeopleCount" class="form-control w-25 text-end" min='0' max='200000' />
-                <span asp-validation-for="PeopleCount" class="text-danger"></span>
+
             </div>
             <div class="form-group">
-                <a asp-action="Index" class="btn btn-outline-dark text-uppercase"><i class="fas fa-arrow-left"></i> Grižti į sąrašą</a>
+                <a asp-action="Details" asp-controller="Events" asp-route-id="@Model.Id" class="btn btn-outline-dark text-uppercase">← Grižti į renginio detales</a>
                 <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase rounded-2" />
             </div>
         </form>

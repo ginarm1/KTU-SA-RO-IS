@@ -21,5 +21,10 @@ namespace KTU_SA_RO.Models
 
         [Required]
         public Event Event { get; set; }
+
+        public decimal Total()
+        {
+            return decimal.Round((decimal)Price * (decimal)Quantity,2);
+        }
     }
 }

@@ -8,7 +8,31 @@
     var revenue = ViewData["revenues"] as List<Revenue>;
     var cost = ViewData["costs"] as List<Cost>;
     var ticketing = ViewData["ticketings"] as List<Ticketing>;
+    var sponsors = ViewData["sponsors"] as List<Sponsor>;
 }
+<style>
+    /*jquery-searchable-dropdown container*/
+    .custom-select {
+        border: 1px solid #ced4da;
+    }
+        .custom-select, .custom-select > div {
+            border-radius: 0.25rem;
+        }
+        .custom-select:focus {
+            border-color: #86b7fe;
+            background: #ced4da;
+            box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+        }
+        .custom-select > div {
+            padding: 0.6rem 0;
+            background: #ced4da;
+            border: 1px solid #7e8082;
+        }
+        .custom-select input {
+            border: 1px solid rgb(13 110 253 / 25%);
+            box-shadow: 0 0 0 0.1rem rgb(13 110 253 / 25%);
+        }
+</style>
 
 <div class="container display-5 my-4 fw-bold">Plačiau apie renginį</div>
 
@@ -83,7 +107,6 @@
                 <div class="btn btn-primary mt-3 mb-4 col-sm-5 col-lg-3 rounded-2" id="addUserBtn"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti narį</div>
             </div>
             @*Add user to an event team*@
-
             <div class="row" id="containerAddUser">
                 <form asp-action="Create" asp-controller="EventTeamMembers">
                     <input name="eventId" class="form-control" value="@Model.Id" hidden />
@@ -106,7 +129,7 @@
             {
                 for (int i = 0; i < eventTeam.Count(); i++)
                 {
-                    <div class="card mb-4">
+                    <div class="card mb-4" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                         <div class="card-header d-flex justify-content-between">
                             <div class="fw-bold">@eventTeam.ElementAt(i).Value.Name @eventTeam.ElementAt(i).Value.Surname</div>
                             <div class="me-1 px-2 rounded-3 text-white fw-light bg-dark">@eventTeam.ElementAt(i).Value.Email</div>
@@ -221,6 +244,101 @@
                 @Html.DisplayFor(model => model.PeopleCount)
             }
         </div>
+        @*Sponsorships container*@
+        <div>
+            <div class="d-flex mt-4 mb-2 justify-content-between">
+                <h5 class="my-4 display-6">Rėmimas</h5>
+                <div class="d-flex mt-4 mb-2 justify-content-end">
+                    <div class="btn btn-primary mt-3 mb-4 rounded-2" id="addSingleSponsorshipBtn">
+                        <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti paramą</div>
+                </div>
+            </div>
+            @*Add single revenue to an event*@
+                <div class="row container bg-light rounded-2 mb-3 pt-5" id="containerAddSingleSponsorship">
+                    @if(ViewData["sponsors"] != null){
+                        <form asp-action="CreateSponsorship" asp-controller="Sponsors">
+                            <input name="eventId" class="form-control" value="@Model.Id" hidden />
+                            <div class="d-flex justify-content-between">
+                                <input name="description" class="form-control me-3" placeholder="Aprašymas" required />
+                                <input name="quantity" type="number" step="1" class="form-control w-25 me-3" placeholder="Kiekis" min='0' max='999999' required />
+                                <input name="costTotal" type="number" step="0.01" class="form-control w-25 me-3" placeholder="Vertė" min='0' max='999999' required  />
+                                <select id="jquery-searchable-dropdown" name="sponsorId" class="form-control custom-select" asp-items="@(new SelectList(sponsors, "Id", "Title"))"></select>
+                           </div>
+                            <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end my-4 rounded-2" id="submit" />
+                        </form>
+                    } 
+                    else{
+                        <div class="alert alert-danger mt-4" role="alert">
+                            Nėra sukurtų rėmėjų
+                        </div>
+                    }
+                </div>
+                @******@
+        </div>
+        @if (Model.Sponsorships != null)
+            {
+                <div class="card card-body" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
+                    <div class="row fw-bold">
+                        <div class="col-sm-9 col-lg-3 mb-3" >Rėmėjas</div>
+                        <div class="col-sm-9 col-lg-4 mb-3" >Aprašymas</div>
+                        <div class="col-sm-9 col-lg-2 mb-3" >Kiekis</div>
+                        <div class="col-sm-9 col-lg-3 mb-3" >Suma</div>
+                    </div>
+                     @foreach (var sponsorship in Model.Sponsorships)
+                     {
+                        <div class="row">
+                            <div class="col-sm-9 col-lg-3 mb-2">
+                               @sponsorship.Sponsor.Title
+                            </div>
+                            <div class="col-sm-9 col-lg-4 mb-3">
+                                @sponsorship.Description
+                            </div>
+                            <div class="col-sm-4 col-lg-2 mb-2">
+                                @sponsorship.Quantity
+                            </div>
+                            <div class="col-sm-4 col-lg-2 text-success mb-2">
+                               € @sponsorship.CostTotal
+                            </div>
+                            <div class="row d-flex justify-content-end mt-3 mb-4">
+                                <div class="col-6 d-flex justify-content-end">
+                                    <a asp-controller="Sponsors" asp-action="EditSponsorship" asp-route-id="@sponsorship.Id"
+                                        class="btn btn-outline-secondary mx-3 rounded-2">
+                                        <i class="fas fa-edit pe-1"></i> Redaguoti
+                                    </a>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#sponsorshipModal-@sponsorship.Id">
+                                      <i class="fas fa-trash pe-1"></i> Ištrinti
+                                    </button>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="sponsorshipModal-@sponsorship.Id" tabindex="-1" role="dialog" aria-labelledby="sponsorshipModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                            Pašalinsite vieną iš rėmėjų: <b>@sponsorship.Sponsor.Title</b> paramą iš renginio
+                                      </div>
+                                      <div class="modal-footer">
+                                        <form asp-action="Delete">
+                                            <input type="hidden" asp-for="@sponsorship.Id">
+                                            <input type="submit" asp-action="DeleteSponsorship" asp-controller="Sponsors" asp-route-id="@sponsorship.Id"  value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!----->
+                            </div>
+                        </div>
+                     }    
+                </div>
+            }
         <div><hr /></div>
         @*Additional requirements container*@
         <div>
@@ -235,7 +353,7 @@
             {
                 @foreach (var requirement in Model.Requirements)
                 {
-                    <div class="card mb-4 w-75">
+                    <div class="card mb-4 w-75" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                         <div class="card-header d-flex justify-content-between">
                             <div class="fw-bold">@requirement.Name</div>
                             @if (requirement.User != null)
@@ -301,14 +419,54 @@
         @*Outlay*@
         <div>
             @*Create revenue, ticketing, cost buttons*@
-            <h5 class="my-4 display-6">Sąmata</h5>
+            <h5 class="display-6 my-4">Sąmata</h5>
+            <div class="d-flex justify-content-center mt-4">
+                    <h5 class="me-4">
+                        Bendros pajamos: 
+                        @if (revenue != null)
+                        {
+                            <span class="display-5 text-success">@revenue.Sum(r => r.Earned)</span>
+                        }
+                        else
+                        {
+                            <span class="display-5 text-success">0</span>
+                        }
+                    </h5>
+                    <h5 class="me-4">
+                        Bilietų pajamos: 
+                        @if (ticketing != null)
+                        {
+                            <span class="display-5 text-success">@ticketing.Sum(r => r.Total())</span>
+                        }
+                        else
+                        {
+                            <span class="display-5 text-success">0</span>
+                        }
+                    </h5>
+                    <h5 class="me-5">
+                        Bendros išlaidos: 
+                        @if (cost != null)
+                        {
+                            <span class="display-5 text-danger">@cost.Sum(r => r.Price)</span>
+                        }
+                        else
+                        {
+                            <span class="display-5 text-danger">0</span>
+                        }
+                    </h5>
+                    <h5 class="ms-2">
+                        Balansas: 
+                        <span class="display-4 "> @((decimal)revenue.Sum(r => r.Earned) + ticketing.Sum(r => r.Total()) - (decimal)cost.Sum(r => r.Price))</span>
+                    </h5>
+            </div>
+
             <div class="d-flex mt-4 mb-2 justify-content-end">
                 <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleRevenueBtn">
                     <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti pajamas</div>
-                <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleTicketingBtn">
-                    <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti bilietaciją</div>
-                <div class="btn btn-primary mt-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleCostBtn">
+                <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleCostBtn">
                     <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti išlaidas</div>
+                <div class="btn btn-primary mt-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleTicketingBtn">
+                    <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti bilietaciją</div>
             </div>
             @*Add single revenue to an event*@
             <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleRevenue">
@@ -365,7 +523,7 @@
             @if (revenue != null)
             {
                 <h4 class="ms-2 mb-4">Pajamos</h4>
-                <div class="card card-body mb-4">
+                <div class="card card-body mb-4" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
                         <div class="col-sm-9 col-lg-3 mb-3" >Pavadinimas</div>
                         <div class="col-sm-9 col-lg-2 mb-3" >Uždirbta</div>
@@ -437,7 +595,7 @@
             @if (cost != null)
             {
                 <h4 class="ms-2 mb-4">Išlaidos</h4>
-                <div class="card card-body mb-4">
+                <div class="card card-body mb-4" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
                         <div class="col-sm-9 col-lg-3 mb-3" >Pavadinimas</div>
                         <div class="col-sm-9 col-lg-2 mb-3" >Kaina</div>
@@ -451,7 +609,7 @@
                             <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
                                 @singleCost.Title
                             </div>
-                            <div class="col-sm-9 col-lg-2 text-success mb-2" style="border-right:1px solid #E1E1E1;">
+                            <div class="col-sm-9 col-lg-2 text-danger mb-2" style="border-right:1px solid #E1E1E1;">
                                € @singleCost.Price
                             </div>
                             <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
@@ -509,7 +667,7 @@
             @if (ticketing != null)
             {
                 <h4 class="ms-2 mb-4">Bilietacija</h4>
-                <div class="card card-body">
+                <div class="card card-body" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
                         <div class="col-sm-9 col-lg-2 mb-3" >Kaina</div>
                         <div class="col-sm-9 col-lg-2 mb-3" >Kiekis</div>
@@ -525,7 +683,7 @@
                                 @singleTicketing.Quantity
                             </div>
                             <div class="col-sm-9 col-lg-2 text-success mb-2">
-                               € @Decimal.Round((decimal)(singleTicketing.Price * singleTicketing.Quantity),2)
+                               € @Decimal.Round((decimal)(singleTicketing.Total()),2)
                             </div>
                             @*<div class="row d-flex justify-content-end mt-3 mb-4">*@
                                 <div class="col-6 d-flex justify-content-end">
@@ -623,50 +781,58 @@
         this.value = parseFloat(this.value).toFixed(2);
     }
 
-    $('#containerAddUser').hide();
-    $('#containerAddSingleRevenue').hide();
-    $('#containerAddSingleTicketing').hide();
-    $('#containerAddSingleCost').hide();
-
-    $('#addUserBtn').click(function(){
-        $('#containerAddSingleRevenue').hide("slow");
-        $('#containerAddSingleCost').hide("slow");
-        $('#containerAddSingleTicketing').hide("slow");
+    $(() => {
+        $('#containerAddUser').hide();
+        $('#containerAddSingleSponsorship').hide();
+        $('#containerAddSingleRevenue').hide();
+        $('#containerAddSingleTicketing').hide();
+        $('#containerAddSingleCost').hide();        
     });
 
-    $('#addSingleRevenueBtn').click(function(){
-        $('#containerAddUser').hide("slow")
-        $('#containerAddSingleCost').hide("slow");
-        $('#containerAddSingleTicketing').hide("slow");
-    });
-
-    $('#addSingleCostBtn').click(function(){
-        $('#containerAddSingleRevenue').hide("slow");
-        $('#containerAddUser').hide("slow")
-        $('#containerAddSingleTicketing').hide("slow");
-    });
-    
-    $('#addSingleTicketingBtn').click(function(){
-        $('#containerAddUser').hide("slow");
-        $('#containerAddSingleRevenue').hide("slow");
-        $('#containerAddSingleCost').hide("slow");
-    });
 
     $('#addUserBtn').click(function(){
         $('#containerAddUser').toggle("slow");
+
+        $('#containerAddSingleSponsorship').hide("slow");
+        $('#containerAddSingleRevenue').hide("slow");
+        $('#containerAddSingleCost').hide("slow");
+        $('#containerAddSingleTicketing').hide("slow");
+    });
+
+    $('#addSingleSponsorshipBtn').click(function(){
+        $('#containerAddSingleSponsorship').toggle("slow");
+
+        $('#containerAddUser').hide("slow")
+        $('#containerAddSingleRevenue').hide("slow");
+        $('#containerAddSingleCost').hide("slow");
+        $('#containerAddSingleTicketing').hide("slow");
     });
 
     $('#addSingleRevenueBtn').click(function(){
         $('#containerAddSingleRevenue').toggle("slow");
+
+        $('#containerAddUser').hide("slow")
+        $('#containerAddSingleSponsorship').hide("slow");
+        $('#containerAddSingleCost').hide("slow");
+        $('#containerAddSingleTicketing').hide("slow");
     });
 
     $('#addSingleCostBtn').click(function(){
         $('#containerAddSingleCost').toggle("slow");
+
+        $('#containerAddSingleSponsorship').hide("slow");
+        $('#containerAddSingleRevenue').hide("slow");
+        $('#containerAddUser').hide("slow")
+        $('#containerAddSingleTicketing').hide("slow");
     });
     
     $('#addSingleTicketingBtn').click(function(){
         $('#containerAddSingleTicketing').toggle("slow");
-    });
 
+        $('#containerAddUser').hide("slow");
+        $('#containerAddSingleSponsorship').hide("slow");
+        $('#containerAddSingleRevenue').hide("slow");
+        $('#containerAddSingleCost').hide("slow");
+    });
 </script>
 }
