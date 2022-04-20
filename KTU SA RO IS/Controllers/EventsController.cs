@@ -96,7 +96,7 @@ namespace KTU_SA_RO.Controllers
                 .Include(s => s.Sponsorships)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            ViewData["lastEvents"] = LastEvents(@event, 2, 4);
+            ViewData["lastEvents"] = LastEvents(@event, 3, 4);
 
             ViewData["sponsors"] = await _context.Sponsors.ToListAsync();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -139,14 +139,15 @@ namespace KTU_SA_RO.Controllers
 
         public List<Event> LastEvents(Event chosenEvent,int chosenEventsCount , int removeLettersCount)
         {
-            string titleTrimed = chosenEvent.Title.Remove(chosenEvent.Title.Length - removeLettersCount);
-            var lastEvents = new List<Event>();
-
-            var les = _context.Events.Where(e => e.Title.Contains(titleTrimed) && !e.StartDate.Equals(chosenEvent.StartDate) && !e.EndDate.Equals(chosenEvent.EndDate)).OrderByDescending(e => e.Id).Select(e => e.Id).AsEnumerable();
-            if (chosenEventsCount > les.Count())
-                chosenEventsCount = les.Count();
-            else
+            if (chosenEvent.Title.Length > 3)
             {
+                string titleTrimed = chosenEvent.Title.Remove(chosenEvent.Title.Length - removeLettersCount);
+                var lastEvents = new List<Event>();
+
+                var les = _context.Events.Where(e => e.Title.Contains(titleTrimed) && !e.StartDate.Equals(chosenEvent.StartDate) && !e.EndDate.Equals(chosenEvent.EndDate)).OrderByDescending(e => e.Id).Select(e => e.Id).AsEnumerable();
+                if (chosenEventsCount > les.Count())
+                    chosenEventsCount = les.Count();
+
                 for (int i = 0; i < chosenEventsCount; i++)
                 {
                     var lastEvent = _context.Events
@@ -159,8 +160,10 @@ namespace KTU_SA_RO.Controllers
                         .FirstOrDefault();
                     lastEvents.Add(lastEvent);
                 }
+                return lastEvents;
             }
-            return lastEvents;
+
+            return null;
         }
 
         public string SetUserPosition(string roleName)
@@ -351,19 +354,19 @@ namespace KTU_SA_RO.Controllers
             var successMsg = "Renginys:" + @event.Title;
             if (@event.EventTeamMembers != null && @event.Requirements != null)
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> ir <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
+                TempData["success"] = "<b>" + @event.Title + "</b> su <u>renginio komandos nariais</u> ir <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
             }
             else if (@event.EventTeamMembers != null)
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> sėkmingai pašalintas!";
+                TempData["success"] = "<b>" + @event.Title + "</b> su <u>renginio komandos nariais</u> sėkmingai pašalintas!";
             }
             else if (@event.Requirements != null)
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> su <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
+                TempData["success"] = "<b>" + @event.Title + "</b> su <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
             }
             else
             {
-                TempData["success"] = "<b>" + successMsg + "<b/> sėkmingai pašalintas!";
+                TempData["success"] = "<b>" + @event.Title + "</b> sėkmingai pašalintas!";
             }
             return RedirectToAction(nameof(Index));
         }

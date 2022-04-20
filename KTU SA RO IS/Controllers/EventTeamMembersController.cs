@@ -217,11 +217,23 @@ namespace KTU_SA_RO.Controllers
         public async Task<IActionResult> DeleteConfirm(int id)
         {
             var eventTeamMember = await _context.EventTeamMembers.FindAsync(id);
-            var eventId =  _context.EventTeamMembers.FirstOrDefault(et => et.Id == id).EventId.ToString();
-            _context.EventTeamMembers.Remove(eventTeamMember);
-            await _context.SaveChangesAsync();
-            TempData["success"] = "Narys iš komandos sėkmingai pašalintas";
-            return Redirect("~/Events/Details/" + eventId);
+            var eventId =  _context.EventTeamMembers.FirstOrDefault(et => et.Id == id).EventId;
+            var @event = await _context.Events.FindAsync(eventId);
+            var user = await _context.Users.FindAsync(eventTeamMember.UserId);
+
+            if (!user.Name.Equals(@event.CoordinatorName) && !user.Surname.Equals(@event.CoordinatorSurname))
+            {
+                _context.EventTeamMembers.Remove(eventTeamMember);
+                await _context.SaveChangesAsync();
+                TempData["success"] = "Narys iš komandos sėkmingai pašalintas";
+            }
+            else
+            {
+                TempData["danger"] = "Renginio koordinatorius negali būti pašalintas iš renginio. " +
+                    "Pakeiskite renginio koordinatorių per renginio redagavimo puslapį";
+            }
+
+            return Redirect("~/Events/Details/" + eventId.ToString());
         }
 
         private bool EventTeamExists(int id)

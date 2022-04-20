@@ -245,112 +245,7 @@
                 @Html.DisplayFor(model => model.PeopleCount)
             }
         </div>
-
-        @*Two last years events*@
-        <div>
-            <div class="d-flex mt-4 mb-2 justify-content-between">
-                <h5 class="my-4 display-6"><b>@Model.Title</b> pastarųjų metų renginių statistika</h5>
-            </div>
-            @if (lastEvents != null)
-            {
-                <table class="table table-responsive">
-                    <thead>
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Title)
-                            </th>
-                            <th>
-                                Renginio data
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Location)
-                            </th>
-                            <th>
-                                Renginio koordinatorius
-                            </th>
-                            <th class="text-end">
-                                @Html.DisplayNameFor(model => model.PlannedPeopleCount)
-                            </th>
-                            <th class="text-end">
-                                @Html.DisplayNameFor(model => model.PeopleCount)
-                            </th>
-                            <th>
-                                Bendros pajamos
-                            </th>
-                            <th>
-                                Bendros išlaidos
-                            </th>
-                            <th>
-                                Bendra bilietacija
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var lastEvent in lastEvents)
-                        {
-                           
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => lastEvent.Title)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => lastEvent.StartDate)
-                                    @Html.DisplayFor(modelItem => lastEvent.EndDate)
-                                </td>
-
-                                <td>
-                                    @if (lastEvent.Location == null)
-                                    {
-                                        <span>-</span>
-                                    }
-                                    else
-                                    {
-                                        @Html.DisplayFor(model => lastEvent.Location)
-                                    }
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => lastEvent.CoordinatorName) @Html.DisplayFor(modelItem => lastEvent.CoordinatorSurname)
-                                </td>
-                                <td class="text-end">
-                                    @Html.DisplayFor(modelItem => lastEvent.PlannedPeopleCount)
-                                </td>
-                                <td class="text-end">
-                                    @Html.DisplayFor(modelItem => lastEvent.PeopleCount)
-                                </td>
-                                <td class="text-end">
-                                    @if(lastEvent.Revenues != null){
-                                       <span>@lastEvent.Revenues.Sum(r => r.Earned)</span> 
-                                    }
-                                    else
-                                    {
-                                        <span>0</span>
-                                    }
-                                </td>
-                                <td class="text-end">
-                                    @if(lastEvent.Costs != null){
-                                       <span>@lastEvent.Costs.Sum(r => r.Price)</span> 
-                                    }
-                                    else
-                                    {
-                                        <span>0</span>
-                                    }
-                                </td>
-                                <td class="text-end">
-                                    @if(lastEvent.Ticketings != null){
-                                       <span>@lastEvent.Ticketings.Sum(t => t.Total())</span> 
-                                    }
-                                    else
-                                    {
-                                        <span>0</span>
-                                    }
-                                </td>
-                            </tr>
-                         }
-                    </tbody>
-                </table>
-            }
-            <hr />
-        </div>
+          
         @*Sponsorships container*@
         <div>
             <div class="d-flex mt-4 mb-2 justify-content-between">
@@ -834,6 +729,196 @@
                 <hr />
             }
         </div>
+        @*Two last years events*@
+        <div>
+            <div class="d-flex mt-4 mb-2 justify-content-between">
+                <h5 class="my-4 display-6"><b>@Model.Title</b> pastarųjų metų renginių statistika</h5>
+            </div>
+            @if (lastEvents != null)
+            {
+                @if (lastEvents.Count != 0)
+                {
+                    @*Charts*@
+                    <div class="container mb-4">
+                        <canvas id="chart" width="200" height="200"></canvas>
+                        <canvas id="chart2" width="200" height="200"></canvas>
+                        <canvas id="chart3" width="200" height="200"></canvas>
+                    </div>
+
+                    <table class="table table-responsive" style="display: none" id="eventsTable">
+                        <tbody>
+                            @foreach (var lastEvent in lastEvents)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => lastEvent.Title)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => lastEvent.StartDate)
+                                        @Html.DisplayFor(modelItem => lastEvent.EndDate)
+                                    </td>
+
+                                    <td>
+                                        @if (lastEvent.Location == null)
+                                        {
+                                            <span>-</span>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(model => lastEvent.Location)
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => lastEvent.CoordinatorName) @Html.DisplayFor(modelItem => lastEvent.CoordinatorSurname)
+                                    </td>
+                                    <td class="text-end">
+                                        @Html.DisplayFor(modelItem => lastEvent.PlannedPeopleCount)
+                                    </td>
+                                    <td class="text-end">
+                                        @Html.DisplayFor(modelItem => lastEvent.PeopleCount)
+                                    </td>
+                                    <td class="text-end">
+                                        @if(lastEvent.Revenues != null){
+                                           <span>@lastEvent.Revenues.Sum(r => r.Earned)</span> 
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        @if(lastEvent.Costs != null){
+                                           <span>@lastEvent.Costs.Sum(r => r.Price)</span> 
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        @if(lastEvent.Ticketings != null){
+                                           <span>@lastEvent.Ticketings.Sum(t => t.Total())</span> 
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                </tr>
+                             }
+                        </tbody>
+                    </table>
+                    <table class="table table-responsive mx-3">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Title)
+                                </th>
+                                <th>
+                                    Renginio data
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Location)
+                                </th>
+                                <th>
+                                    Renginio koordinatorius
+                                </th>
+                                <th class="text-end">
+                                    @Html.DisplayNameFor(model => model.PlannedPeopleCount)
+                                </th>
+                                <th class="text-end">
+                                    @Html.DisplayNameFor(model => model.PeopleCount)
+                                </th>
+                                <th class="text-end">
+                                    Bendros pajamos
+                                </th>
+                                <th class="text-end">
+                                    Bendros išlaidos
+                                </th>
+                                <th class="text-end">
+                                    Bendra bilietacija
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var lastEvent in lastEvents)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => lastEvent.Title)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => lastEvent.StartDate)
+                                        @Html.DisplayFor(modelItem => lastEvent.EndDate)
+                                    </td>
+
+                                    <td>
+                                        @if (lastEvent.Location == null)
+                                        {
+                                            <span>-</span>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(model => lastEvent.Location)
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => lastEvent.CoordinatorName) @Html.DisplayFor(modelItem => lastEvent.CoordinatorSurname)
+                                    </td>
+                                    <td class="text-end">
+                                        @Html.DisplayFor(modelItem => lastEvent.PlannedPeopleCount)
+                                    </td>
+                                    <td class="text-end">
+                                        @Html.DisplayFor(modelItem => lastEvent.PeopleCount)
+                                    </td>
+                                    <td class="text-end">
+                                        @if(lastEvent.Revenues != null){
+                                           <span>@lastEvent.Revenues.Sum(r => r.Earned)</span> 
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        @if(lastEvent.Costs != null){
+                                           <span>@lastEvent.Costs.Sum(r => r.Price)</span> 
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        @if(lastEvent.Ticketings != null){
+                                           <span>@lastEvent.Ticketings.Sum(t => t.Total())</span> 
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                </tr>
+                             }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-light mt-4" role="alert">
+                        Ankstesnių metų renginių nerasta
+                    </div> 
+                }
+            }
+            else
+            {
+                <div class="alert alert-light mt-4" role="alert">
+                    Per trumpas renginio pavadinimas kitų renginių tikrinimui
+                </div> 
+            }
+
+            <hr />
+        </div>
         @*Edit and delete event*@
         <div>
             <div class="float-start">
@@ -880,14 +965,151 @@
 
 @section Scripts
 {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Chart.js
+    let eventsTable = document.getElementById('eventsTable');
+    if(eventsTable != null)
+    {
+        let trElems = eventsTable.getElementsByTagName('tr');
+        let eventNames = [];
+        let revenueAndTicketing = [];
+        let costs = [];
+        let ticketing = [];
+        let balance = [];
+    
+        for (let tr of trElems) {
+            let tdElems = tr.getElementsByTagName('td');
+            eventNames.push(tdElems[0].innerText);
+            revenueAndTicketing.push(parseFloat(tdElems[4].innerText) + parseFloat(tdElems[6].innerText));
+            costs.push(parseFloat(tdElems[5].innerText));
+            ticketing.push(parseFloat(tdElems[6].innerText));
+            balance.push(parseFloat(tdElems[4].innerText) + parseFloat(tdElems[6].innerText) - parseFloat(tdElems[5].innerText));
+
+        }
+
+        const ctx = document.getElementById('chart');
+        const ctx2 = document.getElementById('chart2');
+        const ctx3 = document.getElementById('chart3');
+
+        const revenueAndTicketingChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: eventNames,
+                //labels: [
+                //    'Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange
+                //],
+                datasets: [{
+                    label: 'Pelnas su bilietacija',
+                    data: revenueAndTicketing,
+                    //data: [
+                    //    12, 21, 
+                    //],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const costsChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: eventNames,
+                datasets: [{
+                    label: 'Išlaidos',
+                    data: costs,
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const totalChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: eventNames,
+                datasets: [{
+                    label: 'Balansas',
+                    data: balance,
+                    backgroundColor: [
+                        'rgba(225, 150, 251 , 0.2)',
+                        'rgba(251, 179, 150 , 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(225, 150, 251 , 1)',
+                        'rgba(251, 179, 150 , 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
     // max date input is today
     datePickerId.max = new Date().toISOString().split("T")[0];
     datePickerId2.max = new Date().toISOString().split("T")[0];
     function setTwoNumberDecimal(event) {
         this.value = parseFloat(this.value).toFixed(2);
     }
-
+    // make visible only one form
     $(() => {
         $('#containerAddUser').hide();
         $('#containerAddSingleSponsorship').hide();
