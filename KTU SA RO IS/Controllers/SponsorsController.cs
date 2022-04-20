@@ -159,7 +159,10 @@ namespace KTU_SA_RO.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                TempData["success"] = "Rėmėjas: <b>" + sponsor.Title + "</b> sėkmingai atnaujintas!";
+
+                return RedirectToAction(nameof(Details), nameof(SponsorsController).Replace("Controller", ""), new { id = sponsor.Id.ToString()});
             }
             return View(sponsor);
         }

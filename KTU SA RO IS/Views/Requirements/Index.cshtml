@@ -45,8 +45,40 @@
                 <td>
                     @requirement.Comment
                 </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@requirement.Id" class="btn btn-dark d-flex rounded-2"><i class="mt-1 mr-2 fas fa-info-circle"></i> Plačiau</a>
+                <td class="col-4">
+                    <a asp-action="Edit" asp-route-id="@requirement.Id" class="btn btn-outline-secondary mx-3 mb-4 rounded-2"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+                    <button type="button" class="btn btn-outline-danger mb-4 rounded-2" data-toggle="modal" data-target="#exampleModal-@requirement.Id">
+                        <i class="fas fa-trash pe-1"></i> Ištrinti
+                    </button>  
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal-@requirement.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title m-2" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body m-2">
+                                @if(requirement.Is_general){
+                                    <span>Pašalinsite bendrinį reikalavimą: <b>@requirement.Name</b></span>
+                                }
+                                else{
+                                    <span>Pašalinsite specifinį reikalavimą: <b>@requirement.Name</b> iš renginio</span>
+                                }
+                            </div>
+                            <div class="modal-footer">
+                            @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                            <form asp-action="Delete">
+                                <input type="submit" asp-action="Delete" asp-route-id="@requirement.Id"  value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase" />
+                            </form>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <!----->
+                    @*<a asp-action="Details" asp-route-id="@requirement.Id" class="btn btn-dark d-flex rounded-2"><i class="mt-1 mr-2 fas fa-info-circle"></i> Plačiau</a>*@
                 </td>
             </tr>
         }

@@ -9,6 +9,7 @@
     var cost = ViewData["costs"] as List<Cost>;
     var ticketing = ViewData["ticketings"] as List<Ticketing>;
     var sponsors = ViewData["sponsors"] as List<Sponsor>;
+    var lastEvents = ViewData["lastEvents"] as List<Event>;
 }
 <style>
     /*jquery-searchable-dropdown container*/
@@ -244,6 +245,112 @@
                 @Html.DisplayFor(model => model.PeopleCount)
             }
         </div>
+
+        @*Two last years events*@
+        <div>
+            <div class="d-flex mt-4 mb-2 justify-content-between">
+                <h5 class="my-4 display-6"><b>@Model.Title</b> pastarųjų metų renginių statistika</h5>
+            </div>
+            @if (lastEvents != null)
+            {
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Title)
+                            </th>
+                            <th>
+                                Renginio data
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Location)
+                            </th>
+                            <th>
+                                Renginio koordinatorius
+                            </th>
+                            <th class="text-end">
+                                @Html.DisplayNameFor(model => model.PlannedPeopleCount)
+                            </th>
+                            <th class="text-end">
+                                @Html.DisplayNameFor(model => model.PeopleCount)
+                            </th>
+                            <th>
+                                Bendros pajamos
+                            </th>
+                            <th>
+                                Bendros išlaidos
+                            </th>
+                            <th>
+                                Bendra bilietacija
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var lastEvent in lastEvents)
+                        {
+                           
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => lastEvent.Title)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => lastEvent.StartDate)
+                                    @Html.DisplayFor(modelItem => lastEvent.EndDate)
+                                </td>
+
+                                <td>
+                                    @if (lastEvent.Location == null)
+                                    {
+                                        <span>-</span>
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayFor(model => lastEvent.Location)
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => lastEvent.CoordinatorName) @Html.DisplayFor(modelItem => lastEvent.CoordinatorSurname)
+                                </td>
+                                <td class="text-end">
+                                    @Html.DisplayFor(modelItem => lastEvent.PlannedPeopleCount)
+                                </td>
+                                <td class="text-end">
+                                    @Html.DisplayFor(modelItem => lastEvent.PeopleCount)
+                                </td>
+                                <td class="text-end">
+                                    @if(lastEvent.Revenues != null){
+                                       <span>@lastEvent.Revenues.Sum(r => r.Earned)</span> 
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if(lastEvent.Costs != null){
+                                       <span>@lastEvent.Costs.Sum(r => r.Price)</span> 
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if(lastEvent.Ticketings != null){
+                                       <span>@lastEvent.Ticketings.Sum(t => t.Total())</span> 
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                            </tr>
+                         }
+                    </tbody>
+                </table>
+            }
+            <hr />
+        </div>
         @*Sponsorships container*@
         <div>
             <div class="d-flex mt-4 mb-2 justify-content-between">
@@ -282,7 +389,7 @@
                         <div class="col-sm-9 col-lg-3 mb-3" >Rėmėjas</div>
                         <div class="col-sm-9 col-lg-4 mb-3" >Aprašymas</div>
                         <div class="col-sm-9 col-lg-2 mb-3" >Kiekis</div>
-                        <div class="col-sm-9 col-lg-3 mb-3" >Suma</div>
+                        <div class="col-sm-9 col-lg-3 mb-3" >Vertė</div>
                     </div>
                      @foreach (var sponsorship in Model.Sponsorships)
                      {

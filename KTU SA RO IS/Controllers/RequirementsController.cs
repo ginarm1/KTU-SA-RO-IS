@@ -58,6 +58,13 @@ namespace KTU_SA_RO.Controllers
         }
 
         // GET:
+        [Route("Requirements/Create/")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // GET:
         [Route("Requirements/Create/{eventId}")]
         public IActionResult Create(int? eventId)
         {

@@ -96,6 +96,8 @@ namespace KTU_SA_RO.Controllers
                 .Include(s => s.Sponsorships)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            ViewData["lastEvents"] = LastEvents(@event, 2, 4);
+
             ViewData["sponsors"] = await _context.Sponsors.ToListAsync();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var eventTeam = new Dictionary<int,ApplicationUser>();
@@ -133,6 +135,32 @@ namespace KTU_SA_RO.Controllers
             ViewData["ticketings"] = @event.Ticketings.Where(r => r.Event == @event).ToList();
 
             return View(@event);
+        }
+
+        public List<Event> LastEvents(Event chosenEvent,int chosenEventsCount , int removeLettersCount)
+        {
+            string titleTrimed = chosenEvent.Title.Remove(chosenEvent.Title.Length - removeLettersCount);
+            var lastEvents = new List<Event>();
+
+            var les = _context.Events.Where(e => e.Title.Contains(titleTrimed) && !e.StartDate.Equals(chosenEvent.StartDate) && !e.EndDate.Equals(chosenEvent.EndDate)).OrderByDescending(e => e.Id).Select(e => e.Id).AsEnumerable();
+            if (chosenEventsCount > les.Count())
+                chosenEventsCount = les.Count();
+            else
+            {
+                for (int i = 0; i < chosenEventsCount; i++)
+                {
+                    var lastEvent = _context.Events
+                        .Where(e => e.Title.Contains(titleTrimed) && !e.StartDate.Equals(chosenEvent.StartDate) && !e.EndDate.Equals(chosenEvent.EndDate) && les.ElementAtOrDefault(i) == e.Id)
+                        .Include(et => et.EventTeamMembers)
+                        .Include(rv => rv.Revenues)
+                        .Include(c => c.Costs)
+                        .Include(t => t.Ticketings)
+                        .Include(s => s.Sponsorships)
+                        .FirstOrDefault();
+                    lastEvents.Add(lastEvent);
+                }
+            }
+            return lastEvents;
         }
 
         public string SetUserPosition(string roleName)

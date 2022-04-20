@@ -155,7 +155,7 @@ namespace KTU_SA_RO.Controllers
 
 
         //POST: Users/UserRole/{userName}
-        [Route("Users/UserRole/{userName}")]
+        //[Route("Users/DeleteUser/{userId}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string userId)
@@ -165,7 +165,7 @@ namespace KTU_SA_RO.Controllers
                 return NotFound($"Unable to find user.");
             }
 
-            var DeleteUser = await _userManager.FindByNameAsync(userId);
+            var DeleteUser = await _userManager.FindByIdAsync(userId);
             if (DeleteUser == null)
             {
                 TempData["danger"] = "Naudotojas su ID: " + userId + " nerastas";
