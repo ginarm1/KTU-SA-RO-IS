@@ -64,9 +64,12 @@
                         </span>
                     </div>
                 </td>
-                <td>
-                    <a asp-action="UserRole" asp-route-id="@item.Id" class="btn btn-secondary mx-3 rounded-2"><i class="fas fa-edit pe-1"></i> Pakeisti rolę</a>
-                </td>
+                @if (User.IsInRole("admin") || User.IsInRole("orgCoord"))
+                {
+                    <td>
+                        <a asp-action="UserRole" asp-route-id="@item.Id" class="btn btn-secondary mx-3 rounded-2"><i class="fas fa-edit pe-1"></i> Pakeisti rolę</a>
+                    </td>                    
+                }
             </tr>
         }
     </tbody>

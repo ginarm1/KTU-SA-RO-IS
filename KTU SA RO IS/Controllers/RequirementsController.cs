@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KTU_SA_RO.Controllers
 {
+    [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]
     public class RequirementsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -173,19 +175,27 @@ namespace KTU_SA_RO.Controllers
                 return NotFound();
             }
 
-            ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(responsibleUserName) && u.Surname.Equals(responsibleUserSurname));
+            if (responsibleUserName != null && responsibleUserSurname != null)
+            {
+                ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(responsibleUserName) && u.Surname.Equals(responsibleUserSurname));
 
-            if (user == null)
-            {
-                TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nebuvo rastas sistemoje";
-                return RedirectToAction(nameof(Edit));
+                if (user == null)
+                {
+                    TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nebuvo rastas sistemoje";
+                    return RedirectToAction(nameof(Edit));
+                }
+                //check if user doesn't exist in a team
+                else if (_context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id)).FirstOrDefault() == null)
+                {
+                    TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nėra renginio komandoje";
+                    return RedirectToAction(nameof(Edit));
+                }
             }
-            //check if user doesn't exist in a team
-            else if (_context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id)).FirstOrDefault() == null)
+            else
             {
-                TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde nėra renginio komandoje";
-                return RedirectToAction(nameof(Edit));
+
             }
+
 
             if (ModelState.IsValid)
             {

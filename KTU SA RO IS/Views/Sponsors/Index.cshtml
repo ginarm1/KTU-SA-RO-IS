@@ -22,13 +22,19 @@
         @Html.Raw(TempData["success"].ToString())
     </div>
 }
+@if(User.IsInRole("admin")  || User.IsInRole("fsaBussinesCoord"))
+{
+    <a asp-action="Create" class="btn btn-primary my-3 col-sm-5 col-lg-3 rounded-2"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują rėmėją</a>
+}
 
-<a asp-action="Create" class="btn btn-primary my-3 col-sm-5 col-lg-3 rounded-2"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują rėmėją</a>
 <table class="table table-responsive">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyCode)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CompanyVAT)
@@ -54,6 +60,9 @@
             <tr>
                 <td class="fw-bold">
                     @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyCode)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CompanyVAT)

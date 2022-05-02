@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace KTU_SA_RO.Areas.Identity.Pages.Account
 {
@@ -44,7 +46,8 @@ namespace KTU_SA_RO.Areas.Identity.Pages.Account
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return RedirectToPage("./ForgotPasswordConfirmation");
+                    TempData["danger"] = "Naudotojas su el. paštu: <b> " + Input.Email + "</b> sistemoje neegzistuoja";
+                    return RedirectToPage("./ForgotPassword");
                 }
 
                 // For more information on how to enable account confirmation and password reset please 
@@ -56,6 +59,7 @@ namespace KTU_SA_RO.Areas.Identity.Pages.Account
                     pageHandler: null,
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
+
 
                 await _emailSender.SendEmailAsync(
                     Input.Email,

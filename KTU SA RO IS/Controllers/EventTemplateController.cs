@@ -40,6 +40,7 @@ namespace KTU_SA_RO.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin,orgCoord")]
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
@@ -137,7 +138,7 @@ namespace KTU_SA_RO.Controllers
             };
         }
 
-        [Authorize(Roles = "admin,orgCoord, eventCoord")]
+        [Authorize(Roles = "admin,orgCoord")]
         public IActionResult Delete(string path)
         {
             if (path == null)

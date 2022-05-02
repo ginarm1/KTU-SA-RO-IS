@@ -84,7 +84,10 @@
         <dd>
             <div class="float-start">
                 <a asp-action="Index" class="btn btn-outline-dark my-3"><i class="fas fa-arrow-left"></i>  Grįžti į sąrašą</a>
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary mx-3 rounded-2"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+                @if(!User.IsInRole("registered"))
+                {
+                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary mx-3 rounded-2"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+                }
             </div>
             <div class="float-end">
                 <!-- Button trigger modal -->

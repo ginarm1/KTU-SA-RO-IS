@@ -28,16 +28,19 @@
                 <ul class="navbar-nav ms-auto py-4 py-lg-0">
                     @*<li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Home" asp-action="Index">Pagrindinis</a></li>*@
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="EventTemplate" asp-action="Index">Renginio šablonas</a></li>
-                    @if (User.IsInRole("admin") || User.IsInRole("eventCoord") || User.IsInRole("orgCoord"))
+                    @if (User.IsInRole("admin") || User.IsInRole("orgCoord") || User.IsInRole("fsaOrgCoord") || User.IsInRole("fsaPrCoord") || User.IsInRole("eventCoord") || User.IsInRole("fsaBussinesCoord"))
                     {
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Events" asp-action="Index">Renginiai</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Sponsors" asp-action="Index">Rėmėjai</a></li>
                     }
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Sponsors" asp-action="Index">Rėmėjai</a></li>
                     @if (User.IsInRole("admin") || User.IsInRole("orgCoord"))
                     {
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Users" asp-action="Index">Naudotojai</a></li>
                     }
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Requirements" asp-action="Index">Reikalavimai</a></li>
+                    @if (User.IsInRole("admin") || User.IsInRole("orgCoord") || User.IsInRole("fsaOrgCoord") || User.IsInRole("fsaPrCoord") || User.IsInRole("eventCoord") || User.IsInRole("fsaBussinesCoord"))
+                    {
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Requirements" asp-action="Index">Reikalavimai</a></li>
+                    }
                     <partial name="_LoginPartial" />
                 </ul>
             </div>

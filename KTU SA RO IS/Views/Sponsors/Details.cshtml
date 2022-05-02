@@ -23,6 +23,12 @@
             @Html.DisplayFor(model => model.Title)
         </dd>
         <dt class="col-sm-3 col-lg-2 mb-3">
+            @Html.DisplayNameFor(model => model.CompanyCode)
+        </dt>
+        <dd class="col-sm-9 col-lg-10">
+            @Html.DisplayFor(model => model.CompanyCode)
+        </dd>
+        <dt class="col-sm-3 col-lg-2 mb-3">
             @Html.DisplayNameFor(model => model.CompanyVAT)
         </dt>
         <dd class="col-sm-9 col-lg-10">
@@ -56,38 +62,43 @@
         <dd>
             <div class="float-start">
                 <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i>  Grįžti į sąrašą</a>
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary rounded-2 mx-3"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+                @if(User.IsInRole("admin") || User.IsInRole("fsaBussinesCoord")){
+                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary rounded-2 mx-3"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+                }
             </div>
-            <div class="float-end">
-                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-danger rounded-2" data-toggle="modal" data-target="#exampleModal-@Model.Id">
-                    <i class="fas fa-trash pe-1"></i> Ištrinti
-                </button>
+            @if(User.IsInRole("admin") || User.IsInRole("fsaBussinesCoord"))
+            {
+                <div class="float-end">
+                     <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-danger rounded-2" data-toggle="modal" data-target="#exampleModal-@Model.Id">
+                        <i class="fas fa-trash pe-1"></i> Ištrinti
+                    </button>
 
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModal-@Model.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        </div>
-                        <div class="modal-body">
-                            Pašalinsite rėmėją: <b>@Model.Title</b>. Rėmėjas bus pašalintas ir iš paramų renginiams
-                        </div>
-                        <div class="modal-footer">
-                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
-                        <form asp-action="Delete">
-                            <input type="submit" asp-action="Delete" asp-route-id="@Model.Id"  value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase rounded-2" />
-                        </form>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal-@Model.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                    Pašalinsite rėmėją: <b>@Model.Title</b>. Rėmėjas bus pašalintas ir iš paramų renginiams
+                                </div>
+                                <div class="modal-footer">
+                                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                                <form asp-action="Delete">
+                                    <input type="submit" asp-action="Delete" asp-route-id="@Model.Id"  value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase rounded-2" />
+                                </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    </div>
-                </div>
-                <!----->
-            </div>
+                    <!----->
+                </div>                    
+            }
         </dd>
     </dl>
 </div>

@@ -1,5 +1,6 @@
 ﻿using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace KTU_SA_RO.Controllers
 {
+    [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]
     public class OutlaysController : Controller
     {
         private readonly ApplicationDbContext _context;

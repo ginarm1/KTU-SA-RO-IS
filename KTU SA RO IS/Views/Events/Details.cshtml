@@ -9,30 +9,36 @@
     var cost = ViewData["costs"] as List<Cost>;
     var ticketing = ViewData["ticketings"] as List<Ticketing>;
     var sponsors = ViewData["sponsors"] as List<Sponsor>;
+    var eventSponsors = ViewData["eventSponsors"] as List<Sponsor>;
     var lastEvents = ViewData["lastEvents"] as List<Event>;
+    var userInTeam = ViewData["userBelongsToEvent"];
 }
 <style>
     /*jquery-searchable-dropdown container*/
     .custom-select {
         border: 1px solid #ced4da;
     }
+
         .custom-select, .custom-select > div {
             border-radius: 0.25rem;
         }
-        .custom-select:focus {
-            border-color: #86b7fe;
-            background: #ced4da;
-            box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
-        }
-        .custom-select > div {
-            padding: 0.6rem 0;
-            background: #ced4da;
-            border: 1px solid #7e8082;
-        }
-        .custom-select input {
-            border: 1px solid rgb(13 110 253 / 25%);
-            box-shadow: 0 0 0 0.1rem rgb(13 110 253 / 25%);
-        }
+
+            .custom-select:focus {
+                border-color: #86b7fe;
+                background: #ced4da;
+                box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+            }
+
+            .custom-select > div {
+                padding: 0.6rem 0;
+                background: #ced4da;
+                border: 1px solid #7e8082;
+            }
+
+            .custom-select input {
+                border: 1px solid rgb(13 110 253 / 25%);
+                box-shadow: 0 0 0 0.1rem rgb(13 110 253 / 25%);
+            }
 </style>
 
 <div class="container display-5 my-4 fw-bold">Plačiau apie renginį</div>
@@ -105,7 +111,13 @@
                 <h5 class="display-6 mb-4">
                     Renginio komanda
                 </h5>
-                <div class="btn btn-primary mt-3 mb-4 col-sm-5 col-lg-3 rounded-2" id="addUserBtn"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti narį</div>
+                @if(User.IsInRole("admin")  || User.IsInRole("eventCoord") || User.IsInRole("fsaOrgCoord"))
+                {
+                    if (User.IsInRole("admin") || userInTeam != null)
+                    {
+                        <div class="btn btn-primary mt-3 mb-4 col-sm-5 col-lg-3 rounded-2" id="addUserBtn"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti narį</div>
+                    }
+                }              
             </div>
             @*Add user to an event team*@
             <div class="row" id="containerAddUser">
@@ -136,34 +148,41 @@
                             <div class="me-1 px-2 rounded-3 text-white fw-light bg-dark">@eventTeam.ElementAt(i).Value.Email</div>
                         </div>
                         <div class="row my-3 mx-2 ">
-                            <div class="col-8" >@membersRole.ElementAt(i).Value</div>
+                            <div class="col-8">@membersRole.ElementAt(i).Value</div>
                             <div class="col-4 align-items-end">
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-outline-dark rounded-2" data-toggle="modal" data-target="#exampleModal-@eventTeam.ElementAt(i).Key">
-                                  <i class="fas fa-trash pe-1"></i> Ištrinti
-                                </button>
+                                @if(User.IsInRole("admin")  || User.IsInRole("eventCoord") || User.IsInRole("fsaOrgCoord"))
+                                {
+                                    if (User.IsInRole("admin") || userInTeam != null)
+                                    {
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-outline-dark rounded-2" data-toggle="modal" data-target="#exampleModal-@eventTeam.ElementAt(i).Key">
+                                            <i class="fas fa-trash pe-1"></i> Ištrinti
+                                        </button>                                        
+                                    }
+
+                                }
 
                                 <!-- Modal -->
                                 <div class="modal fade" id="exampleModal-@eventTeam.ElementAt(i).Key" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                        Pašalinsite <b>@eventTeam.ElementAt(i).Value.Name @eventTeam.ElementAt(i).Value.Surname</b> iš komandos
-                                      </div>
-                                      <div class="modal-footer">
-                                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
-                                        <form asp-action="Delete">
-                                            <input type="submit" asp-action="Delete" asp-controller="EventTeamMembers" asp-route-id="@eventTeam.ElementAt(i).Key"  value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
-                                        </form>
-                                      </div>
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Pašalinsite <b>@eventTeam.ElementAt(i).Value.Name @eventTeam.ElementAt(i).Value.Surname</b> iš komandos
+                                            </div>
+                                            <div class="modal-footer">
+                                                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                                                <form asp-action="Delete">
+                                                    <input type="submit" asp-action="Delete" asp-controller="EventTeamMembers" asp-route-id="@eventTeam.ElementAt(i).Key" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
                                 <!----->
                             </div>
@@ -245,111 +264,157 @@
                 @Html.DisplayFor(model => model.PeopleCount)
             }
         </div>
-          
+
         @*Sponsorships container*@
-        <div>
+        <div>           
             <div class="d-flex mt-4 mb-2 justify-content-between">
                 <h5 class="my-4 display-6">Rėmimas</h5>
                 <div class="d-flex mt-4 mb-2 justify-content-end">
-                    <div class="btn btn-primary mt-3 mb-4 rounded-2" id="addSingleSponsorshipBtn">
-                        <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti paramą</div>
-                </div>
-            </div>
-            @*Add single revenue to an event*@
-                <div class="row container bg-light rounded-2 mb-3 pt-5" id="containerAddSingleSponsorship">
-                    @if(ViewData["sponsors"] != null){
-                        <form asp-action="CreateSponsorship" asp-controller="Sponsors">
-                            <input name="eventId" class="form-control" value="@Model.Id" hidden />
-                            <div class="d-flex justify-content-between">
-                                <input name="description" class="form-control me-3" placeholder="Aprašymas" required />
-                                <input name="quantity" type="number" step="1" class="form-control w-25 me-3" placeholder="Kiekis" min='0' max='999999' required />
-                                <input name="costTotal" type="number" step="0.01" class="form-control w-25 me-3" placeholder="Vertė" min='0' max='999999' required  />
-                                <select id="jquery-searchable-dropdown" name="sponsorId" class="form-control custom-select" asp-items="@(new SelectList(sponsors, "Id", "Title"))"></select>
-                           </div>
-                            <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end my-4 rounded-2" id="submit" />
-                        </form>
-                    } 
-                    else{
-                        <div class="alert alert-danger mt-4" role="alert">
-                            Nėra sukurtų rėmėjų
-                        </div>
+                    @if(User.IsInRole("admin") || User.IsInRole("fsaBussinesCoord"))
+                    {
+                        if (User.IsInRole("admin") || userInTeam != null)
+                        {
+                            <div class="btn btn-primary mt-3 mb-4 rounded-2" id="addSingleSponsorshipBtn">
+                                <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti paramą
+                            </div>
+                        }             
                     }
                 </div>
-                @******@
-        </div>
-        @if (Model.Sponsorships != null)
+            </div>
+            @if (Model.Sponsorships.Count == 0)
             {
-                <div class="card card-body" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
-                    <div class="row fw-bold">
-                        <div class="col-sm-9 col-lg-3 mb-3" >Rėmėjas</div>
-                        <div class="col-sm-9 col-lg-4 mb-3" >Aprašymas</div>
-                        <div class="col-sm-9 col-lg-2 mb-3" >Kiekis</div>
-                        <div class="col-sm-9 col-lg-3 mb-3" >Vertė</div>
-                    </div>
-                     @foreach (var sponsorship in Model.Sponsorships)
-                     {
-                        <div class="row">
-                            <div class="col-sm-9 col-lg-3 mb-2">
-                               @sponsorship.Sponsor.Title
-                            </div>
-                            <div class="col-sm-9 col-lg-4 mb-3">
-                                @sponsorship.Description
-                            </div>
-                            <div class="col-sm-4 col-lg-2 mb-2">
-                                @sponsorship.Quantity
-                            </div>
-                            <div class="col-sm-4 col-lg-2 text-success mb-2">
-                               € @sponsorship.CostTotal
-                            </div>
-                            <div class="row d-flex justify-content-end mt-3 mb-4">
-                                <div class="col-6 d-flex justify-content-end">
-                                    <a asp-controller="Sponsors" asp-action="EditSponsorship" asp-route-id="@sponsorship.Id"
-                                        class="btn btn-outline-secondary mx-3 rounded-2">
-                                        <i class="fas fa-edit pe-1"></i> Redaguoti
-                                    </a>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#sponsorshipModal-@sponsorship.Id">
-                                      <i class="fas fa-trash pe-1"></i> Ištrinti
-                                    </button>
-                                </div>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="sponsorshipModal-@sponsorship.Id" tabindex="-1" role="dialog" aria-labelledby="sponsorshipModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                            Pašalinsite vieną iš rėmėjų: <b>@sponsorship.Sponsor.Title</b> paramą iš renginio
-                                      </div>
-                                      <div class="modal-footer">
-                                        <form asp-action="Delete">
-                                            <input type="hidden" asp-for="@sponsorship.Id">
-                                            <input type="submit" asp-action="DeleteSponsorship" asp-controller="Sponsors" asp-route-id="@sponsorship.Id"  value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
-                                        </form>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <!----->
-                            </div>
-                        </div>
-                     }    
+                <div class="alert bg-light w-50" role="alert">
+                    Nėra sukurta rėmimo šiam renginiui
                 </div>
-            }
+            }                      
+               
+            @*Add single revenue to an event*@
+            <div class="row container bg-light rounded-2 mb-3 pt-5" id="containerAddSingleSponsorship">
+                @if  (sponsors != null)
+                {
+                    <form asp-action="CreateSponsorship" asp-controller="Sponsors">
+                        <input name="eventId" class="form-control" value="@Model.Id" hidden />
+                        <div class="d-flex justify-content-between">
+                            <input name="description" class="form-control me-3" placeholder="Aprašymas" required />
+                            <input name="quantity" type="number" step="1" class="form-control w-25 me-3" placeholder="Kiekis" min='0' max='999999' required />
+                            <input name="costTotal" type="number" step="0.01" class="form-control w-25 me-3" placeholder="Vertė" min='0' max='999999' required />
+                            <select id="jquery-searchable-dropdown" name="sponsorId" class="form-control custom-select" asp-items="@(new SelectList(sponsors, "Id", "Title"))"></select>
+                        </div>
+                        <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end my-4 rounded-2" id="submit" />
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-danger mt-4" role="alert">
+                        Nėra sukurtų rėmėjų
+                    </div>
+                }
+            </div>
+            @******@
+        </div>
+        @if (Model.Sponsorships.Count != 0)
+        {
+            <div class="card card-body" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
+                <div class="row fw-bold ms-1">
+                    <div class="col-sm-9 col-lg-3 mb-3">Rėmėjas</div>
+                    <div class="col-sm-9 col-lg-4 mb-3">Aprašymas</div>
+                    <div class="col-sm-9 col-lg-2 mb-3">Kiekis</div>
+                    <div class="col-sm-9 col-lg-3 mb-3">Vertė</div>
+                </div>
+                @foreach (var sponsorship in Model.Sponsorships)
+                {
+                    <div class="row ms-1">
+                        <div class="col-sm-9 col-lg-3 mb-2">
+                            @sponsorship.Sponsor.Title
+                        </div>
+                        <div class="col-sm-9 col-lg-4 mb-3">
+                            @sponsorship.Description
+                        </div>
+                        <div class="col-sm-4 col-lg-2 mb-2">
+                            @sponsorship.Quantity
+                        </div>
+                        <div class="col-sm-4 col-lg-2 text-success mb-2">
+                            € @sponsorship.CostTotal
+                        </div>
+                        <div class="row d-flex justify-content-end mt-3 mb-4">
+                            @if(User.IsInRole("admin")  || User.IsInRole("fsaBussinesCoord"))
+                            {
+                                if (User.IsInRole("admin") || userInTeam != null)
+                                {
+                                    <div class="col-6 d-flex justify-content-end">
+                                        <a asp-controller="Sponsors" asp-action="EditSponsorship" asp-route-id="@sponsorship.Id"
+                                            class="btn btn-outline-secondary mx-3 rounded-2">
+                                            <i class="fas fa-edit pe-1"></i> Redaguoti
+                                        </a>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#sponsorshipModal-@sponsorship.Id">
+                                            <i class="fas fa-trash pe-1"></i> Ištrinti
+                                        </button>
+                                    </div>                                    
+                                }                              
+                            }
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="sponsorshipModal-@sponsorship.Id" tabindex="-1" role="dialog" aria-labelledby="sponsorshipModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Pašalinsite vieną iš rėmėjų: <b>@sponsorship.Sponsor.Title</b> paramą iš renginio
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form asp-action="Delete">
+                                                <input type="hidden" asp-for="@sponsorship.Id">
+                                                <input type="submit" asp-action="DeleteSponsorship" asp-controller="Sponsors" asp-route-id="@sponsorship.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!----->
+                        </div>
+                    </div>
+                }            
+                <!--Sponsorship document generator-->
+                <form class="mt-4 mx-2" asp-controller="Documents" asp-action="GetSponsorshipAgreement" >
+                    <input name="eventId" class="form-control" value="@Model.Id" hidden />
+                    <div class="d-flex justify-content-between">
+                        <h5>Renginio įmonė</h5>
+                        <select id="jquery-searchable-dropdown" name="sponsorId" class="form-control w-50 custom-select ms-3 me-4" asp-items="@(new SelectList(eventSponsors, "Id", "Title"))"></select>
+                        <h5>Įmonės teisinė formos tipas</h5>
+                        <select class="form-control w-50" name="companyLegalType">
+                            <option>Uždaroji akcinė bendrovė</option>
+                            <option>Mažoji bendrija</option>
+                            <option>Asociacija</option>
+                            <option>Viešoji įstaiga</option>
+                            <option>Individuali įmonė</option>
+                        </select>
+                    </div>
+                    <input type="submit" value="Generuoti sutartį" class="btn btn-outline-dark float-end my-4 rounded-2" id="submit" />
+                </form> 
+            </div>
+  
+        }
         <div><hr /></div>
         @*Additional requirements container*@
         <div>
             <div class="d-flex mt-4 mb-2 justify-content-between">
                 <h5 class="my-4 display-6">Specifiniai reikalavimai</h5>
-                <a asp-controller="Requirements" asp-route-eventId="@Model.Id" asp-action="Create" class="btn btn-primary my-3 col-3 rounded-2">
-                    <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i>
-                    Sukurti specifinį reikalavimą
-                </a>
+                @if(User.IsInRole("admin")  || User.IsInRole("eventCoord") || User.IsInRole("fsaPrCoord") || User.IsInRole("fsaOrgCoord") || User.IsInRole("fsaBussinesCoord"))
+                {
+                    if (User.IsInRole("admin") || userInTeam != null)
+                    {
+                        <a asp-controller="Requirements" asp-route-eventId="@Model.Id" asp-action="Create" class="btn btn-primary my-3 col-3 rounded-2">
+                            <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i>
+                            Sukurti specifinį reikalavimą
+                        </a>                        
+                    }
+                }
             </div>
             @if (Model.Requirements.Count != 0)
             {
@@ -362,9 +427,9 @@
                             {
                                 <div>
                                     <span class="me-1 px-2 rounded-3 text-white fw-light bg-dark">@requirement.User.Name @requirement.User.Surname</span>
-                                    @if(requirement.Is_fulfilled)
+                                    @if  (requirement.Is_fulfilled)
                                     {
-                                         <span><i class="ms-2 fas fa-check text-success"></i></span>
+                                        <span><i class="ms-2 fas fa-check text-success"></i></span>
                                     }
                                 </div>
                             }
@@ -373,39 +438,39 @@
                             <div class="col-6">@requirement.Description</div>
                             <div class="col">
                                 <a asp-controller="Requirements" asp-action="Edit" asp-route-id="@requirement.Id"
-                                    class="btn btn-outline-secondary mx-3 rounded-2">
+                           class="btn btn-outline-secondary mx-3 rounded-2">
                                     <i class="fas fa-edit pe-1"></i> Redaguoti
                                 </a>
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#exampleModal-@requirement.Id">
-                                  <i class="fas fa-trash pe-1"></i> Ištrinti
+                        <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#exampleModal-@requirement.Id">
+                                    <i class="fas fa-trash pe-1"></i> Ištrinti
                                 </button>
 
                                 <!-- Modal -->
-                                <div class="modal fade" id="exampleModal-@requirement.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                        Pašalinsite specifinį reikalavimą: <b>@requirement.Name</b> iš renginio
-                                      </div>
-                                      <div class="modal-footer">
-                                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
-                                        <form asp-action="Delete">
-                                            <input type="submit" asp-action="Delete" asp-route-id="@requirement.Id"  value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase" />
-                                        </form>
-                                      </div>
+                        <div class="modal fade" id="exampleModal-@requirement.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Pašalinsite specifinį reikalavimą: <b>@requirement.Name</b> iš renginio
+                                            </div>
+                                            <div class="modal-footer">
+                                                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                                                <form asp-action="Delete">
+                                                    <input type="submit" asp-action="Delete" asp-route-id="@requirement.Id" value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase" />
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
                                 <!----->
 
-                            </div>
+                    </div>
                         </div>
                     </div>
                 }
@@ -423,53 +488,66 @@
             @*Create revenue, ticketing, cost buttons*@
             <h5 class="display-6 my-4">Sąmata</h5>
             <div class="d-flex justify-content-center mt-4">
-                    <h5 class="me-4">
-                        Bendros pajamos: 
-                        @if (revenue != null)
-                        {
-                            <span class="display-5 text-success">@revenue.Sum(r => r.Earned)</span>
-                        }
-                        else
-                        {
-                            <span class="display-5 text-success">0</span>
-                        }
-                    </h5>
-                    <h5 class="me-4">
-                        Bilietų pajamos: 
-                        @if (ticketing != null)
-                        {
-                            <span class="display-5 text-success">@ticketing.Sum(r => r.Total())</span>
-                        }
-                        else
-                        {
-                            <span class="display-5 text-success">0</span>
-                        }
-                    </h5>
-                    <h5 class="me-5">
-                        Bendros išlaidos: 
-                        @if (cost != null)
-                        {
-                            <span class="display-5 text-danger">@cost.Sum(r => r.Price)</span>
-                        }
-                        else
-                        {
-                            <span class="display-5 text-danger">0</span>
-                        }
-                    </h5>
-                    <h5 class="ms-2">
-                        Balansas: 
-                        <span class="display-4 "> @((decimal)revenue.Sum(r => r.Earned) + ticketing.Sum(r => r.Total()) - (decimal)cost.Sum(r => r.Price))</span>
-                    </h5>
+                <h5 class="me-4">
+                    Bendros pajamos:
+                    @if (revenue != null)
+                    {
+                        <span class="display-5 text-success">@decimal.Round((decimal)revenue.Sum(r => r.Earned),2)</span>
+                    }
+                    else
+                    {
+                        <span class="display-5 text-success">0</span>
+                    }
+                </h5>
+                <h5 class="me-4">
+                    Bilietų pajamos:
+                    @if (ticketing != null)
+                    {
+                        <span class="display-5 text-success">@decimal.Round((decimal)ticketing.Sum(r => r.Total()),2)</span>
+                    }
+                    else
+                    {
+                        <span class="display-5 text-success">0</span>
+                    }
+                </h5>
+                <h5 class="me-5">
+                    Bendros išlaidos:
+                    @if (cost != null)
+                    {
+                        <span class="display-5 text-danger">@decimal.Round((decimal)cost.Sum(r => r.Price),2)</span>
+                    }
+                    else
+                    {
+                        <span class="display-5 text-danger">0</span>
+                    }
+                </h5>
+                <h5 class="ms-2">
+                    Balansas:
+                    <span class="display-4 "> @((decimal)revenue.Sum(r => r.Earned) + ticketing.Sum(r => r.Total()) - (decimal)cost.Sum(r => r.Price))</span>
+                </h5>
             </div>
 
-            <div class="d-flex mt-4 mb-2 justify-content-end">
-                <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleRevenueBtn">
-                    <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti pajamas</div>
-                <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleCostBtn">
-                    <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti išlaidas</div>
-                <div class="btn btn-primary mt-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleTicketingBtn">
-                    <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti bilietaciją</div>
-            </div>
+            @if(User.IsInRole("admin") || User.IsInRole("eventCoord"))
+            {
+                if (User.IsInRole("admin") || userInTeam != null)
+                {
+                    <div class="d-flex mt-4 mb-2 justify-content-end">
+                        <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleRevenueBtn">
+                            <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti pajamas
+                
+                        </div>
+                        <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleCostBtn">
+                            <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti išlaidas
+                
+                        </div>
+                        <div class="btn btn-primary mt-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleTicketingBtn">
+                            <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti bilietaciją
+                
+                        </div>
+                    </div>                       
+                }             
+            }
+
             @*Add single revenue to an event*@
             <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleRevenue">
                 <h4 class="my-4">Pajamos</h4>
@@ -485,9 +563,9 @@
                         <input name="comment" class="form-control w-50" placeholder="Komentaras" />
                     </div>
                     <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
-                </form> 
+                </form>
             </div>
-           
+
             @******@
             @*Add single cost to an event*@
             <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleCost">
@@ -506,7 +584,7 @@
                     <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
                 </form>
             </div>
-            
+
             @******@
             @*Add single ticketing to an event*@
             <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleTicketing">
@@ -515,7 +593,7 @@
                     <input name="eventId" class="form-control" value="@Model.Id" hidden />
                     <div class="d-flex justify-content-start">
                         <input name="price" type="number" class="form-control w-25 me-3" min="0" max="9999" step="0.01" onchange="setTwoNumberDecimal" placeholder="Kaina" required />
-                        <input name="quantity" type="number" class="form-control w-25 me-3" placeholder="Kiekis"  min='1' max='99999' required />
+                        <input name="quantity" type="number" class="form-control w-25 me-3" placeholder="Kiekis" min='1' max='99999' required />
                     </div>
                     <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
                 </form>
@@ -527,71 +605,73 @@
                 <h4 class="ms-2 mb-4">Pajamos</h4>
                 <div class="card card-body mb-4" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
-                        <div class="col-sm-9 col-lg-3 mb-3" >Pavadinimas</div>
-                        <div class="col-sm-9 col-lg-2 mb-3" >Uždirbta</div>
-                        <div class="col-sm-9 col-lg-3 mb-3" >Sąskaitos faktūra</div>
-                        <div class="col-sm-9 col-lg-2 mb-3" >Data</div>
-                        <div class="col-sm-9 col-lg-2 mb-3" >Komentaras</div>
+                        <div class="col-sm-9 col-lg-3 mb-3">Pavadinimas</div>
+                        <div class="col-sm-9 col-lg-2 mb-3">Uždirbta</div>
+                        <div class="col-sm-9 col-lg-3 mb-3">Sąskaitos faktūra</div>
+                        <div class="col-sm-9 col-lg-2 mb-3">Data</div>
+                        <div class="col-sm-9 col-lg-2 mb-3">Komentaras</div>
                     </div>
-                     @foreach (var singleRevenue in revenue)
-                     {
+                    @foreach (var singleRevenue in revenue)
+                    {
                         <div class="row">
                             <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
                                 @singleRevenue.Title
                             </div>
                             <div class="col-sm-9 col-lg-2 text-success mb-2" style="border-right:1px solid #E1E1E1;">
-                               € @singleRevenue.Earned
+                                € @singleRevenue.Earned
                             </div>
                             <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
-                               @singleRevenue.InvoiceNr
+                                @singleRevenue.InvoiceNr
                             </div>
                             <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
                                 @singleRevenue.Date.ToString("yyyy/MM/dd")
                             </div>
-                            @if(singleRevenue.Comment != null){
+                            @if  (singleRevenue.Comment != null)
+                            
+                            {
                                 <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
                                     @singleRevenue.Comment
-                                </div>                            
+                                </div>
                             }
                             <div class="row d-flex justify-content-end mt-3 mb-4">
                                 <div class="col-7 d-flex justify-content-end">
                                     <a asp-controller="Outlays" asp-action="EditRevenue" asp-route-id="@singleRevenue.Id"
-                                        class="btn btn-outline-secondary mx-3 rounded-2">
+                               class="btn btn-outline-secondary mx-3 rounded-2">
                                         <i class="fas fa-edit pe-1"></i> Redaguoti
                                     </a>
                                     <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#revenueModal-@singleRevenue.Id">
-                                      <i class="fas fa-trash pe-1"></i> Ištrinti
+                            <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#revenueModal-@singleRevenue.Id">
+                                        <i class="fas fa-trash pe-1"></i> Ištrinti
                                     </button>
                                 </div>
 
                                 <!-- Modal -->
-                                <div class="modal fade" id="revenueModal-@singleRevenue.Id" tabindex="-1" role="dialog" aria-labelledby="revenueModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="revenueModalLabel">Ar tikrai norite pašalinti?</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                            Pašalinsite vieną iš pajamų: <b>@singleRevenue.Title</b> iš renginio
-                                      </div>
-                                      <div class="modal-footer">
-                                        <form asp-action="Delete">
-                                            <input type="hidden" asp-for="@Model.Id">
-                                            <input type="submit" asp-action="DeleteRevenue" asp-controller="Outlays" asp-route-id="@singleRevenue.Id"  value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
-                                        </form>
-                                      </div>
+                        <div class="modal fade" id="revenueModal-@singleRevenue.Id" tabindex="-1" role="dialog" aria-labelledby="revenueModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="revenueModalLabel">Ar tikrai norite pašalinti?</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Pašalinsite vieną iš pajamų: <b>@singleRevenue.Title</b> iš renginio
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form asp-action="Delete">
+                                                    <input type="hidden" asp-for="@Model.Id">
+                                                    <input type="submit" asp-action="DeleteRevenue" asp-controller="Outlays" asp-route-id="@singleRevenue.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
                                 <!----->
-                            </div>
+                    </div>
 
                         </div>
-                     }   
+                    }
                 </div>
             }
             @if (cost != null)
@@ -599,71 +679,73 @@
                 <h4 class="ms-2 mb-4">Išlaidos</h4>
                 <div class="card card-body mb-4" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
-                        <div class="col-sm-9 col-lg-3 mb-3" >Pavadinimas</div>
-                        <div class="col-sm-9 col-lg-2 mb-3" >Kaina</div>
-                        <div class="col-sm-9 col-lg-3 mb-3" >Sąskaitos faktūra</div>
-                        <div class="col-sm-9 col-lg-2 mb-3" >Data</div>
-                        <div class="col-sm-9 col-lg-2 mb-3" >Komentaras</div>
+                        <div class="col-sm-9 col-lg-3 mb-3">Pavadinimas</div>
+                        <div class="col-sm-9 col-lg-2 mb-3">Kaina</div>
+                        <div class="col-sm-9 col-lg-3 mb-3">Sąskaitos faktūra</div>
+                        <div class="col-sm-9 col-lg-2 mb-3">Data</div>
+                        <div class="col-sm-9 col-lg-2 mb-3">Komentaras</div>
                     </div>
-                     @foreach (var singleCost in cost)
-                     {
+                    @foreach (var singleCost in cost)
+                    {
                         <div class="row">
                             <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
                                 @singleCost.Title
                             </div>
                             <div class="col-sm-9 col-lg-2 text-danger mb-2" style="border-right:1px solid #E1E1E1;">
-                               € @singleCost.Price
+                                € @singleCost.Price
                             </div>
                             <div class="col-sm-9 col-lg-3 mb-2" style="border-right:1px solid #E1E1E1;">
-                               @singleCost.InvoiceNr
+                                @singleCost.InvoiceNr
                             </div>
                             <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
                                 @singleCost.Date.ToString("yyyy/MM/dd")
                             </div>
-                            @if(singleCost.Comment != null){
+                            @if  (singleCost.Comment != null)
+                            
+                            {
                                 <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
                                     @singleCost.Comment
-                                </div>                            
+                                </div>
                             }
                             <div class="row d-flex justify-content-end mt-3 mb-4">
                                 <div class="col-7 d-flex justify-content-end">
                                     <a asp-controller="Outlays" asp-action="EditCost" asp-route-id="@singleCost.Id"
-                                        class="btn btn-outline-secondary mx-3 rounded-2">
+                               class="btn btn-outline-secondary mx-3 rounded-2">
                                         <i class="fas fa-edit pe-1"></i> Redaguoti
                                     </a>
                                     <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#costModal-@singleCost.Id">
-                                      <i class="fas fa-trash pe-1"></i> Ištrinti
+                            <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#costModal-@singleCost.Id">
+                                        <i class="fas fa-trash pe-1"></i> Ištrinti
                                     </button>
                                 </div>
 
                                 <!-- Modal -->
-                                <div class="modal fade" id="costModal-@singleCost.Id" tabindex="-1" role="dialog" aria-labelledby="costModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                            Pašalinsite vieną iš išlaidų: <b>@singleCost.Title</b> iš renginio
-                                      </div>
-                                      <div class="modal-footer">
-                                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
-                                        <form asp-action="Delete">
-                                            <input type="hidden" asp-for="@Model.Id">
-                                            <input type="submit" asp-action="DeleteCost" asp-controller="Outlays" asp-route-id="@singleCost.Id"  value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
-                                        </form>
-                                      </div>
+                        <div class="modal fade" id="costModal-@singleCost.Id" tabindex="-1" role="dialog" aria-labelledby="costModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Pašalinsite vieną iš išlaidų: <b>@singleCost.Title</b> iš renginio
+                                            </div>
+                                            <div class="modal-footer">
+                                                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                                                <form asp-action="Delete">
+                                                    <input type="hidden" asp-for="@Model.Id">
+                                                    <input type="submit" asp-action="DeleteCost" asp-controller="Outlays" asp-route-id="@singleCost.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
                                 <!----->
-                            </div>
+                    </div>
                         </div>
-                     }   
+                    }
                 </div>
             }
             @if (ticketing != null)
@@ -671,60 +753,60 @@
                 <h4 class="ms-2 mb-4">Bilietacija</h4>
                 <div class="card card-body" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
-                        <div class="col-sm-9 col-lg-2 mb-3" >Kaina</div>
-                        <div class="col-sm-9 col-lg-2 mb-3" >Kiekis</div>
-                        <div class="col-sm-9 col-lg-3 mb-3" >Suma</div>
+                        <div class="col-sm-9 col-lg-2 mb-3">Kaina</div>
+                        <div class="col-sm-9 col-lg-2 mb-3">Kiekis</div>
+                        <div class="col-sm-9 col-lg-3 mb-3">Suma</div>
                     </div>
-                     @foreach (var singleTicketing in ticketing)
-                     {
+                    @foreach (var singleTicketing in ticketing)
+                    {
                         <div class="row">
                             <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
-                               € @singleTicketing.Price
+                                € @singleTicketing.Price
                             </div>
                             <div class="col-sm-9 col-lg-2 mb-2" style="border-right:1px solid #E1E1E1;">
                                 @singleTicketing.Quantity
                             </div>
                             <div class="col-sm-9 col-lg-2 text-success mb-2">
-                               € @Decimal.Round((decimal)(singleTicketing.Total()),2)
+                                € @Decimal.Round((decimal)(singleTicketing.Total()),2)
                             </div>
                             @*<div class="row d-flex justify-content-end mt-3 mb-4">*@
-                                <div class="col-6 d-flex justify-content-end">
-                                    <a asp-controller="Outlays" asp-action="EditTicketing" asp-route-id="@singleTicketing.Id"
-                                        class="btn btn-outline-secondary mx-3 rounded-2">
-                                        <i class="fas fa-edit pe-1"></i> Redaguoti
-                                    </a>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#ticketingModal-@singleTicketing.Id">
-                                      <i class="fas fa-trash pe-1"></i> Ištrinti
-                                    </button>
-                                </div>
+                            <div class="col-6 d-flex justify-content-end">
+                                <a asp-controller="Outlays" asp-action="EditTicketing" asp-route-id="@singleTicketing.Id"
+                                    class="btn btn-outline-secondary mx-3 rounded-2">
+                                    <i class="fas fa-edit pe-1"></i> Redaguoti
+                                </a>
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#ticketingModal-@singleTicketing.Id">
+                                    <i class="fas fa-trash pe-1"></i> Ištrinti
+                                </button>
+                            </div>
 
-                                <!-- Modal -->
-                                <div class="modal fade" id="ticketingModal-@singleTicketing.Id" tabindex="-1" role="dialog" aria-labelledby="ticketingModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
+                            <!-- Modal -->
+                            <div class="modal fade" id="ticketingModal-@singleTicketing.Id" tabindex="-1" role="dialog" aria-labelledby="ticketingModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
                                     <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
                                             Pašalinsite vieną iš bilietacijų (kaina: <b>@singleTicketing.Price</b>, kiekis: <b>@singleTicketing.Quantity</b> ) iš renginio
-                                      </div>
-                                      <div class="modal-footer">
-                                        <form asp-action="Delete">
-                                            <input type="hidden" asp-for="@Model.Id">
-                                            <input type="submit" asp-action="DeleteTicketing" asp-controller="Outlays" asp-route-id="@singleTicketing.Id"  value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
-                                        </form>
-                                      </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form asp-action="Delete">
+                                                <input type="hidden" asp-for="@Model.Id">
+                                                <input type="submit" asp-action="DeleteTicketing" asp-controller="Outlays" asp-route-id="@singleTicketing.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                            </form>
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
-                                <!----->
+                            </div>
+                            <!----->
                             @*</div>*@
                         </div>
-                     }    
+                    }
                 </div>
                 <hr />
             }
@@ -738,183 +820,204 @@
             {
                 @if (lastEvents.Count != 0)
                 {
-                    @*Charts*@
-                    <div class="container mb-4">
-                        <canvas id="chart" width="200" height="200"></canvas>
-                        <canvas id="chart2" width="200" height="200"></canvas>
-                        <canvas id="chart3" width="200" height="200"></canvas>
-                    </div>
+                    @if (lastEvents[0].Revenues.Count != 0 && lastEvents[0].Costs.Count != 0)
+                    {
+                        @*Charts*@
+                        <div class="container mb-4">
+                            <canvas id="chart" width="200" height="90" class="my-3"></canvas>
+                            <canvas id="chart2" width="200" height="90" class="my-3"></canvas>
+                            <canvas id="chart3" width="200" height="90" class="my-3"></canvas>
+                        </div>
 
-                    <table class="table table-responsive" style="display: none" id="eventsTable">
-                        <tbody>
-                            @foreach (var lastEvent in lastEvents)
-                            {
+                        <table class="table table-responsive" style="display: none" id="eventsTable">
+                            <tbody>
+                                @foreach (var lastEvent in lastEvents)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => lastEvent.Title)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => lastEvent.StartDate)
+                                            @Html.DisplayFor(modelItem => lastEvent.EndDate)
+                                        </td>
+
+                                        <td>
+                                            @if (lastEvent.Location == null)
+                                            {
+                                                <span>-</span>
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(model => lastEvent.Location)
+                                            }
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => lastEvent.CoordinatorName) @Html.DisplayFor(modelItem => lastEvent.CoordinatorSurname)
+                                        </td>
+                                        <td class="text-end">
+                                            @Html.DisplayFor(modelItem => lastEvent.PlannedPeopleCount)
+                                        </td>
+                                        <td class="text-end">
+                                            @Html.DisplayFor(modelItem => lastEvent.PeopleCount)
+                                        </td>
+                                        <td class="text-end">
+                                            @if  (lastEvent.Revenues != null)
+                                        
+                                            {
+                                                <span>@decimal.Round((decimal)lastEvent.Revenues.Sum(r => r.Earned),2)</span>
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            @if  (lastEvent.Costs != null)
+                                        
+                                            {
+                                                <span>@decimal.Round((decimal)lastEvent.Costs.Sum(r => r.Price),2)</span>
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            @if  (lastEvent.Ticketings != null)
+                                        
+                                            {
+                                                <span>@lastEvent.Ticketings.Sum(t => t.Total())</span>
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <table class="table table-responsive mx-3">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => lastEvent.Title)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => lastEvent.StartDate)
-                                        @Html.DisplayFor(modelItem => lastEvent.EndDate)
-                                    </td>
-
-                                    <td>
-                                        @if (lastEvent.Location == null)
-                                        {
-                                            <span>-</span>
-                                        }
-                                        else
-                                        {
-                                            @Html.DisplayFor(model => lastEvent.Location)
-                                        }
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => lastEvent.CoordinatorName) @Html.DisplayFor(modelItem => lastEvent.CoordinatorSurname)
-                                    </td>
-                                    <td class="text-end">
-                                        @Html.DisplayFor(modelItem => lastEvent.PlannedPeopleCount)
-                                    </td>
-                                    <td class="text-end">
-                                        @Html.DisplayFor(modelItem => lastEvent.PeopleCount)
-                                    </td>
-                                    <td class="text-end">
-                                        @if(lastEvent.Revenues != null){
-                                           <span>@lastEvent.Revenues.Sum(r => r.Earned)</span> 
-                                        }
-                                        else
-                                        {
-                                            <span>0</span>
-                                        }
-                                    </td>
-                                    <td class="text-end">
-                                        @if(lastEvent.Costs != null){
-                                           <span>@lastEvent.Costs.Sum(r => r.Price)</span> 
-                                        }
-                                        else
-                                        {
-                                            <span>0</span>
-                                        }
-                                    </td>
-                                    <td class="text-end">
-                                        @if(lastEvent.Ticketings != null){
-                                           <span>@lastEvent.Ticketings.Sum(t => t.Total())</span> 
-                                        }
-                                        else
-                                        {
-                                            <span>0</span>
-                                        }
-                                    </td>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Title)
+                                    </th>
+                                    <th>
+                                        Renginio data
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Location)
+                                    </th>
+                                    <th>
+                                        Renginio koordinatorius
+                                    </th>
+                                    <th class="text-end">
+                                        @Html.DisplayNameFor(model => model.PlannedPeopleCount)
+                                    </th>
+                                    <th class="text-end">
+                                        @Html.DisplayNameFor(model => model.PeopleCount)
+                                    </th>
+                                    <th class="text-end">
+                                        Bendros pajamos
+                                    </th>
+                                    <th class="text-end">
+                                        Bendros išlaidos
+                                    </th>
+                                    <th class="text-end">
+                                        Bendra bilietacija
+                                    </th>
                                 </tr>
-                             }
-                        </tbody>
-                    </table>
-                    <table class="table table-responsive mx-3">
-                        <thead>
-                            <tr>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Title)
-                                </th>
-                                <th>
-                                    Renginio data
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Location)
-                                </th>
-                                <th>
-                                    Renginio koordinatorius
-                                </th>
-                                <th class="text-end">
-                                    @Html.DisplayNameFor(model => model.PlannedPeopleCount)
-                                </th>
-                                <th class="text-end">
-                                    @Html.DisplayNameFor(model => model.PeopleCount)
-                                </th>
-                                <th class="text-end">
-                                    Bendros pajamos
-                                </th>
-                                <th class="text-end">
-                                    Bendros išlaidos
-                                </th>
-                                <th class="text-end">
-                                    Bendra bilietacija
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var lastEvent in lastEvents)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => lastEvent.Title)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => lastEvent.StartDate)
-                                        @Html.DisplayFor(modelItem => lastEvent.EndDate)
-                                    </td>
+                            </thead>
+                            <tbody>
+                                @foreach (var lastEvent in lastEvents)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => lastEvent.Title)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => lastEvent.StartDate)
+                                            @Html.DisplayFor(modelItem => lastEvent.EndDate)
+                                        </td>
 
-                                    <td>
-                                        @if (lastEvent.Location == null)
-                                        {
-                                            <span>-</span>
-                                        }
-                                        else
-                                        {
-                                            @Html.DisplayFor(model => lastEvent.Location)
-                                        }
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => lastEvent.CoordinatorName) @Html.DisplayFor(modelItem => lastEvent.CoordinatorSurname)
-                                    </td>
-                                    <td class="text-end">
-                                        @Html.DisplayFor(modelItem => lastEvent.PlannedPeopleCount)
-                                    </td>
-                                    <td class="text-end">
-                                        @Html.DisplayFor(modelItem => lastEvent.PeopleCount)
-                                    </td>
-                                    <td class="text-end">
-                                        @if(lastEvent.Revenues != null){
-                                           <span>@lastEvent.Revenues.Sum(r => r.Earned)</span> 
-                                        }
-                                        else
-                                        {
-                                            <span>0</span>
-                                        }
-                                    </td>
-                                    <td class="text-end">
-                                        @if(lastEvent.Costs != null){
-                                           <span>@lastEvent.Costs.Sum(r => r.Price)</span> 
-                                        }
-                                        else
-                                        {
-                                            <span>0</span>
-                                        }
-                                    </td>
-                                    <td class="text-end">
-                                        @if(lastEvent.Ticketings != null){
-                                           <span>@lastEvent.Ticketings.Sum(t => t.Total())</span> 
-                                        }
-                                        else
-                                        {
-                                            <span>0</span>
-                                        }
-                                    </td>
-                                </tr>
-                             }
-                        </tbody>
-                    </table>
+                                        <td>
+                                            @if (lastEvent.Location == null)
+                                            {
+                                                <span>-</span>
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(model => lastEvent.Location)
+                                            }
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => lastEvent.CoordinatorName) @Html.DisplayFor(modelItem => lastEvent.CoordinatorSurname)
+                                        </td>
+                                        <td class="text-end">
+                                            @Html.DisplayFor(modelItem => lastEvent.PlannedPeopleCount)
+                                        </td>
+                                        <td class="text-end">
+                                            @Html.DisplayFor(modelItem => lastEvent.PeopleCount)
+                                        </td>
+                                        <td class="text-end">
+                                            @if  (lastEvent.Revenues != null)
+                                        
+                                            {
+                                                <span>@decimal.Round((decimal)lastEvent.Revenues.Sum(r => r.Earned),2)</span>
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            @if  (lastEvent.Costs != null)
+                                        
+                                            {
+                                                <span>@decimal.Round((decimal)lastEvent.Costs.Sum(r => r.Price),2)</span>
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            @if  (lastEvent.Ticketings != null)
+                                        
+                                            {
+                                                <span>@lastEvent.Ticketings.Sum(t => t.Total())</span>
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                         <div class="alert alert-light mt-4" role="alert">
+                            Nėra įvesta susijusių renginių sąmatos duomenų
+                        </div>                       
+                    }
                 }
                 else
                 {
                     <div class="alert alert-light mt-4" role="alert">
                         Ankstesnių metų renginių nerasta
-                    </div> 
+                    </div>
                 }
             }
             else
             {
                 <div class="alert alert-light mt-4" role="alert">
                     Per trumpas renginio pavadinimas kitų renginių tikrinimui
-                </div> 
+                </div>
             }
 
             <hr />
@@ -923,38 +1026,50 @@
         <div>
             <div class="float-start">
                 <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i>  Grįžti į sąrašą</a>
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary mx-3 rounded-2"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
+                @if(User.IsInRole("admin")  || User.IsInRole("eventCoord") || User.IsInRole("fsaOrgCoord"))
+                {
+                    if (User.IsInRole("admin") || userInTeam != null)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary mx-3 rounded-2"><i class="fas fa-edit pe-1"></i> Redaguoti</a>                           
+                    }      
+                }
             </div>
             <div class="float-end">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-danger rounded-2" data-toggle="modal" data-target="#exampleModal-@Model.Id">
-                    <i class="fas fa-trash pe-1"></i> Ištrinti
-                </button>
+                @if(User.IsInRole("admin")  || User.IsInRole("eventCoord") || User.IsInRole("fsaOrgCoord"))
+                {
+                    if (User.IsInRole("admin") || userInTeam != null)
+                    {
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-danger rounded-2" data-toggle="modal" data-target="#eventModal-@Model.Id">
+                            <i class="fas fa-trash pe-1"></i> Ištrinti
+                        </button>                            
+                    }                           
+                }
 
                 <!-- Modal -->
-                <div class="modal fade" id="exampleModal-@Model.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="eventModal-@Model.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Pašalinsite renginį: <b>@Model.Title</b>. Pašalinus renginį, bus pašalinta:
+                                <ol class="mt-3">
+                                    <li>Renginio komanda</li>
+                                    <li>Parama, susijusi su šiuo renginiu</li>
+                                    <li>Specifiniai reikalavimai, susije su šiuo renginiu</li>
+                                </ol>
+                            </div>
+                            <div class="modal-footer">
+                                <form asp-action="Delete">
+                                    <input type="submit" asp-action="Delete" asp-route-id="@Model.Id" value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase rounded-2" />
+                                </form>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            Pašalinsite renginį: <b>@Model.Title</b>. Pašalinus renginį, bus pašalinta: 
-                            <ol class="mt-3">
-                              <li>Renginio komanda</li>
-                              <li>Parama, susijusi su šiuo renginiu</li>
-                              <li>Specifiniai reikalavimai, susije su šiuo renginiu</li>
-                            </ol>   
-                        </div>
-                        <div class="modal-footer">
-                        <form asp-action="Delete">
-                            <input type="submit" asp-action="Delete" asp-route-id="@Model.Id"  value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase rounded-2" />
-                        </form>
-                        </div>
-                    </div>
                     </div>
                 </div>
                 <!----->
@@ -977,15 +1092,15 @@
         let costs = [];
         let ticketing = [];
         let balance = [];
-    
+
         for (let tr of trElems) {
             let tdElems = tr.getElementsByTagName('td');
             eventNames.push(tdElems[0].innerText);
-            revenueAndTicketing.push(parseFloat(tdElems[4].innerText) + parseFloat(tdElems[6].innerText));
-            costs.push(parseFloat(tdElems[5].innerText));
-            ticketing.push(parseFloat(tdElems[6].innerText));
-            balance.push(parseFloat(tdElems[4].innerText) + parseFloat(tdElems[6].innerText) - parseFloat(tdElems[5].innerText));
-
+            revenueAndTicketing.push(parseFloat(tdElems[6].innerText) + parseFloat(tdElems[8].innerText));
+            costs.push(parseFloat(tdElems[7].innerText));
+            ticketing.push(parseFloat(tdElems[8].innerText));
+            balance.push(parseFloat(tdElems[6].innerText) + parseFloat(tdElems[8].innerText) - parseFloat(tdElems[7].innerText));
+            console.log("balansas: " + tdElems[6].innerText);
         }
 
         const ctx = document.getElementById('chart');
@@ -996,15 +1111,9 @@
             type: 'bar',
             data: {
                 labels: eventNames,
-                //labels: [
-                //    'Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange
-                //],
                 datasets: [{
                     label: 'Pelnas su bilietacija',
                     data: revenueAndTicketing,
-                    //data: [
-                    //    12, 21, 
-                    //],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -1115,7 +1224,7 @@
         $('#containerAddSingleSponsorship').hide();
         $('#containerAddSingleRevenue').hide();
         $('#containerAddSingleTicketing').hide();
-        $('#containerAddSingleCost').hide();        
+        $('#containerAddSingleCost').hide();
     });
 
 
@@ -1154,7 +1263,7 @@
         $('#containerAddUser').hide("slow")
         $('#containerAddSingleTicketing').hide("slow");
     });
-    
+
     $('#addSingleTicketingBtn').click(function(){
         $('#containerAddSingleTicketing').toggle("slow");
 

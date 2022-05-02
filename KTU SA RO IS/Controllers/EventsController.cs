@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace KTU_SA_RO.Controllers
 {
-    [Authorize(Roles = "admin,eventCoord")]
     public class EventsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -41,7 +40,7 @@ namespace KTU_SA_RO.Controllers
                 .Skip((pageIndex - 1) * pageSize).Take(pageSize)
                 .ToListAsync());
         }
-
+        [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]
         // GET: Events/UserEvents/{userId}
         [Route("Events/UserEvents/{userId}")]
         public async Task<IActionResult> UserEvents(string userId, int pageIndex = 1)
@@ -67,7 +66,7 @@ namespace KTU_SA_RO.Controllers
 
             return View(nameof(Index));
         }
-
+        [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -94,11 +93,13 @@ namespace KTU_SA_RO.Controllers
                 .Include(c => c.Costs)
                 .Include(t => t.Ticketings)
                 .Include(s => s.Sponsorships)
+                    .ThenInclude(a => a.Sponsor)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             ViewData["lastEvents"] = LastEvents(@event, 3, 4);
-
             ViewData["sponsors"] = await _context.Sponsors.ToListAsync();
+            ViewData["eventSponsors"] = @event.Sponsorships.Select(s => s.Sponsor).Distinct().ToList();
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var eventTeam = new Dictionary<int,ApplicationUser>();
             var membersRole = new Dictionary<int,string>();
@@ -133,6 +134,7 @@ namespace KTU_SA_RO.Controllers
             ViewData["revenues"] = @event.Revenues.Where(r => r.Event == @event).ToList();
             ViewData["costs"] = @event.Costs.Where(r => r.Event == @event).ToList();
             ViewData["ticketings"] = @event.Ticketings.Where(r => r.Event == @event).ToList();
+            ViewData["userBelongsToEvent"] = await _context.EventTeamMembers.FirstOrDefaultAsync(e => e.UserId.Equals(userId) && e.EventId == @event.Id);
 
             return View(@event);
         }
@@ -196,6 +198,7 @@ namespace KTU_SA_RO.Controllers
         // POST: Events/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "admin,eventCoord,fsaOrgCoord")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,StartDate,EndDate,Location,Description,Has_coordinator,CoordinatorName,CoordinatorSurname,Is_canceled,Is_public,Is_live,PlannedPeopleCount,PeopleCount")]
@@ -207,7 +210,6 @@ namespace KTU_SA_RO.Controllers
                 @event.EventType = await _context.EventTypes.FirstOrDefaultAsync(et => et.Name.Equals(eventTypeName));
 
                 ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(@event.CoordinatorName) && u.Surname.Equals(@event.CoordinatorSurname));
-                var role = await _userManager.GetRolesAsync(user);
 
                 if (user == null)
                 {
@@ -215,16 +217,27 @@ namespace KTU_SA_RO.Controllers
                     return RedirectToAction(nameof(Create));
                 }
 
-                //@event.User = user;
+                var role = await _userManager.GetRolesAsync(user);
+                if (role == null)
+                {
+                    TempData["danger"] = "Renginio koordinatoriaus rolė nebuvo rasta";
+                    return RedirectToAction(nameof(Create));
+                }
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
 
+                var is_coord = true;
+                if (role.Equals("orgCoord"))
+                {
+                    is_coord = false;
+                }
+                
                 EventTeamMember team = new()
                 {
                     EventId = @event.Id,
                     UserId = user.Id,
                     RoleName = role.FirstOrDefault(),
-                    Is_event_coord = true
+                    Is_event_coord = is_coord
                 };
 
                 _context.Add(team);
@@ -236,7 +249,7 @@ namespace KTU_SA_RO.Controllers
             }
             return View(@event);
         }
-
+        [Authorize(Roles = "admin,eventCoord,fsaOrgCoord")]
         // GET: Events/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -259,6 +272,7 @@ namespace KTU_SA_RO.Controllers
         // POST: Events/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "admin,eventCoord,fsaOrgCoord")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,StartDate,EndDate,Location,Description,Has_coordinator,CoordinatorName,CoordinatorSurname,Is_canceled,Is_public,Is_live,PlannedPeopleCount,PeopleCount")]
@@ -286,17 +300,45 @@ namespace KTU_SA_RO.Controllers
                     EventTeamMember teamMember = await _context.EventTeamMembers.Where(t => t.EventId == @event.Id && t.UserId == user.Id).FirstOrDefaultAsync();
                     if (teamMember == null)
                     {
-                        TempData["danger"] = "Naudotojas su tokiu vardu ir pavarde komandoje nebuvo rastas";
-                        return RedirectToAction(nameof(EventsController.Edit), nameof(EventsController).Replace("Controller", ""), new { id = @event.Id.ToString() });
+                        EventTeamMember teamEventCoord = await _context.EventTeamMembers.Where(t => t.EventId == @event.Id && t.RoleName.Equals("eventCoord")).FirstOrDefaultAsync();
+                        var oldEventCoord = new ApplicationUser();
+                        if (teamEventCoord == null)
+                        {
+                            EventTeamMember teamFsaOrgCoord = await _context.EventTeamMembers.Where(t => t.EventId == @event.Id && t.RoleName.Equals("fsaOrgCoord")).FirstOrDefaultAsync();
+                            oldEventCoord = await _context.Users.FirstOrDefaultAsync(u => u.Id == teamFsaOrgCoord.UserId);
+                            EventTeamMember teamFsaOrgCoord2 = new()
+                            {
+                                EventId = @event.Id,
+                                UserId = oldEventCoord.Id,
+                                RoleName = teamFsaOrgCoord.RoleName,
+                                Is_event_coord = false
+                            };
+                            
+                            teamFsaOrgCoord.UserId = user.Id;
+                            teamFsaOrgCoord.RoleName = "eventCoord";
+                            _context.Update(teamFsaOrgCoord);
+                            _context.Add(teamFsaOrgCoord2);
+                            TempData["success"] = "FSA ORK koordinatorius <b>" + oldEventCoord.Name + " " + oldEventCoord.Surname +
+                                                    "</b> sėkmingai paskyrė išrinktą renginio koordinatorių <b>" + user.Name + " " + user.Surname + "</b> . ";
+                        }
+                        else
+                        {
+                            oldEventCoord = await _context.Users.FirstOrDefaultAsync(u => u.Id == teamEventCoord.UserId);
+                            teamEventCoord.UserId = user.Id;                           
+                            _context.Update(teamEventCoord);
+                            TempData["success"] = "Senas renginio koordinatorius <b>" + oldEventCoord.Name + " " + oldEventCoord.Surname + 
+                                                    "</b> sėkmingai pakeistas į <b>" + user.Name + " " + user.Surname + "</b> . ";
+                        }                        
+
+                        @event.CoordinatorName = user.Name;
+                        @event.CoordinatorSurname = user.Surname;
                     }
-                    teamMember.UserId = user.Id;
 
 
                     _context.Update(@event);
-                    _context.Update(teamMember);
                     await _context.SaveChangesAsync();
 
-                    TempData["success"] = "Renginys <b> " + @event.Title + " </b> sėkmingai atnaujintas!";
+                    TempData["success"] += "Renginys <b> " + @event.Title + " </b> sėkmingai atnaujintas!";
                     return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = @event.Id.ToString() });
                 }
                 catch (DbUpdateConcurrencyException)
@@ -314,25 +356,8 @@ namespace KTU_SA_RO.Controllers
             return View(@event);
         }
 
-        // GET: Events/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var @event = await _context.Events
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (@event == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(@event);
-        //}
-
         // POST: Events/Delete/5
+        [Authorize(Roles = "admin,eventCoord,fsaOrgCoord")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -348,6 +373,12 @@ namespace KTU_SA_RO.Controllers
                 _context.EventTeamMembers.RemoveRange(@event.EventTeamMembers);
             if(@event.Requirements != null)
                 _context.Requirements.RemoveRange(@event.Requirements);
+            if (@event.Sponsorships != null)
+                _context.Sponsorships.RemoveRange(@event.Sponsorships);
+            if (@event.Revenues != null)
+                _context.Revenues.RemoveRange(@event.Revenues);
+            if (@event.Ticketings != null)
+                _context.Ticketings.RemoveRange(@event.Ticketings);
 
             await _context.SaveChangesAsync();
 

@@ -16,8 +16,13 @@ namespace KTU_SA_RO.Models
         [DisplayName("Pavadinimas")]
         public string Title { get; set; }
 
+        [Required(ErrorMessage = "Įmonės kodas yra privalomas")]
+        [MaxLength(10)]
+        [DisplayName("Įmonės kodas")]
+        public string CompanyCode { get; set; }
+
         [Required(ErrorMessage = "Įmonės PVM mokėtojo kodas yra privalomas")]
-        [MaxLength(30)]
+        [MaxLength(20)]
         [DisplayName("Įmonės PVM kodas")]
         public string CompanyVAT { get; set; }
 

@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KTU_SA_RO.Controllers
 {
+    [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]
     public class SponsorsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -64,12 +66,13 @@ namespace KTU_SA_RO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,LogoPath,CompanyVAT,Address,PhoneNr,Email,CompanyHeadName,CompanyHeadSurname")] Sponsor sponsor)
+        public async Task<IActionResult> Create([Bind("Id,Title,CompanyCode,CompanyVAT,Address,PhoneNr,Email,CompanyHeadName,CompanyHeadSurname")] Sponsor sponsor)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(sponsor);
                 await _context.SaveChangesAsync();
+                TempData["success"] = "Rėmėjas <b>" + sponsor.Title + "</b> sėkmingai sukurtas!";
                 return RedirectToAction(nameof(Index));
             }
             return View(sponsor);
@@ -134,7 +137,7 @@ namespace KTU_SA_RO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,LogoPath,CompanyVAT,Address,PhoneNr,Email,CompanyHeadName,CompanyHeadSurname")] Sponsor sponsor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,CompanyCode,CompanyVAT,Address,PhoneNr,Email,CompanyHeadName,CompanyHeadSurname")] Sponsor sponsor)
         {
             if (id != sponsor.Id)
             {

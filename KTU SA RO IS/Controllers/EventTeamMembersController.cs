@@ -9,6 +9,7 @@ using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KTU_SA_RO.Controllers
 {
@@ -23,41 +24,10 @@ namespace KTU_SA_RO.Controllers
             _userManager = userManager;
         }
 
-        // GET: EventTeams
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.EventTeamMembers;
-            return View(await applicationDbContext.OrderByDescending(e => e.EventId).ToListAsync());
-        }
-
-        // GET: EventTeams/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eventTeam = await _context.EventTeamMembers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (eventTeam == null)
-            {
-                return NotFound();
-            }
-
-            return View(eventTeam);
-        }
-
-        // GET: EventTeams/Create
-        public IActionResult Create()
-        {
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "CoordinatorName");
-            return View();
-        }
-
         // POST: EventTeamMembers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,orgCoord")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(/*[Bind("Id,EventId,UserId,Is_event_coord")] EventTeamMember eventTeamMember, */
@@ -78,25 +48,17 @@ namespace KTU_SA_RO.Controllers
                     return RedirectToAction(nameof(EventsController.Details),nameof(EventsController).Replace("Controller",""), new { id = eventId.ToString()});
                 }
                 var userRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
-                var a = SetUserRole(pickedPosition);
+                var userWithSamePosition = await _context.EventTeamMembers.Where(et => et.EventId == eventId && et.RoleName.Equals(userRole)).FirstOrDefaultAsync();
                 // if wanted user has the same position 
-                if ( _context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id) 
-                    && userRole.Equals(SetUserRole(pickedPosition))).FirstOrDefault() != null)
+                if ( _context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id)
+                    && userRole.Equals(SetUserRole(pickedPosition))).FirstOrDefault() != null || userWithSamePosition != null)
                 {
                     TempData["danger"] = "Naudotojas su tokiais duomenimis ir pozicija jau egzistuoja komandoje";
                     return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
                 }
-                if (_context.EventTeamMembers.Where(et =>  et.UserId.Equals(user.Id)
-                    && userRole.Equals(SetUserRole(pickedPosition))).FirstOrDefault() == null)
+                else if (!userRole.Equals(SetUserRole(pickedPosition)))
                 {
                     TempData["danger"] = "Pasirinktas naudotojas neturi tokios rolės";
-                    return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
-                }
-                // if event coordinator already exists
-                if (_context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id)
-                    && et.RoleName.Equals("eventCoord")).FirstOrDefault() != null)
-                {
-                    TempData["danger"] = "Renginio koordinatorius gali būti tik vienas";
                     return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
                 }
 
@@ -137,87 +99,14 @@ namespace KTU_SA_RO.Controllers
                 return null;
         }
 
-        // GET: EventTeams/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eventTeamMember = await _context.EventTeamMembers.FindAsync(id);
-            if (eventTeamMember == null)
-            {
-                return NotFound();
-            }
-            // Pakeisti Id
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "CoordinatorName", eventTeamMember.Id);
-            return View(eventTeamMember);
-        }
-
-        // POST: EventTeams/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EventId,UserId,Is_event_coord")] EventTeamMember eventTeamMember)
-        {
-            if (id != eventTeamMember.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(eventTeamMember);
-                    await _context.SaveChangesAsync();
-                    TempData["success"] = "Komanda <b> " + eventTeamMember.Id + "</b> sėkmingai atnaujinta!";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EventTeamExists(eventTeamMember.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            // Pakeisti Id
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "CoordinatorName", eventTeamMember.Id);
-            return View(eventTeamMember);
-        }
-
-        // GET: EventTeams/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var eventTeamMember = await _context.EventTeamMembers
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (eventTeamMember == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(eventTeamMember);
-        //}
-
         // POST: EventTeams/Delete/5
+        [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,orgCoord")]
         [HttpPost,ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirm(int id)
         {
             var eventTeamMember = await _context.EventTeamMembers.FindAsync(id);
-            var eventId =  _context.EventTeamMembers.FirstOrDefault(et => et.Id == id).EventId;
+            var eventId =  eventTeamMember.EventId;
             var @event = await _context.Events.FindAsync(eventId);
             var user = await _context.Users.FindAsync(eventTeamMember.UserId);
 

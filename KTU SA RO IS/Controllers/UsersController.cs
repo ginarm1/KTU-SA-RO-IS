@@ -1,5 +1,6 @@
 ﻿using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace KTU_SA_RO.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(Roles = "admin, orgCoord")]
         // GET: Users
         public async Task<IActionResult> Index(int pageIndex = 1)
         {
@@ -38,6 +40,7 @@ namespace KTU_SA_RO.Controllers
             ViewData["pageIndex"] = pageIndex;
 
             return View(await _context.Users
+                .OrderBy(x => x.Name)
                 .Skip((pageIndex - 1) * pageSize).Take(pageSize)
                 .ToListAsync());
         }
