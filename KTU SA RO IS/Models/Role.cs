@@ -2,7 +2,7 @@
 {
     public enum Role
     {
-        registered,
+        registeredUnverified,
         eventCoord,
         fsaOrgCoord,
         fsaBussinesCoord,

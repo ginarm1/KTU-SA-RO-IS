@@ -44,7 +44,7 @@
             </dd>
             <div class="form-group mt-4">
                 <a asp-action="Index" class="btn btn-outline-dark text-uppercase"><i class="fas fa-arrow-left"></i> Grižti į sąrašą</a>
-                <button type="submit"  asp-action="ChangeUserRole" asp-route-id="@Model.Id"  class="btn btn-primary"> Patvirtinti</button>
+                <button type="submit"  asp-action="ChangeUserRole" asp-route-id="@Model.Id"  class="btn btn-primary text-uppercase"> Patvirtinti</button>
                 <button type="button" class="btn btn-danger ms-5 rounded-2" data-toggle="modal" data-target="#exampleModal">
                     <i class="fas fa-trash pe-1"></i> Pašalinti naudotoją
                 </button>                    
@@ -68,7 +68,7 @@
                         <div class="modal-footer">
                         <form asp-action="DeleteUser" class="col-4">
                             <input type="hidden" name="userId"  value="@Model.Id" />
-                            <button type="submit"  asp-action="DeleteUser" asp-route-id="@Model.Id"  class="btn btn-danger"> Patvirtinti</button>
+                            <button type="submit"  asp-action="DeleteUser" asp-route-id="@Model.Id"  class="btn btn-danger text-uppercase"> Patvirtinti</button>
                         </form>
                         </div>
                     </div>

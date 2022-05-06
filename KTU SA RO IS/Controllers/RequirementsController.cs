@@ -191,14 +191,10 @@ namespace KTU_SA_RO.Controllers
                     return RedirectToAction(nameof(Edit));
                 }
             }
-            else
-            {
-
-            }
-
 
             if (ModelState.IsValid)
             {
+                ApplicationUser user = await _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(responsibleUserName) && u.Surname.Equals(responsibleUserSurname));
                 var reqLabel = "Bendrinis reikalavimas: <b> ";
                 try
                 {

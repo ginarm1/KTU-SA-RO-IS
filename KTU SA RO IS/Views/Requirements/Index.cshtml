@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<KTU_SA_RO.Models.Requirement>
 
 @{
-    ViewData["Title"] = "Reikalavimai";
+    ViewData["Title"] = "Bendriniai reikalavimai";
     var generalReq = ViewData["GeneralReq"] as List<Requirement>;
     var additionalReq = ViewData["AdditionalReq"] as List<Requirement>;
 }
@@ -15,8 +15,8 @@
 }
 
 <a asp-action="Create" class="btn btn-primary my-3 col-sm-6 col-lg-4 rounded-2"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti bendrinį reikalavimą</a>
-<hr />
-<h3 class="container mb-3">Bendriniai reikalavimai</h3>
+@*<hr />*@
+@*<h3 class="container mb-3">Bendriniai reikalavimai</h3>*@
 <table class="table table-responsive">
     <thead>
         <tr>
@@ -87,7 +87,7 @@
     </tbody>
 </table>
 
-<h3 class="container mt-5 mb-3">Specifiniai reikalavimai</h3>
+@*<h3 class="container mt-5 mb-3">Specifiniai reikalavimai</h3>
 <table class="table table-responsive">
     <thead>
         <tr>
@@ -139,4 +139,4 @@
             </tr>
         }
     </tbody>
-</table>
+</table>*@

@@ -37,9 +37,9 @@ namespace KTU_SA_RO.Models
 
             var roleStore = new RoleStore<IdentityRole>(_context);
 
-            if (!_context.Roles.Any(r => r.Name == "registered"))
+            if (!_context.Roles.Any(r => r.Name == "registeredUnverified"))
             {
-                await roleStore.CreateAsync(new IdentityRole { Name = "registered", NormalizedName = "REGISTERED" });
+                await roleStore.CreateAsync(new IdentityRole { Name = "registeredUnverified", NormalizedName = "REGISTEREDUNVERIFIED" });
             }
             if (!_context.Roles.Any(r => r.Name == "eventCoord"))
             {

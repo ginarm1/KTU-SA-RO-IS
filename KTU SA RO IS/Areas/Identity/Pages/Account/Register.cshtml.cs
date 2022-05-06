@@ -147,7 +147,7 @@ namespace KTU_SA_RO.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Naudotojas" + Input.Email + " sukūrė naują paskyrą");
-                    var result_role = await _userManager.AddToRoleAsync(user, Role.registered.ToString());
+                    var result_role = await _userManager.AddToRoleAsync(user, Role.registeredUnverified.ToString());
                     if (result_role.Succeeded)
                     {
                         var userId = await _userManager.GetUserIdAsync(user);
