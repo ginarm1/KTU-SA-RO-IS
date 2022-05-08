@@ -65,6 +65,7 @@ namespace KTU_SA_RO
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseMigrationsEndPoint();
             }
             else
             {

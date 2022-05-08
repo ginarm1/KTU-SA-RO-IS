@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<KTU_SA_RO.Models.Requirement>
 
 @{
-    ViewData["Title"] = "Bendriniai reikalavimai";
+    ViewData["Title"] = "Bendri reikalavimai";
     var generalReq = ViewData["GeneralReq"] as List<Requirement>;
     var additionalReq = ViewData["AdditionalReq"] as List<Requirement>;
 }
@@ -13,8 +13,11 @@
         @Html.Raw(TempData["success"].ToString())
     </div>
 }
+@if (User.IsInRole("admin") || User.IsInRole("orgCoord"))
+{
+    <a asp-action="Create" class="btn btn-primary my-3 col-sm-6 col-lg-4 rounded-2"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti bendrą reikalavimą</a>    
+}
 
-<a asp-action="Create" class="btn btn-primary my-3 col-sm-6 col-lg-4 rounded-2"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti bendrinį reikalavimą</a>
 @*<hr />*@
 @*<h3 class="container mb-3">Bendriniai reikalavimai</h3>*@
 <table class="table table-responsive">

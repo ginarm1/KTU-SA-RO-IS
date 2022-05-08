@@ -436,41 +436,47 @@
                         </div>
                         <div class="row m-3">
                             <div class="col-6">@requirement.Description</div>
-                            <div class="col">
-                                <a asp-controller="Requirements" asp-action="Edit" asp-route-id="@requirement.Id"
-                           class="btn btn-outline-secondary mx-3 rounded-2">
-                                    <i class="fas fa-edit pe-1"></i> Redaguoti
-                                </a>
-                                <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#exampleModal-@requirement.Id">
-                                    <i class="fas fa-trash pe-1"></i> Ištrinti
-                                </button>
+                            @if(User.IsInRole("admin")  || User.IsInRole("eventCoord") || User.IsInRole("fsaPrCoord") || User.IsInRole("fsaOrgCoord") || User.IsInRole("fsaBussinesCoord"))
+                            {
+                                if (User.IsInRole("admin") || userInTeam != null)
+                                {
+                                    <div class="col">
+                                        <a asp-controller="Requirements" asp-action="Edit" asp-route-id="@requirement.Id"
+                                            class="btn btn-outline-secondary mx-3 rounded-2">
+                                            <i class="fas fa-edit pe-1"></i> Redaguoti
+                                        </a>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#exampleModal-@requirement.Id">
+                                            <i class="fas fa-trash pe-1"></i> Ištrinti
+                                        </button>
 
-                                <!-- Modal -->
-                        <div class="modal fade" id="exampleModal-@requirement.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Pašalinsite specifinį reikalavimą: <b>@requirement.Name</b> iš renginio
-                                            </div>
-                                            <div class="modal-footer">
-                                                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
-                                                <form asp-action="Delete">
-                                                    <input type="submit" asp-action="Delete" asp-route-id="@requirement.Id" value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase" />
-                                                </form>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal-@requirement.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Ar tikrai norite pašalinti?</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Pašalinsite specifinį reikalavimą: <b>@requirement.Name</b> iš renginio
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                                                        <form asp-action="Delete">
+                                                            <input type="submit" asp-action="Delete" asp-route-id="@requirement.Id" value="Patvirtinti" class="btn btn-danger rounded-3 text-uppercase" />
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <!----->
+                                        <!----->
+                                    </div>                                    
+                                }
+                            }
 
-                    </div>
                         </div>
                     </div>
                 }
@@ -489,7 +495,7 @@
             <h5 class="display-6 my-4">Sąmata</h5>
             <div class="d-flex justify-content-center mt-4">
                 <h5 class="me-4">
-                    Bendros pajamos:
+                    Bendros įplaukos:
                     @if (revenue != null)
                     {
                         <span class="display-5 text-success">@decimal.Round((decimal)revenue.Sum(r => r.Earned),2)</span>
@@ -500,7 +506,7 @@
                     }
                 </h5>
                 <h5 class="me-4">
-                    Bilietų pajamos:
+                    Bilietų įplaukos:
                     @if (ticketing != null)
                     {
                         <span class="display-5 text-success">@decimal.Round((decimal)ticketing.Sum(r => r.Total()),2)</span>
@@ -533,11 +539,11 @@
                 {
                     <div class="d-flex mt-4 mb-2 justify-content-end">
                         <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleRevenueBtn">
-                            <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti pajamas
+                            <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti įplauką
                 
                         </div>
                         <div class="btn btn-primary mt-3 me-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleCostBtn">
-                            <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti išlaidas
+                            <i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Pridėti išlaidą
                 
                         </div>
                         <div class="btn btn-primary mt-3 mb-4 col-sm-4 col-lg-3 rounded-2" id="addSingleTicketingBtn">
@@ -550,7 +556,7 @@
 
             @*Add single revenue to an event*@
             <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleRevenue">
-                <h4 class="my-4">Pajamos</h4>
+                <h4 class="my-4">Įplaukos</h4>
                 <form asp-action="CreateRevenue" asp-controller="Outlay">
                     <input name="eventId" class="form-control" value="@Model.Id" hidden />
                     <div class="d-flex justify-content-between">
@@ -602,7 +608,7 @@
 
             @if (revenue != null)
             {
-                <h4 class="ms-2 mb-4">Pajamos</h4>
+                <h4 class="ms-2 mb-4">Įplaukos</h4>
                 <div class="card card-body mb-4" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
                         <div class="col-sm-9 col-lg-3 mb-3">Pavadinimas</div>
@@ -633,43 +639,49 @@
                                     @singleRevenue.Comment
                                 </div>
                             }
-                            <div class="row d-flex justify-content-end mt-3 mb-4">
-                                <div class="col-7 d-flex justify-content-end">
-                                    <a asp-controller="Outlays" asp-action="EditRevenue" asp-route-id="@singleRevenue.Id"
-                               class="btn btn-outline-secondary mx-3 rounded-2">
-                                        <i class="fas fa-edit pe-1"></i> Redaguoti
-                                    </a>
-                                    <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#revenueModal-@singleRevenue.Id">
-                                        <i class="fas fa-trash pe-1"></i> Ištrinti
-                                    </button>
-                                </div>
+                            @if(User.IsInRole("admin") || User.IsInRole("eventCoord") || User.IsInRole("fsaOrgCoord"))
+ 
+                            {
+                                if (User.IsInRole("admin") || userInTeam != null)
+                                {
+                                    <div class="row d-flex justify-content-end mt-3 mb-4">
+                                        <div class="col-7 d-flex justify-content-end">
+                                            <a asp-controller="Outlays" asp-action="EditRevenue" asp-route-id="@singleRevenue.Id"
+                                                class="btn btn-outline-secondary mx-3 rounded-2">
+                                                <i class="fas fa-edit pe-1"></i> Redaguoti
+                                            </a>
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#revenueModal-@singleRevenue.Id">
+                                                <i class="fas fa-trash pe-1"></i> Ištrinti
+                                            </button>
+                                        </div>
 
-                                <!-- Modal -->
-                        <div class="modal fade" id="revenueModal-@singleRevenue.Id" tabindex="-1" role="dialog" aria-labelledby="revenueModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="revenueModalLabel">Ar tikrai norite pašalinti?</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Pašalinsite vieną iš pajamų: <b>@singleRevenue.Title</b> iš renginio
-                                            </div>
-                                            <div class="modal-footer">
-                                                <form asp-action="Delete">
-                                                    <input type="hidden" asp-for="@Model.Id">
-                                                    <input type="submit" asp-action="DeleteRevenue" asp-controller="Outlays" asp-route-id="@singleRevenue.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
-                                                </form>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="revenueModal-@singleRevenue.Id" tabindex="-1" role="dialog" aria-labelledby="revenueModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="revenueModalLabel">Ar tikrai norite pašalinti?</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Pašalinsite įplauką: <b>@singleRevenue.Title</b> iš renginio
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <form asp-action="Delete">
+                                                            <input type="hidden" asp-for="@Model.Id">
+                                                            <input type="submit" asp-action="DeleteRevenue" asp-controller="Outlays" asp-route-id="@singleRevenue.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <!----->
-                    </div>
-
+                                        <!----->
+                                    </div>                                    
+                                }
+                            }
                         </div>
                     }
                 </div>
@@ -707,43 +719,49 @@
                                     @singleCost.Comment
                                 </div>
                             }
-                            <div class="row d-flex justify-content-end mt-3 mb-4">
-                                <div class="col-7 d-flex justify-content-end">
-                                    <a asp-controller="Outlays" asp-action="EditCost" asp-route-id="@singleCost.Id"
-                               class="btn btn-outline-secondary mx-3 rounded-2">
-                                        <i class="fas fa-edit pe-1"></i> Redaguoti
-                                    </a>
-                                    <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#costModal-@singleCost.Id">
-                                        <i class="fas fa-trash pe-1"></i> Ištrinti
-                                    </button>
-                                </div>
+                            @if(User.IsInRole("admin")  || User.IsInRole("eventCoord") || User.IsInRole("fsaOrgCoord"))
+                            {
+                                if (User.IsInRole("admin") || userInTeam != null)
+                                {
+                                    <div class="row d-flex justify-content-end mt-3 mb-4">
+                                        <div class="col-7 d-flex justify-content-end">
+                                            <a asp-controller="Outlays" asp-action="EditCost" asp-route-id="@singleCost.Id"
+                                                class="btn btn-outline-secondary mx-3 rounded-2">
+                                                <i class="fas fa-edit pe-1"></i> Redaguoti
+                                            </a>
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#costModal-@singleCost.Id">
+                                                <i class="fas fa-trash pe-1"></i> Ištrinti
+                                            </button>
+                                        </div>
 
-                                <!-- Modal -->
-                        <div class="modal fade" id="costModal-@singleCost.Id" tabindex="-1" role="dialog" aria-labelledby="costModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Pašalinsite vieną iš išlaidų: <b>@singleCost.Title</b> iš renginio
-                                            </div>
-                                            <div class="modal-footer">
-                                                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
-                                                <form asp-action="Delete">
-                                                    <input type="hidden" asp-for="@Model.Id">
-                                                    <input type="submit" asp-action="DeleteCost" asp-controller="Outlays" asp-route-id="@singleCost.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
-                                                </form>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="costModal-@singleCost.Id" tabindex="-1" role="dialog" aria-labelledby="costModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Pašalinsite išlaidą: <b>@singleCost.Title</b> iš renginio
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>*@
+                                                        <form asp-action="Delete">
+                                                            <input type="hidden" asp-for="@Model.Id">
+                                                            <input type="submit" asp-action="DeleteCost" asp-controller="Outlays" asp-route-id="@singleCost.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <!----->
-                    </div>
+                                        <!----->
+                                    </div>                                    
+                                }
+                            }
                         </div>
                     }
                 </div>
@@ -769,42 +787,48 @@
                             <div class="col-sm-9 col-lg-2 text-success mb-2">
                                 € @Decimal.Round((decimal)(singleTicketing.Total()),2)
                             </div>
-                            @*<div class="row d-flex justify-content-end mt-3 mb-4">*@
-                            <div class="col-6 d-flex justify-content-end">
-                                <a asp-controller="Outlays" asp-action="EditTicketing" asp-route-id="@singleTicketing.Id"
-                                    class="btn btn-outline-secondary mx-3 rounded-2">
-                                    <i class="fas fa-edit pe-1"></i> Redaguoti
-                                </a>
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#ticketingModal-@singleTicketing.Id">
-                                    <i class="fas fa-trash pe-1"></i> Ištrinti
-                                </button>
-                            </div>
+                            @if(User.IsInRole("admin")  || User.IsInRole("eventCoord") || User.IsInRole("fsaOrgCoord"))
+                            {
+                                if (User.IsInRole("admin") || userInTeam != null)
+                                {
+                                    @*<div class="row d-flex justify-content-end mt-3 mb-4">*@
+                                    <div class="col-6 d-flex justify-content-end">
+                                        <a asp-controller="Outlays" asp-action="EditTicketing" asp-route-id="@singleTicketing.Id"
+                                            class="btn btn-outline-secondary mx-3 rounded-2">
+                                            <i class="fas fa-edit pe-1"></i> Redaguoti
+                                        </a>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-outline-danger rounded-2" data-toggle="modal" data-target="#ticketingModal-@singleTicketing.Id">
+                                            <i class="fas fa-trash pe-1"></i> Ištrinti
+                                        </button>
+                                    </div>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="ticketingModal-@singleTicketing.Id" tabindex="-1" role="dialog" aria-labelledby="ticketingModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            Pašalinsite vieną iš bilietacijų (kaina: <b>@singleTicketing.Price</b>, kiekis: <b>@singleTicketing.Quantity</b> ) iš renginio
-                                        </div>
-                                        <div class="modal-footer">
-                                            <form asp-action="Delete">
-                                                <input type="hidden" asp-for="@Model.Id">
-                                                <input type="submit" asp-action="DeleteTicketing" asp-controller="Outlays" asp-route-id="@singleTicketing.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
-                                            </form>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="ticketingModal-@singleTicketing.Id" tabindex="-1" role="dialog" aria-labelledby="ticketingModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="costModalLabel">Ar tikrai norite pašalinti?</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Pašalinsite bilietaciją (kaina: <b>@singleTicketing.Price</b>, kiekis: <b>@singleTicketing.Quantity</b> ) iš renginio
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form asp-action="Delete">
+                                                        <input type="hidden" asp-for="@Model.Id">
+                                                        <input type="submit" asp-action="DeleteTicketing" asp-controller="Outlays" asp-route-id="@singleTicketing.Id" value="Patvirtinti" class="btn btn-danger rounded-2 text-uppercase" />
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <!----->
-                            @*</div>*@
+                                    <!----->
+                                    @*</div>*@
+                                }    
+                            }
                         </div>
                     }
                 </div>
