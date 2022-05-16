@@ -120,7 +120,7 @@
                 }              
             </div>
             @*Add user to an event team*@
-            <div class="row" id="containerAddUser">
+            <div class="row" id="containerAddUser" style="display:none;">
                 <form asp-action="Create" asp-controller="EventTeamMembers">
                     <input name="eventId" class="form-control" value="@Model.Id" hidden />
                     <div class="d-flex justify-content-between">
@@ -289,7 +289,7 @@
             }                      
                
             @*Add single revenue to an event*@
-            <div class="row container bg-light rounded-2 mb-3 pt-5" id="containerAddSingleSponsorship">
+            <div class="row container bg-light rounded-2 mb-3 pt-5" id="containerAddSingleSponsorship" style="display:none;">
                 @if  (sponsors != null)
                 {
                     <form asp-action="CreateSponsorship" asp-controller="Sponsors">
@@ -317,9 +317,10 @@
             <div class="card card-body" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                 <div class="row fw-bold ms-1">
                     <div class="col-sm-9 col-lg-3 mb-3">Rėmėjas</div>
-                    <div class="col-sm-9 col-lg-4 mb-3">Aprašymas</div>
+                    <div class="col-sm-9 col-lg-2 mb-3">Tipas</div>
+                    <div class="col-sm-9 col-lg-3 mb-3">Aprašymas</div>
                     <div class="col-sm-9 col-lg-2 mb-3">Kiekis</div>
-                    <div class="col-sm-9 col-lg-3 mb-3">Vertė</div>
+                    <div class="col-sm-9 col-lg-2 mb-3">Vertė</div>
                 </div>
                 @foreach (var sponsorship in Model.Sponsorships)
                 {
@@ -327,7 +328,10 @@
                         <div class="col-sm-9 col-lg-3 mb-2">
                             @sponsorship.Sponsor.Title
                         </div>
-                        <div class="col-sm-9 col-lg-4 mb-3">
+                        <div class="col-sm-9 col-lg-2 mb-2">
+                            @sponsorship.Sponsor.CompanyType
+                        </div>
+                        <div class="col-sm-9 col-lg-3 mb-3">
                             @sponsorship.Description
                         </div>
                         <div class="col-sm-4 col-lg-2 mb-2">
@@ -379,24 +383,31 @@
                             <!----->
                         </div>
                     </div>
-                }            
-                <!--Sponsorship document generator-->
-                <form class="mt-4 mx-2" asp-controller="Documents" asp-action="GetSponsorshipAgreement" >
-                    <input name="eventId" class="form-control" value="@Model.Id" hidden />
-                    <div class="d-flex justify-content-between">
-                        <h5>Renginio įmonė</h5>
-                        <select id="jquery-searchable-dropdown" name="sponsorId" class="form-control w-50 custom-select ms-3 me-4" asp-items="@(new SelectList(eventSponsors, "Id", "Title"))"></select>
-                        <h5>Įmonės teisinė formos tipas</h5>
-                        <select class="form-control w-50" name="companyLegalType">
-                            <option>Uždaroji akcinė bendrovė</option>
-                            <option>Mažoji bendrija</option>
-                            <option>Asociacija</option>
-                            <option>Viešoji įstaiga</option>
-                            <option>Individuali įmonė</option>
-                        </select>
-                    </div>
-                    <input type="submit" value="Generuoti sutartį" class="btn btn-outline-dark float-end my-4 rounded-2" id="submit" />
-                </form> 
+                }
+                @if(User.IsInRole("admin") || User.IsInRole("fsaBussinesCoord"))
+                {
+                    if (User.IsInRole("admin") || userInTeam != null)
+                    {
+                        <!--Sponsorship document generator-->
+                        <form class="mt-4 mx-2" asp-controller="Documents" asp-action="GetSponsorshipAgreement" >
+                            <input name="eventId" class="form-control" value="@Model.Id" hidden />
+                            <div class="d-flex justify-content-between">
+                                <h5>Renginio įmonė</h5>
+                                <select id="jquery-searchable-dropdown" name="sponsorId" class="form-control w-50 custom-select ms-3 me-4" asp-items="@(new SelectList(eventSponsors, "Id", "Title"))"></select>
+@*                              <h5>Įmonės teisinė formos tipas</h5>
+                                <select class="form-control w-50" name="companyLegalType">
+                                    <option>Uždaroji akcinė bendrovė</option>
+                                    <option>Akcinė bendrovė</option>
+                                    <option>Mažoji bendrija</option>
+                                    <option>Asociacija</option>
+                                    <option>Viešoji įstaiga</option>
+                                    <option>Individuali įmonė</option>
+                                </select>*@
+                            </div>
+                            <input type="submit" value="Generuoti sutartį" class="btn btn-outline-dark float-end my-4 rounded-2" id="submit" />
+                        </form>                         
+                    }                    
+                }
             </div>
   
         }
@@ -555,7 +566,7 @@
             }
 
             @*Add single revenue to an event*@
-            <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleRevenue">
+            <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleRevenue" style="display:none;">
                 <h4 class="my-4">Įplaukos</h4>
                 <form asp-action="CreateRevenue" asp-controller="Outlay">
                     <input name="eventId" class="form-control" value="@Model.Id" hidden />
@@ -574,7 +585,7 @@
 
             @******@
             @*Add single cost to an event*@
-            <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleCost">
+            <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleCost" style="display:none;">
                 <h4 class="my-4">Išlaidos</h4>
                 <form asp-action="CreateCost" asp-controller="Outlay">
                     <input name="eventId" class="form-control" value="@Model.Id" hidden />
@@ -593,7 +604,7 @@
 
             @******@
             @*Add single ticketing to an event*@
-            <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleTicketing">
+            <div class="row container bg-light rounded-2 mb-3" id="containerAddSingleTicketing" style="display:none;">
                 <h4 class="my-4">Bilietacija</h4>
                 <form asp-action="CreateTicketing" asp-controller="Outlay">
                     <input name="eventId" class="form-control" value="@Model.Id" hidden />
@@ -1242,13 +1253,13 @@
         this.value = parseFloat(this.value).toFixed(2);
     }
     // make visible only one form
-    $(() => {
-        $('#containerAddUser').hide();
-        $('#containerAddSingleSponsorship').hide();
-        $('#containerAddSingleRevenue').hide();
-        $('#containerAddSingleTicketing').hide();
-        $('#containerAddSingleCost').hide();
-    });
+    //$(() => {
+    //    $('#containerAddUser').hide();
+    //    $('#containerAddSingleSponsorship').hide();
+    //    $('#containerAddSingleRevenue').hide();
+    //    $('#containerAddSingleTicketing').hide();
+    //    $('#containerAddSingleCost').hide();
+    //});
 
 
     $('#addUserBtn').click(function(){

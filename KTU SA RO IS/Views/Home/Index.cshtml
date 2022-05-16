@@ -29,7 +29,7 @@
         </tr>
     }
 </table>
-@if (userId != null && !User.IsInRole("registered"))
+@if (userId != null && !User.IsInRole("registeredUnverified"))
 {
    <div class="container">
       <a asp-action="userEvents" asp-controller="Events" asp-route-id="@userId" class="btn btn-dark mt-4 rounded-2"><i class="mt-1 mr-2 fas fa-info-circle"></i> Mano renginiai</a>

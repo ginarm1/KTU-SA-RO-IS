@@ -34,6 +34,7 @@ namespace KTU_SA_RO.Controllers
 
             return View(await _context.Sponsors
                 .Skip((pageIndex - 1) * pageSize).Take(pageSize)
+                .OrderBy(s => s.Title)
                 .ToListAsync());
         }
 
@@ -66,7 +67,7 @@ namespace KTU_SA_RO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,CompanyCode,CompanyVAT,Address,PhoneNr,Email,CompanyHeadName,CompanyHeadSurname")] Sponsor sponsor)
+        public async Task<IActionResult> Create([Bind("Id,Title,CompanyType,CompanyCode,CompanyVAT,Address,PhoneNr,Email,CompanyHeadName,CompanyHeadSurname")] Sponsor sponsor)
         {
             if (ModelState.IsValid)
             {
@@ -137,7 +138,7 @@ namespace KTU_SA_RO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,CompanyCode,CompanyVAT,Address,PhoneNr,Email,CompanyHeadName,CompanyHeadSurname")] Sponsor sponsor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,CompanyType,CompanyCode,CompanyVAT,Address,PhoneNr,Email,CompanyHeadName,CompanyHeadSurname")] Sponsor sponsor)
         {
             if (id != sponsor.Id)
             {

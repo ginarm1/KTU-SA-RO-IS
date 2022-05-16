@@ -34,6 +34,9 @@
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.CompanyType)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.CompanyCode)
             </th>
             <th>
@@ -60,6 +63,9 @@
             <tr>
                 <td class="fw-bold">
                     @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td class="fw-bold">
+                    @Html.DisplayFor(modelItem => item.CompanyType)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CompanyCode)

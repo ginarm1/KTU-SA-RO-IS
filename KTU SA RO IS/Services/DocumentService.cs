@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
 using Microsoft.AspNetCore.Hosting;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,31 +50,49 @@ namespace KTU_SA_RO.Services
 
                 for (int i = 0; i < words.Length; i++)
                 {
-                    if (words[i].Text.Equals("{companyName}") || words[i].Text.Equals("companyName"))
+                    if (words[i].Text.Equals("{todayDate}") || words[i].Text.Equals("todayDate"))
+                    {
+                        if (words[i].Text.Equals("todayDate"))
+                            DeleteBrackets(words, i);
+
+                        words[i].Text = DateTime.Today.ToString("yyyy-MM-dd");
+                    }
+                    else if (words[i].Text.Equals("{companyName}") || words[i].Text.Equals("companyName"))
                     {
                         if(words[i].Text.Equals("companyName"))
                             DeleteBrackets(words, i);
 
-                        switch (companyLegalType)
-                        {
-                            case "Uždaroji akcinė bendrovė":
-                                words[i].Text = "UAB " + sponsor.Title;
-                                break;
-                            case "Mažoji bendrija":
-                                words[i].Text = "MB " + sponsor.Title;
-                                break;
-                            case "Asociacija":
-                                words[i].Text = "" + sponsor.Title;
-                                break;
-                            case "Viešoji įstaiga":
-                                words[i].Text = "VšĮ " + sponsor.Title;
-                                break;
-                            case "Individuali įmonė":
-                                words[i].Text = "IĮ " + sponsor.Title;
-                                break;
-                            default:
-                                break;
-                        }
+                        words[i].Text = sponsor.Title;
+                    }
+                    else if (words[i].Text.Equals("{companyType}") || words[i].Text.Equals("companyType"))
+                    {
+                        if (words[i].Text.Equals("companyType"))
+                            DeleteBrackets(words, i);
+                        words[i].Text = sponsor.CompanyType;
+
+                        //switch (companyType)
+                        //{
+                        //    case "Uždaroji akcinė bendrovė":
+                        //        words[i].Text = "UAB " + sponsor.Title;
+                        //        break;
+                        //    case "Akcinė bendrovė":
+                        //        words[i].Text = "AB " + sponsor.Title;
+                        //        break;
+                        //    case "Mažoji bendrija":
+                        //        words[i].Text = "MB " + sponsor.Title;
+                        //        break;
+                        //    case "Asociacija":
+                        //        words[i].Text = "" + sponsor.Title;
+                        //        break;
+                        //    case "Viešoji įstaiga":
+                        //        words[i].Text = "VšĮ " + sponsor.Title;
+                        //        break;
+                        //    case "Individuali įmonė":
+                        //        words[i].Text = "IĮ " + sponsor.Title;
+                        //        break;
+                        //    default:
+                        //        break;
+                        //}
                     }
                     else if (words[i].Text.Equals("{companyVat}") || words[i].Text.Equals("companyVat"))
                     {
@@ -129,11 +148,6 @@ namespace KTU_SA_RO.Services
                         if(words[i].Text.Equals("sponsorshipDescription"))
                             DeleteBrackets(words, i);
                         SponsorshipContainsPart(words[i], sponsorshipsDetails, sponsorId, @event.Id);
-                        // after last sponsorship, unnecessary sponsorship details are added, so with this loop, it is deleted
-                        for (int j = 46; j < 61; j++)
-                        {
-                            words[j].Text = "";
-                        }
                     }
                     else if (words[i].Text.Equals("{sponsorshipSingleCost}") || words[i].Text.Equals("sponsorshipSingleCost"))
                     {

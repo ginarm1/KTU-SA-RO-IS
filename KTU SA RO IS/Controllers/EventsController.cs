@@ -64,6 +64,11 @@ namespace KTU_SA_RO.Controllers
 
             ViewData["userEvents"] = userEvents;
 
+            if (userEvents.Count == 0)
+            {
+                TempData["danger"] = "Jūs dar neturite sukūręs renginių";
+            }
+
             return View(nameof(Index));
         }
         [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]

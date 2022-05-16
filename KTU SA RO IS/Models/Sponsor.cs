@@ -16,6 +16,11 @@ namespace KTU_SA_RO.Models
         [DisplayName("Pavadinimas")]
         public string Title { get; set; }
 
+        [Required(ErrorMessage = "Įmonės teisinės formos tipas yra privalomas")]
+        [MaxLength(50)]
+        [DisplayName("Įmonės teisinės formos tipas")]
+        public string CompanyType { get; set; }
+
         [Required(ErrorMessage = "Įmonės kodas yra privalomas")]
         [MaxLength(10)]
         [DisplayName("Įmonės kodas")]
