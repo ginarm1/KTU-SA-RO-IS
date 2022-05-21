@@ -851,6 +851,21 @@
             <div class="d-flex mt-4 mb-2 justify-content-between">
                 <h5 class="my-4 display-6"><b>@Model.Title</b> pastarųjų metų renginių statistika</h5>
             </div>
+            <form asp-action="Details">
+                <input type="hidden" asp-for="@Model.Id">
+                <div class="d-flex mt-4 me-4 mb-2 justify-content-end">
+                    <label><b>Norimų matyti renginių kiekis</b></label>              
+                    <select class="custom-select mx-4 w-25" name="lastEventsCount">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                    <input type="submit"  value="Patvirtinti" class="btn btn-dark rounded-2 text-uppercase" />                
+                </div>
+            </form>
+
             @if (lastEvents != null)
             {
                 @if (lastEvents.Count != 0)
@@ -1194,7 +1209,7 @@
                     borderColor: [
                         'rgba(75, 192, 192, 1)',
                         'rgba(153, 102, 255, 1)',
-                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 206, 86, 1)',
                         'rgba(54, 162, 235, 1)',
                         'rgba(153, 102, 255, 1)',
                         'rgba(255, 159, 64, 1)'
@@ -1229,7 +1244,7 @@
                     borderColor: [
                         'rgba(225, 150, 251 , 1)',
                         'rgba(251, 179, 150 , 1)',
-                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 206, 86, 1)',
                         'rgba(54, 162, 235, 1)',
                         'rgba(153, 102, 255, 1)',
                         'rgba(255, 159, 64, 1)'

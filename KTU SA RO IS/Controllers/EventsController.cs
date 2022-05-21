@@ -73,7 +73,7 @@ namespace KTU_SA_RO.Controllers
         }
         [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]
         // GET: Events/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? lastEventsCount)
         {
             if (id == null)
             {
@@ -101,7 +101,11 @@ namespace KTU_SA_RO.Controllers
                     .ThenInclude(a => a.Sponsor)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            ViewData["lastEvents"] = LastEvents(@event, 3, 4);
+            if (lastEventsCount != null)
+                ViewData["lastEvents"] = LastEventsStats(@event, lastEventsCount, 4);
+            else
+                ViewData["lastEvents"] = LastEventsStats(@event, 3, 4);
+            
             ViewData["sponsors"] = await _context.Sponsors.ToListAsync();
             ViewData["eventSponsors"] = @event.Sponsorships.Select(s => s.Sponsor).Distinct().ToList();
 
@@ -144,7 +148,7 @@ namespace KTU_SA_RO.Controllers
             return View(@event);
         }
 
-        public List<Event> LastEvents(Event chosenEvent,int chosenEventsCount , int removeLettersCount)
+        public List<Event> LastEventsStats(Event chosenEvent,int? chosenEventsCount , int removeLettersCount)
         {
             if (chosenEvent.Title.Length > 3)
             {

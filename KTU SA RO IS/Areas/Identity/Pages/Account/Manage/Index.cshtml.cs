@@ -74,8 +74,37 @@ namespace KTU_SA_RO.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            var userRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+            userRole = SetUserRole(userRole);
+            if (userRole == null)
+            {
+                TempData["danger"] = "Naudotojo rolė nerasta";
+                userRole = "rolė nerasta";
+            }
+            ViewData["userRole"] = userRole;
             Load(user);
             return Page();
+        }
+
+        public string SetUserRole(string positionName)
+        {
+            if (positionName.Equals("registered"))
+                return "Registruotas naudotojas";
+            if (positionName.Equals("eventCoord"))
+                return "Renginio koordinatorius";
+            if (positionName.Equals("fsaOrgCoord"))
+                return "ORK koordinatorius";
+            if (positionName.Equals("fsaBussinesCoord"))
+                return "VIP koordinatorius";
+            if (positionName.Equals("fsaPrCoord"))
+                return "RSV koordinatorius";
+            if (positionName.Equals("orgCoord"))
+                return "CSA ORK koordinatorius";
+            if (positionName.Equals("admin"))
+                return "Administratorius";
+            else
+                return null;
         }
 
         public async Task<IActionResult> OnPostAsync()
