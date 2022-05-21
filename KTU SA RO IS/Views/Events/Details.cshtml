@@ -616,10 +616,10 @@
                 </form>
             </div>
             @******@
-
-            @if (revenue != null)
-            {
-                <h4 class="ms-2 mb-4">Įplaukos</h4>
+            
+            <h4 class="ms-2 mb-4">Įplaukos</h4>
+            @if (revenue.Count != 0)
+            {               
                 <div class="card card-body mb-4" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
                         <div class="col-sm-9 col-lg-3 mb-3">Pavadinimas</div>
@@ -697,9 +697,16 @@
                     }
                 </div>
             }
-            @if (cost != null)
+            else
             {
-                <h4 class="ms-2 mb-4">Išlaidos</h4>
+                <div class="alert bg-light w-25 mt-4" role="alert">
+                    Nėra pridėtų pajamų
+                </div>
+            }
+
+            <h4 class="ms-2 mb-4">Išlaidos</h4>
+            @if (cost.Count != 0)
+            {                
                 <div class="card card-body mb-4" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
                         <div class="col-sm-9 col-lg-3 mb-3">Pavadinimas</div>
@@ -777,9 +784,16 @@
                     }
                 </div>
             }
-            @if (ticketing != null)
+            else
             {
-                <h4 class="ms-2 mb-4">Bilietacija</h4>
+                <div class="alert bg-light w-25 mt-4" role="alert">
+                    Nėra pridėtų išlaidų
+                </div>
+            }
+            
+            <h4 class="ms-2 mb-4">Bilietacija</h4>
+            @if (ticketing.Count != 0)
+            {               
                 <div class="card card-body" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
                     <div class="row fw-bold">
                         <div class="col-sm-9 col-lg-2 mb-3">Kaina</div>
@@ -844,6 +858,12 @@
                     }
                 </div>
                 <hr />
+            }
+            else
+            {
+                <div class="alert bg-light w-25 mt-4" role="alert">
+                    Nėra pridėtos bilietacijos
+                </div>
             }
         </div>
         @*Two last years events*@
