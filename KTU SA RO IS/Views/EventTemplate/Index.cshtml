@@ -23,12 +23,19 @@
     </div>
 }
 
+<style>
+    main{
+        margin: auto;
+        width: 50%;
+    }
+</style>
+
 <div class="container">
-    <div class="display-6 my-4 fw-bold">Renginio šablonas</div>
+    <div class="display-6 text-center my-4 fw-bold">Renginio šablonas</div>
     @if (@Model != null)
     {
-        <div class="row mb-4">
-            <div class="col-3">
+        <div class="d-flex justify-content-center mb-4">
+            <div class="">
                 <i class="fas fa-file-excel me-3"></i>
                 <a asp-action="Download"
                asp-route-filename="@Model.Name">
@@ -36,11 +43,11 @@
                 </a>
             </div>
 
-            <div class="col-6">
+            <div class="">
                 <!-- Button trigger modal -->
                 @if (User.IsInRole("admin") || User.IsInRole("orgCoord"))
                 {
-                    <button type="button" class="btn btn-danger rounded-2" data-toggle="modal" data-target="#exampleModal">
+                    <button type="button" class="btn btn-danger ms-5 rounded-2" data-toggle="modal" data-target="#exampleModal">
                         <i class="fas fa-trash pe-1"></i> Ištrinti
                     </button>                    
                 }

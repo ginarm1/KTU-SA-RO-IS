@@ -18,13 +18,13 @@
             {
                 if (i != 1 && i + showCount <= currentPage)
                 {
-                    // Kaireje puseje
+                    // Left side
                     if (i == currentPage - showCount)
                     {
                         <h4 class="mx-2">...</h4>
                     }
                 }
-                // Desineje puseje
+                // Right side
                 else if (currentPage + showCount == i && i != totalPages)
                 {
                     <h4 class="mx-2">...</h4>
@@ -35,20 +35,10 @@
                     {
                         <form asp-action="Index" method="post">
                             <input type="number" name="pageIndex" hidden value="@i" />
-                            @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                            {
-                                <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                                <input type="text" name="baseProductSku" hidden value="@ViewData["pickedBaseProductSku"]" />
-                            }
                             <input type="submit" class="btn btn-outline-dark" value="@i" />
                         </form>
                         <form asp-action="Index" method="post">
                             <input type="number" name="pageIndex" hidden value="@i" />
-                            @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                            {
-                                <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                                <input type="text" name="baseProductSku" hidden value="@ViewData["pickedBaseProductSku"]" />
-                            }
                             <button type="submit" class="btn btn-outline-dark ms-3"><i class="bi bi-arrow-left"></i> Atgal</button>
                         </form>
                     }
@@ -56,20 +46,10 @@
                     {
                         <form asp-action="Index" method="post">
                             <input type="number" name="pageIndex" hidden value="@i" />
-                            @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                            {
-                                <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                                <input type="text" name="baseProductSku" hidden value="@ViewData["pickedBaseProductSku"]" />
-                            }
                             <button type="submit" class="btn btn-outline-dark me-3">Kitas <i class="bi bi-arrow-right"></i></button>
                         </form>
                         <form asp-action="Index" method="post">
                             <input type="number" name="pageIndex" hidden value="@i" />
-                            @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                            {
-                                <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                                <input type="text" name="baseProductSku" hidden value="@ViewData["pickedBaseProductSku"]" />
-                            }
                             <input type="submit" class="btn btn-outline-dark" value="@i" />
                         </form>
                     }
@@ -79,11 +59,6 @@
                         {
                             <form asp-action="Index" method="post">
                                 <input type="number" name="pageIndex" hidden value="@i" />
-                                @if (ViewData["pickedStore"] != null || ViewData["pickedBaseProductSku"] != null)
-                                {
-                                    <input type="text" name="store" hidden value="@ViewData["pickedStore"]" />
-                                    <input type="text" name="store" hidden value="@ViewData["pickedBaseProductSku"]" />
-                                }
                                 <input type="submit" class="btn btn-outline-dark" value="@i" />
                             </form>
                         }

@@ -7,6 +7,13 @@
     ViewData["Title"] = "Redaguoti renginį";
 }
 
+<style>
+    main{
+        margin: auto;
+        width: 70%;
+    }
+</style>
+
 <div class="row">
     <div class="d-flex justify-content-center">
         <form asp-action="Edit">
@@ -51,7 +58,7 @@
             <label asp-for="EventType.Name" class="control-label"></label>
             <select id="jquery-searchable-dropdown" name="Name" asp-for="EventType.Name" class="form-control custom-select mb-3" asp-items="@(new SelectList(ViewData["eventTypes"] as List<EventType>, "Name", "Name"))"></select>
             <div class="form-check">
-                <input asp-for="Has_coordinator" type="checkbox" class="form-check-input" checked>
+                <input asp-for="Has_coordinator" id="hasCoordinatorCheckbox" type="checkbox" class="form-check-input" checked>
                 <label asp-for="Has_coordinator" class="form-check-label"></label>
                 <span asp-validation-for="Has_coordinator" class="text-danger"></span>
             </div>
@@ -72,18 +79,22 @@
                 <label asp-for="Is_live" class="form-check-label"></label>
                 <span asp-validation-for="Is_live" class="text-danger"></span>
             </div>
+            <div class="form-check mt-2 mb-4">
+                <input asp-for="Is_canceled" id="isCanceledCheckbox" type="checkbox" class="form-check-input">
+                <label asp-for="Is_canceled" class="form-check-label"></label>
+                <span asp-validation-for="Is_canceled" class="text-danger"></span>
+            </div>
             <div class="row mt-2">
                 <div class="col-6 form-group mt-2">
                     <label asp-for="PlannedPeopleCount" class="control-label w-75"></label>
                     <input asp-for="PlannedPeopleCount" class="form-control w- text-end" min='1' max='200000' />
                     <span asp-validation-for="PlannedPeopleCount" class="text-danger"></span>
                 </div>
-                <div class="col-6 form-group mt-2 mb-4">
+                <div class="col-6 form-group mt-2 mb-4" id="peopleCountContainer">
                     <label asp-for="PeopleCount" class="control-label w-75"></label>
                     <input asp-for="PeopleCount" class="form-control w-50 text-end" min='0' max='200000' />
                     <span asp-validation-for="PeopleCount" class="text-danger"></span>
-            </div>
-
+                </div>
             </div>
             <div class="form-group">
                 <a asp-action="Details" asp-controller="Events" asp-route-id="@Model.Id" class="btn btn-outline-dark text-uppercase">← Grižti į renginio detales</a>
@@ -96,7 +107,7 @@
 @section Scripts {
 <script>
     var changeCoordInput = (checked) => {
-        if(checked == ":checked"){
+        if(checked){
             $('#coordName').val('');
             $( "#coordName" ).prop( "disabled", false );
 
@@ -112,17 +123,22 @@
         }
     }
 
-    $(document).ready(() => {
-        $('#hasCoordinatorCheckbox').click(function(){
-            if($('#hasCoordinatorCheckbox').is(":checked"))
-            {
-                changeCoordInput(":checked");
-            }
+    var changePeopleCountInput = (checked) => {
+        if(checked)
+            $("#peopleCountContainer").hide();
+        else
+            $( "#peopleCountContainer" ).show();
+    }
 
-            else
-            {
-                changeCoordInput("");
-            }
+    $(document).ready(() => {
+        $('#hasCoordinatorCheckbox').click(() => {
+            changeCoordInput($('#hasCoordinatorCheckbox').is(":checked"));
+        });
+        if ($('#isCanceledCheckbox').is(":checked")) 
+            $( "#peopleCountContainer" ).hide();
+
+        $('#isCanceledCheckbox').click(() => {
+            changePeopleCountInput($('#isCanceledCheckbox').is(":checked"));
         });
 
         // set min value for event end date

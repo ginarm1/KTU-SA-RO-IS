@@ -4,6 +4,13 @@
     ViewData["Title"] = "Rėmėjo detali informacija";
 }
 
+<style>
+    main{
+        margin: auto;
+        width: 70%;
+    }
+</style>
+
 <div class="container display-6 my-4 fw-bold">Plačiau apie rėmėją</div>
 
 @if (TempData["success"] != null)
@@ -16,57 +23,57 @@
 <div>
     <hr />
     <dl class="container row">
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-5 col-lg-3 mb-3">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class="col-sm-9 col-lg-10 fw-bold">
+        <dd class="col-sm-7 col-lg-9 fw-bold">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-5 col-lg-3 mb-3">
             @Html.DisplayNameFor(model => model.CompanyType)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-7 col-lg-9">
             @Html.DisplayFor(model => model.CompanyType)
         </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-5 col-lg-3 mb-3">
             @Html.DisplayNameFor(model => model.CompanyCode)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-7 col-lg-9">
             @Html.DisplayFor(model => model.CompanyCode)
         </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-5 col-lg-3 mb-3">
             @Html.DisplayNameFor(model => model.CompanyVAT)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-7 col-lg-9">
             @Html.DisplayFor(model => model.CompanyVAT)
         </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-5 col-lg-3 mb-3">
             @Html.DisplayNameFor(model => model.Address)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-7 col-lg-9">
             @Html.DisplayFor(model => model.Address)
         </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-5 col-lg-3 mb-3">
             @Html.DisplayNameFor(model => model.PhoneNr)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-7 col-lg-9">
             @Html.DisplayFor(model => model.PhoneNr)
         </dd>
-        <dt class="col-sm-3 col-lg-2 mb-3">
+        <dt class="col-sm-5 col-lg-3 mb-3">
             @Html.DisplayNameFor(model => model.Email)
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-7 col-lg-9">
             @Html.DisplayFor(model => model.Email)
         </dd>
-        <dt class="col-sm-3 col-lg-2 mb-5">
+        <dt class="col-sm-5 col-lg-3 mb-5">
             Įmonės vadovas
         </dt>
-        <dd class="col-sm-9 col-lg-10">
+        <dd class="col-sm-7 col-lg-9">
             @Html.DisplayFor(model => model.CompanyHeadName)
             @Html.DisplayFor(model => model.CompanyHeadSurname)
         </dd>
         <dd>
-            <div class="float-start">
+            <div class="d-flex justify-content-start">
                 <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i>  Grįžti į sąrašą</a>
                 @if(User.IsInRole("admin") || User.IsInRole("fsaBussinesCoord")){
                      <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary rounded-2 mx-3"><i class="fas fa-edit pe-1"></i> Redaguoti</a>
@@ -74,7 +81,7 @@
             </div>
             @if(User.IsInRole("admin") || User.IsInRole("fsaBussinesCoord"))
             {
-                <div class="float-end">
+                <div class="mt-3">
                      <!-- Button trigger modal -->
                     <button type="button" class="btn btn-danger rounded-2" data-toggle="modal" data-target="#exampleModal-@Model.Id">
                         <i class="fas fa-trash pe-1"></i> Ištrinti

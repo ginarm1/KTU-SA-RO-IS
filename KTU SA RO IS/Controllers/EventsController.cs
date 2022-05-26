@@ -40,6 +40,33 @@ namespace KTU_SA_RO.Controllers
                 .Skip((pageIndex - 1) * pageSize).Take(pageSize)
                 .ToListAsync());
         }
+
+        // GET: Filtered events
+        [HttpPost]
+        public async Task<IActionResult> Index(string title,int pageIndex = 1)
+        {
+            /*Filtering*/
+            /*Filter by event title*/
+            var context_events = _context.Events.AsQueryable();
+            if (title != null)
+            {
+                context_events = context_events.Where(e => e.Title.Equals(title) || e.Title.Contains(title));
+                ViewData["pickedEventTitle"] = title;
+            }
+
+            /*Pagination*/
+            var pageSize = 10;
+            var totalPages = (int)Math.Ceiling(context_events
+                .Count() / (double)pageSize);
+            ViewData["totalPages"] = totalPages;
+            ViewData["pageIndex"] = pageIndex;
+
+            return View(await context_events
+                .OrderByDescending(e => e.Id)
+                .Skip((pageIndex - 1) * pageSize).Take(pageSize)
+                .ToListAsync());
+        }
+
         [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]
         // GET: Events/UserEvents/{userId}
         [Route("Events/UserEvents/{userId}")]
@@ -310,23 +337,40 @@ namespace KTU_SA_RO.Controllers
                     if (teamMember == null)
                     {
                         EventTeamMember teamEventCoord = await _context.EventTeamMembers.Where(t => t.EventId == @event.Id && t.RoleName.Equals("eventCoord")).FirstOrDefaultAsync();
+                        EventTeamMember newEventCoord = await _context.EventTeamMembers.Where(t => 
+                               (t.UserId == user.Id && t.RoleName.Equals("admin") )
+                            || (t.UserId == user.Id && t.RoleName.Equals("fsaBussinesCoord") ) 
+                            || (t.UserId == user.Id && t.RoleName.Equals("fsaPrCoord")) 
+                            || (t.UserId == user.Id && t.RoleName.Equals("orgCoord"))).FirstOrDefaultAsync();
+                        if (newEventCoord != null)
+                        {
+                            TempData["danger"] = "Netinkama norimo naujo koordinatoriaus rolė. Privalo būti: Renginio koordinatorius arba FSA ORK koordinatorius";
+                            return RedirectToAction(nameof(EventsController.Edit), nameof(EventsController).Replace("Controller", ""), new { id = @event.Id.ToString() });
+                        }
+
                         var oldEventCoord = new ApplicationUser();
                         if (teamEventCoord == null)
                         {
                             EventTeamMember teamFsaOrgCoord = await _context.EventTeamMembers.Where(t => t.EventId == @event.Id && t.RoleName.Equals("fsaOrgCoord")).FirstOrDefaultAsync();
-                            oldEventCoord = await _context.Users.FirstOrDefaultAsync(u => u.Id == teamFsaOrgCoord.UserId);
-                            EventTeamMember teamFsaOrgCoord2 = new()
+                            if (teamFsaOrgCoord == null)
+                                teamFsaOrgCoord = await _context.EventTeamMembers.Where(t => t.EventId == @event.Id && t.RoleName.Equals("admin")).FirstOrDefaultAsync();
+                            else
                             {
-                                EventId = @event.Id,
-                                UserId = oldEventCoord.Id,
-                                RoleName = teamFsaOrgCoord.RoleName,
-                                Is_event_coord = false
-                            };
+                                EventTeamMember teamFsaOrgCoord2 = new()
+                                {
+                                    EventId = @event.Id,
+                                    UserId = oldEventCoord.Id,
+                                    RoleName = teamFsaOrgCoord.RoleName,
+                                    Is_event_coord = false
+                                };
+                                _context.Add(teamFsaOrgCoord2);
+                            }
+                            oldEventCoord = await _context.Users.FirstOrDefaultAsync(u => u.Id == teamFsaOrgCoord.UserId);
                             
                             teamFsaOrgCoord.UserId = user.Id;
                             teamFsaOrgCoord.RoleName = "eventCoord";
                             _context.Update(teamFsaOrgCoord);
-                            _context.Add(teamFsaOrgCoord2);
+
                             TempData["success"] = "FSA ORK koordinatorius <b>" + oldEventCoord.Name + " " + oldEventCoord.Surname +
                                                     "</b> sėkmingai paskyrė išrinktą renginio koordinatorių <b>" + user.Name + " " + user.Surname + "</b> . ";
                         }

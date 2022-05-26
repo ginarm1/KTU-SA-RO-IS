@@ -11,7 +11,14 @@
         @Html.Raw(TempData["danger"].ToString())
     </div>
 }
-@*<link rel="stylesheet" href="~/css/modal.css" />*@
+
+<style>
+    main{
+        margin: auto;
+        width: 70%;
+    }
+</style>
+
 @*Forma, kurioje pakeičiama naudotojo rolė, pašalinamas naudotojas*@
 
 <div class="container mt-4">
@@ -20,24 +27,24 @@
     <form asp-action="ChangeUserRole">
         <input type="hidden" asp-for="Email" />
         <dl class="row">
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.Name)
                 @Html.DisplayNameFor(model => model.Surname)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.Name)
                 @Html.DisplayFor(model => model.Surname)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 Rolė
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @usersRoleName
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 Pakeisti rolę
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 <select name="pickedRole" class="form-control w-25" asp-items="@(new SelectList(roles,"",""))">
                     <option value=""></option>
                 </select>
@@ -78,4 +85,3 @@
         </dl>
     </form>
 </div>
-@*<script src="~/js/modal.js" asp-append-version="true"></script>*@

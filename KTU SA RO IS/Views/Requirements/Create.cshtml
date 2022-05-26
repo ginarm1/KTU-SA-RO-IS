@@ -11,6 +11,13 @@
         ViewData["Title"] = "Sukurti bendrinį reikalavimą";
 }
 
+<style>
+    main{
+        margin: auto;
+        width: 70%;
+    }
+</style>
+
 <div class="row">
     <div class="d-flex justify-content-center">
         <form asp-action="Create">
@@ -44,22 +51,25 @@
             </div>
             <div class="form-group mt-2 mb-4">
                 <label asp-for="Comment" class="control-label"></label>
-                <textarea asp-for="Comment" class="form-control"></textarea>
+                <textarea asp-for="Comment" class="form-control" placeholder="(neprivaloma)"></textarea>
                 <span asp-validation-for="Comment" class="text-danger"></span>
             </div>
-            <div class="container mb-4 fw-bold bg-light py-3 rounded-2">
-                <h5 class="display-6 d-flex justify-content-center">Atsakingas asmuo</h5>
-                <div class="m-3 mt-4 d-flex justify-content-between">
-                    <div class="form-group">
-                        <label>Vardas</label>
-                        <input class="form-control" id="responsibleUserName" name="responsibleUserName" />
+            @if(Event != null)
+            {
+                <div class="container mb-4 fw-bold bg-light py-3 rounded-2">
+                    <h5 class="display-6 d-flex justify-content-center">Atsakingas asmuo</h5>
+                    <div class="m-3 mt-4 d-flex justify-content-between">
+                        <div class="form-group">
+                            <label>Vardas</label>
+                            <input class="form-control" id="responsibleUserName" name="responsibleUserName" />
+                        </div>
+                        <div class="form-group">
+                            <label>Pavardė</label>
+                            <input class="form-control" id="responsibleUserSurname" name="responsibleUserSurname" />
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Pavardė</label>
-                        <input class="form-control" id="responsibleUserSurname" name="responsibleUserSurname" />
-                    </div>
-                </div>
-            </div>
+                </div>                
+            }
 
             @if (User.IsInRole("orgCoord"))
             {

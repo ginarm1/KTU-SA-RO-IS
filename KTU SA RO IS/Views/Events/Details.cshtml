@@ -131,7 +131,6 @@
                         <input name="userEmail" class="form-control w-50" type="email" placeholder="El. paštas (neprivaloma)" />
                         <div class="form-label mt-1">Pozicija:</div>
                         <select name="pickedPosition" class="form-control w-25" asp-items="@(new SelectList(positions,"",""))" required>
-                            <option value=""></option>
                         </select>
                     </div>
                     <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
@@ -577,7 +576,7 @@
                         <input name="date" type="date" class="form-control w-25 me-3" id="datePickerId" placeholder="Data" required />
                     </div>
                     <div class="d-flex justify-content-center my-4">
-                        <input name="comment" class="form-control w-50" placeholder="Komentaras" />
+                        <input name="comment" class="form-control w-50" placeholder="Komentaras (neprivaloma)" />
                     </div>
                     <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
                 </form>
@@ -596,7 +595,7 @@
                         <input name="date" type="date" class="form-control w-25 me-3" id="datePickerId2" placeholder="Data" required />
                     </div>
                     <div class="d-flex justify-content-center my-4">
-                        <input name="comment" class="form-control w-50" placeholder="Komentaras" />
+                        <input name="comment" class="form-control w-50" placeholder="Komentaras (neprivaloma)" />
                     </div>
                     <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
                 </form>
@@ -876,7 +875,7 @@
             {
                 @if (lastEvents.Count != 0)
                 {
-                    <form asp-action="Details">
+@*                    <form asp-action="Details">
                         <input type="hidden" asp-for="@Model.Id">
                         <div class="d-flex mt-4 me-4 mb-2 justify-content-end">
                             <label><b>Norimų matyti renginių kiekis</b></label>              
@@ -889,7 +888,7 @@
                             </select>
                             <input type="submit"  value="Patvirtinti" class="btn btn-dark rounded-2 text-uppercase" />                
                         </div>
-                    </form>
+                    </form>*@
                     @if (lastEvents[0].Revenues.Count != 0 && lastEvents[0].Costs.Count != 0)
                     {
                         @*Charts*@
