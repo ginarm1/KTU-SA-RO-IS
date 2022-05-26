@@ -27,6 +27,30 @@
     <a asp-action="Create" class="btn btn-primary my-3 col-sm-5 col-lg-3 rounded-2"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują rėmėją</a>
 }
 
+<form asp-action="Index" method="post" class="row">
+      <div class="col-2 mt-4">
+          <label><b>Filtruoti</b></label>
+      </div>
+      <div class="col-8 mt-2">
+        <div class="row">
+            <div class="col-5 mb-3">
+                <span class="mb-2">Rėmėjo pavadinimas</span>
+                @if (ViewData["pickedSponsorTitle"] != null)
+                {
+                    <input type="text" name="title" id="title" value="@ViewData["pickedSponsorTitle"]" class="form-control" />
+                }
+                else
+                {
+                    <input type="text" name="title" id="title" class="form-control" />
+                }
+            </div>
+            <div class="col-4">
+                <input type="submit" value="Filtruoti" class="btn btn-secondary my-3 rounded-2">
+            </div>
+        </div>
+        
+    </div>
+</form>
 <table class="table table-responsive">
     <thead>
         <tr>

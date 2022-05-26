@@ -38,6 +38,32 @@ namespace KTU_SA_RO.Controllers
                 .ToListAsync());
         }
 
+        // GET: Filtered events
+        [HttpPost]
+        public async Task<IActionResult> Index(string title, int pageIndex = 1)
+        {
+            /*Filtering*/
+            /*Filter by event title*/
+            var context_sponsors = _context.Sponsors.AsQueryable();
+            if (title != null)
+            {
+                context_sponsors = context_sponsors.Where(e => e.Title.Equals(title) || e.Title.Contains(title));
+                ViewData["pickedSponsorTitle"] = title;
+            }
+
+            /*Pagination*/
+            var pageSize = 10;
+            var totalPages = (int)Math.Ceiling(context_sponsors
+                .Count() / (double)pageSize);
+            ViewData["totalPages"] = totalPages;
+            ViewData["pageIndex"] = pageIndex;
+
+            return View(await context_sponsors
+                .OrderByDescending(s => s.Id)
+                .Skip((pageIndex - 1) * pageSize).Take(pageSize)
+                .ToListAsync());
+        }
+
         // GET: Sponsors/Details/5
         public async Task<IActionResult> Details(int? id)
         {
