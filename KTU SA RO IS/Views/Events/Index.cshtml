@@ -2,11 +2,14 @@
 
 @{
     var userEvents = ViewData["userEvents"] as List<Event>;
+    var users = ViewData["users"] as List<ApplicationUser>;
 
     @if (userEvents != null)
         ViewData["Title"] = "Mano renginiai";
     else
         ViewData["Title"] = "Visi renginiai";
+
+    var userId = ViewData["userId"];
     /*Pagination*/
     var currentPage = 0;
     if (ViewData["pageIndex"] != null)
@@ -55,31 +58,62 @@
 {
     <a asp-action="Create" class="btn btn-primary my-3 col-sm-5 col-lg-3 rounded-2"><i class="fas fa-plus-circle pt-1 pe-1" style="font-size: 20px"></i> Sukurti naują renginį</a>
 }
-
-<form asp-action="Index" method="post" class="row">
-      <div class="col-2 mt-4">
-          <label><b>Filtruoti</b></label>
-      </div>
-      <div class="col-8 mt-2">
-        <div class="row">
-            <div class="col-5 mb-3">
-                <span class="mb-2">Renginio pavadinimas</span>
-                @if (ViewData["pickedEventTitle"] != null)
-                {
-                    <input type="text" name="title" id="title" value="@ViewData["pickedEventTitle"]" class="form-control" />
-                }
-                else
-                {
-                    <input type="text" name="title" id="title" class="form-control" />
-                }
+@*All events filter*@
+@if(userId == null)
+{
+    <form asp-action="Index" method="get" class="row" id="allEventsContainer">
+          <div class="col-2 mt-4">
+              <label><b>Filtruoti</b></label>
+          </div>
+          <div class="col-8 mt-2">
+            <div class="row">
+                <div class="col-5 mb-3">
+                    <span class="mb-2">Renginio pavadinimas</span>
+                    @if (ViewData["pickedEventTitle"] != null)
+                    {
+                        <input type="text" name="title" id="title" value="@ViewData["pickedEventTitle"]" class="form-control" />
+                    }
+                    else
+                    {
+                        <input type="text" name="title" id="title" class="form-control" />
+                    }
+                </div>
+                <div class="col-4">
+                    <input type="submit" value="Filtruoti" class="btn btn-secondary my-3 rounded-2">
+                </div>
             </div>
-            <div class="col-4">
-                <input type="submit" value="Filtruoti" class="btn btn-secondary my-3 rounded-2">
-            </div>
-        </div>
         
-    </div>
-</form>
+        </div>
+    </form>    
+}
+@*User events filter*@
+else
+{
+    <form asp-action="UserEvents" method="get" class="row" id="UserEventsContainer">
+          <div class="col-2 mt-4">
+              <label><b>Filtruoti</b></label>
+          </div>
+          <div class="col-8 mt-2">
+            <div class="row">
+                <div class="col-5 mb-3">
+                    <span class="mb-2">Renginio pavadinimas</span>
+                    @if (ViewData["pickedEventTitle"] != null)
+                    {
+                        <input type="text" name="title" id="title" value="@ViewData["pickedEventTitle"]" class="form-control" />
+                    }
+                    else
+                    {
+                        <input type="text" name="title" id="title" class="form-control" />
+                    }
+                </div>
+                <div class="col-4">
+                    <input type="submit" value="Filtruoti" class="btn btn-secondary my-3 rounded-2">
+                </div>
+            </div>
+        
+        </div>
+    </form>
+}
 <table class="table table-responsive mt-3">
     <thead>
         <tr>
@@ -98,9 +132,6 @@
             <th>
                 Renginio koordinatorius
             </th>
-            <th>
-            </th>
-
             <th class="text-end">
                 @Html.DisplayNameFor(model => model.PlannedPeopleCount)
             </th>
@@ -138,11 +169,12 @@
                         @Html.DisplayFor(modelItem => userEvent.Description)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => userEvent.CoordinatorName) @Html.DisplayFor(modelItem => userEvent.CoordinatorSurname)
+                        @if (userEvent.EventTeamMembers.Where(et => et.EventId == userEvent.Id && et.Is_event_coord).FirstOrDefault() != null)
+                        {
+                            <span>@users.Where(u => u.Id.Equals(userEvent.EventTeamMembers.Where(et => et.EventId == userEvent.Id && et.Is_event_coord).FirstOrDefault().UserId)).FirstOrDefault().Name</span> 
+                            <span>@users.Where(u => u.Id.Equals(userEvent.EventTeamMembers.Where(et => et.EventId == userEvent.Id && et.Is_event_coord).FirstOrDefault().UserId)).FirstOrDefault().Surname</span>
+                        }
                     </td>
-                    <td>
-                    </td>
-
                     <td class="text-end">
                         @Html.DisplayFor(modelItem => userEvent.PlannedPeopleCount)
                     </td>
@@ -182,11 +214,12 @@
                         @Html.DisplayFor(modelItem => item.Description)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CoordinatorName) @Html.DisplayFor(modelItem => item.CoordinatorSurname)
+                        @if (item.EventTeamMembers.Where(et => et.EventId == item.Id && et.Is_event_coord).FirstOrDefault() != null)
+                        {
+                            <span>@users.Where(u => u.Id.Equals(item.EventTeamMembers.Where(et => et.EventId == item.Id && et.Is_event_coord).FirstOrDefault().UserId)).FirstOrDefault().Name</span> 
+                            <span>@users.Where(u => u.Id.Equals(item.EventTeamMembers.Where(et => et.EventId == item.Id && et.Is_event_coord).FirstOrDefault().UserId)).FirstOrDefault().Surname</span>
+                        }
                     </td>
-                    <td>
-                    </td>
-
                     <td class="text-end">
                         @Html.DisplayFor(modelItem => item.PlannedPeopleCount)
                     </td>

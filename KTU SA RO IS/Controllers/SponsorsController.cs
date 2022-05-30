@@ -39,7 +39,7 @@ namespace KTU_SA_RO.Controllers
         }
 
         // GET: Filtered events
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Index(string title, int pageIndex = 1)
         {
             /*Filtering*/

@@ -34,15 +34,17 @@ namespace KTU_SA_RO.Controllers
 
             ViewData["totalPages"] = totalPages;
             ViewData["pageIndex"] = pageIndex;
+            ViewData["users"] = await _context.Users.ToListAsync();
 
             return View(await _context.Events
+                .Include(tm => tm.EventTeamMembers)
                 .OrderByDescending(e => e.Id)
                 .Skip((pageIndex - 1) * pageSize).Take(pageSize)
                 .ToListAsync());
         }
 
         // GET: Filtered events
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Index(string title,int pageIndex = 1)
         {
             /*Filtering*/
@@ -60,8 +62,10 @@ namespace KTU_SA_RO.Controllers
                 .Count() / (double)pageSize);
             ViewData["totalPages"] = totalPages;
             ViewData["pageIndex"] = pageIndex;
+            ViewData["users"] = await _context.Users.ToListAsync();
 
             return View(await context_events
+                .Include(tm => tm.EventTeamMembers)
                 .OrderByDescending(e => e.Id)
                 .Skip((pageIndex - 1) * pageSize).Take(pageSize)
                 .ToListAsync());
@@ -70,12 +74,17 @@ namespace KTU_SA_RO.Controllers
         [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]
         // GET: Events/UserEvents/{userId}
         [Route("Events/UserEvents/{userId}")]
-        public async Task<IActionResult> UserEvents(string userId, int pageIndex = 1)
+        public async Task<IActionResult> UserEvents(string userId, string title, int pageIndex = 1)
         {
             var userTeams = await _context.EventTeamMembers.Where(u => u.UserId.Equals(userId)).ToListAsync();
-            var events = await _context.Events.ToListAsync();
 
+            var events = new List<Event>();
+            if (title == null)
+                events = await _context.Events.ToListAsync();
+            else
+                events = await _context.Events.Where(e => e.Title.Equals(title) || e.Title.Contains(title)).ToListAsync();
             var userEvents = new List<Event>();
+            var users = await _context.Users.ToListAsync();
 
             foreach (var @event in events)
             {
@@ -86,10 +95,11 @@ namespace KTU_SA_RO.Controllers
                         userEvents.Add(@event);
                     }
                 }
-
             }
 
             ViewData["userEvents"] = userEvents;
+            ViewData["users"] = users;
+            ViewData["userId"] = userId;
 
             if (userEvents.Count == 0)
             {
@@ -98,6 +108,7 @@ namespace KTU_SA_RO.Controllers
 
             return View(nameof(Index));
         }
+
         [Authorize(Roles = "admin,eventCoord,fsaOrgCoord,fsaBussinesCoord,fsaPrCoord,orgCoord")]
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id, int? lastEventsCount)
