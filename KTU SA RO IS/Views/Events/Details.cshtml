@@ -12,34 +12,8 @@
     var eventSponsors = ViewData["eventSponsors"] as List<Sponsor>;
     var lastEvents = ViewData["lastEvents"] as List<Event>;
     var userInTeam = ViewData["userBelongsToEvent"];
+    var users = ViewData["users"] as List<ApplicationUser>;
 }
-<style>
-    /*jquery-searchable-dropdown container*/
-    .custom-select {
-        border: 1px solid #ced4da;
-    }
-
-        .custom-select, .custom-select > div {
-            border-radius: 0.25rem;
-        }
-
-            .custom-select:focus {
-                border-color: #86b7fe;
-                background: #ced4da;
-                box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
-            }
-
-            .custom-select > div {
-                padding: 0.6rem 0;
-                background: #ced4da;
-                border: 1px solid #7e8082;
-            }
-
-            .custom-select input {
-                border: 1px solid rgb(13 110 253 / 25%);
-                box-shadow: 0 0 0 0.1rem rgb(13 110 253 / 25%);
-            }
-</style>
 
 <div class="container display-5 my-4 fw-bold">Plačiau apie renginį</div>
 
@@ -125,7 +99,7 @@
                     <input name="eventId" class="form-control" value="@Model.Id" hidden />
                     <div class="d-flex justify-content-between">
                         <input name="userName" class="form-control me-3" placeholder="Vardas" required />
-                        <input name="userSurname" class="form-control" placeholder="Pavardė" required />
+                        <select id="jquery-searchable-dropdown" name="userSurname" class="form-control custom-select" asp-items="@(new SelectList(users, "Surname", "Surname"))"></select>
                     </div>
                     <div class="d-flex justify-content-between my-4">
                         <input name="userEmail" class="form-control w-50" type="email" placeholder="El. paštas (neprivaloma)" />
@@ -1286,15 +1260,6 @@
     function setTwoNumberDecimal(event) {
         this.value = parseFloat(this.value).toFixed(2);
     }
-    // make visible only one form
-    //$(() => {
-    //    $('#containerAddUser').hide();
-    //    $('#containerAddSingleSponsorship').hide();
-    //    $('#containerAddSingleRevenue').hide();
-    //    $('#containerAddSingleTicketing').hide();
-    //    $('#containerAddSingleCost').hide();
-    //});
-
 
     $('#addUserBtn').click(function(){
         $('#containerAddUser').toggle("slow");

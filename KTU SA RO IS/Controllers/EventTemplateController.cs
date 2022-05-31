@@ -27,8 +27,8 @@ namespace KTU_SA_RO.Controllers
             {
                 model = new EventTemplate { Name = item.Name, Path = item.PhysicalPath };
             }
-            model.Path += "\\documents\\eventTemplate\\Renginio-šablonas.xlsx";
-            model.Name = "Renginio-šablonas";
+            model.Path += "\\documents\\eventTemplate\\Renginio-sablonas.xlsx";
+            model.Name = "Renginio-sablonas";
 
 
             FileInfo file = new(model.Path);
@@ -65,13 +65,13 @@ namespace KTU_SA_RO.Controllers
                 TempData["file_type_danger"] = "Netinkamas dokumento tipas! Dokumentas privalo būti xlsx tipo";
                 return RedirectToAction("Index");
             }
-            else if (file.FileName != "Renginio-šablonas.xlsx")
+            else if (file.FileName != "Renginio-sablonas.xlsx")
             {
-                TempData["name_danger"] = "Dokumento pavadinimas privalo turėti pavadinimą: Renginio-šablonas";
+                TempData["name_danger"] = "Dokumento pavadinimas privalo turėti pavadinimą: Renginio-sablonas";
                 return RedirectToAction(nameof(Index));
             }
 
-            var path = Path.Combine("Renginio_šablonas.xlsx",
+            var path = Path.Combine("Renginio_sablonas.xlsx",
                         Directory.GetCurrentDirectory(),
                         "wwwroot/lib/documents/eventTemplate",
                         file.FileName);
@@ -97,9 +97,9 @@ namespace KTU_SA_RO.Controllers
             if (filename == null)
                 return Content("filename not present");
 
-            if (filename != "Renginio-šablonas")
+            if (filename != "Renginio-sablonas")
             {
-                TempData["name_danger"] = "Dokumento pavadinimas privalo turėti pavadinimą: Renginio-šablonas";
+                TempData["name_danger"] = "Dokumento pavadinimas privalo turėti pavadinimą: Renginio-sablonas";
                 return View();
             }
 
@@ -149,7 +149,7 @@ namespace KTU_SA_RO.Controllers
 
             file.Delete();
 
-            TempData["success"] = "Renginio šablonas sėkmingai pašalintas";
+            TempData["success"] = "Renginio sablonas sėkmingai pašalintas";
             return RedirectToAction(nameof(Index));
         }
     }

@@ -103,7 +103,7 @@ namespace KTU_SA_RO.Controllers
 
             if (userEvents.Count == 0)
             {
-                TempData["danger"] = "Jūs dar neturite sukūręs renginių";
+                TempData["danger"] = "Jūsų renginių nebuvo rasta";
             }
 
             return View(nameof(Index));
@@ -182,6 +182,7 @@ namespace KTU_SA_RO.Controllers
             ViewData["costs"] = @event.Costs.Where(r => r.Event == @event).ToList();
             ViewData["ticketings"] = @event.Ticketings.Where(r => r.Event == @event).ToList();
             ViewData["userBelongsToEvent"] = await _context.EventTeamMembers.FirstOrDefaultAsync(e => e.UserId.Equals(userId) && e.EventId == @event.Id);
+            ViewData["users"] = await _context.Users.ToListAsync();
 
             return View(@event);
         }
