@@ -5,7 +5,5 @@ Event management system built with:
 * MySQL database; 
 * Bootstrap design; 
 * JavaScript library for calendar - "FullCalendar.io";
-* NUnit testing;
-
 
 ![image](https://user-images.githubusercontent.com/60450573/162620287-fce4e9c6-18b9-44e6-93a8-c42e56a8790c.png)
