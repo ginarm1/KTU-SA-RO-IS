@@ -31,41 +31,56 @@ namespace KTU_SA_RO.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(/*[Bind("Id,EventId,UserId,Is_event_coord")] EventTeamMember eventTeamMember, */
-            int? eventId, string userName, string userSurname, string userEmail, string pickedPosition)
+            int? eventId, string userNameSurname, string userEmail)
         {
-            if (eventId != null && userName != null && userSurname != null)
+            if (eventId != null && userNameSurname != null)
             {
                 var user = new ApplicationUser();
 
-                if (userEmail != null)
-                    user = await _context.Users.Where(u => u.Email.Equals(userEmail)).FirstOrDefaultAsync();
-                else
-                    user = await _context.Users.Where(u => u.Name.Equals(userName) && u.Surname.Equals(userSurname)).FirstOrDefaultAsync();
+                var userNameSurnameArr = userNameSurname.Split(' ');
+                user = await _context.Users.Where(u => u.Name.Equals(userNameSurnameArr[0]) && u.Surname.Equals(userNameSurnameArr[1])).FirstOrDefaultAsync();
 
-                if (user == null)
+                var position = userNameSurname.Split("||")[1].TrimStart();
+
+                if (position == null)
+                {
+                    TempData["danger"] = "Norimo naudotojo rolė nerasta";
+                    return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
+                }
+                else if (position.Equals("CSA ORK koordinatorius"))
+                {
+                    TempData["danger"] = "CSA ORK koordinatorius negali būti komandoje";
+                    return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
+                }
+                else if (user == null)
                 {
                     TempData["danger"] = "Naudotojas nerastas";
                     return RedirectToAction(nameof(EventsController.Details),nameof(EventsController).Replace("Controller",""), new { id = eventId.ToString()});
                 }
                 var userRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
-                var userWithSamePosition = await _context.EventTeamMembers.Where(et => et.EventId == eventId && et.RoleName.Equals(userRole)).FirstOrDefaultAsync();
-                // if wanted user has the same position 
+                var userWithSamePosition = await _context.EventTeamMembers.Where(et => et.EventId == eventId && et.RoleName.Equals(SetUserRole(position))).FirstOrDefaultAsync();
+                // if wanted user has the same position or name and surname
                 if ( _context.EventTeamMembers.Where(et => et.EventId == eventId && et.UserId.Equals(user.Id)
-                    && userRole.Equals(SetUserRole(pickedPosition))).FirstOrDefault() != null || userWithSamePosition != null)
+                    && userRole.Equals(SetUserRole(position))).FirstOrDefault() != null)
                 {
-                    TempData["danger"] = "Naudotojas su tokiais duomenimis ir pozicija jau egzistuoja komandoje";
+                    TempData["danger"] = "Naudotojas su tokiu vardu pavarde ir pozicija jau egzistuoja komandoje";
                     return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
                 }
-                else if (!userRole.Equals(SetUserRole(pickedPosition)))
+                else if (userWithSamePosition != null)
                 {
-                    TempData["danger"] = "Pasirinktas naudotojas neturi tokios rolės";
+                    TempData["danger"] = "Naudotojas su tokia pozicija jau egzistuoja komandoje";
                     return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
                 }
+                //else if (!userRole.Equals(SetUserRole(position)))
+                //{
+                //    TempData["danger"] = "Pasirinktas naudotojas neturi tokios rolės";
+                //    return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
+                //}
 
                 var eventTeamMember = new EventTeamMember()
                 {
                     EventId = (int)eventId,
-                    RoleName = SetUserRole(pickedPosition),
+                    RoleName = SetUserRole(position),
                     UserId = user.Id
                 };
 
@@ -73,7 +88,7 @@ namespace KTU_SA_RO.Controllers
                 await _context.SaveChangesAsync();
 
                 TempData["success"] = "Narys <b> " + user.Name + " " + user.Surname + 
-                    "</b> sėkmingai pridėtas į komandą! Jo pozicija: <b>" + pickedPosition + "</b>";
+                    "</b> sėkmingai pridėtas į komandą! Jo pozicija: <b>" + position + "</b>";
                 return RedirectToAction(nameof(EventsController.Details), nameof(EventsController).Replace("Controller", ""), new { id = eventId.ToString() });
             }
             return NotFound();

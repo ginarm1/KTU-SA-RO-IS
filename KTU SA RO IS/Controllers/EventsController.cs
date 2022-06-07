@@ -16,11 +16,13 @@ namespace KTU_SA_RO.Controllers
     public class EventsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public EventsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public EventsController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _roleManager = roleManager;
             _userManager = userManager;
         }
 
@@ -97,7 +99,7 @@ namespace KTU_SA_RO.Controllers
                 }
             }
 
-            ViewData["userEvents"] = userEvents;
+            ViewData["userEvents"] = userEvents.OrderByDescending(e => e.StartDate).ToList();
             ViewData["users"] = users;
             ViewData["userId"] = userId;
 
@@ -147,7 +149,6 @@ namespace KTU_SA_RO.Controllers
             ViewData["sponsors"] = await _context.Sponsors.ToListAsync();
             ViewData["eventSponsors"] = @event.Sponsorships.Select(s => s.Sponsor).Distinct().ToList();
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var eventTeam = new Dictionary<int,ApplicationUser>();
             var membersRole = new Dictionary<int,string>();
             int i = 0;
@@ -176,13 +177,32 @@ namespace KTU_SA_RO.Controllers
                 return NotFound();
             }
 
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(currentUserId));
+            var currentRole = (await _userManager.GetRolesAsync(currentUser)).FirstOrDefault();
+
+            if (currentRole.Equals("admin") || currentRole.Equals("eventCoord") || currentRole.Equals("fsaOrgCoord"))
+            {
+                var users = await _context.Users.OrderBy(u => u.Name).ToListAsync();
+                var usersNameSurname = new List<string>();
+
+                foreach (var user in users)
+                {
+                    var userRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+                    var role = await _roleManager.Roles.FirstOrDefaultAsync(a => a.Name.Equals(userRole));
+                    usersNameSurname.Add(user.Name + " " + user.Surname + " || " + SetUserPosition(role.Name)); 
+                    ViewData["usersNameSurname"] = usersNameSurname;
+                }
+            }
+
+
             ViewData["eventTeam"] = eventTeam;
             ViewData["membersRole"] = membersRole;
             ViewData["revenues"] = @event.Revenues.Where(r => r.Event == @event).ToList();
             ViewData["costs"] = @event.Costs.Where(r => r.Event == @event).ToList();
             ViewData["ticketings"] = @event.Ticketings.Where(r => r.Event == @event).ToList();
-            ViewData["userBelongsToEvent"] = await _context.EventTeamMembers.FirstOrDefaultAsync(e => e.UserId.Equals(userId) && e.EventId == @event.Id);
-            ViewData["users"] = await _context.Users.ToListAsync();
+            ViewData["userBelongsToEvent"] = await _context.EventTeamMembers.FirstOrDefaultAsync(e => e.UserId.Equals(currentUserId) && e.EventId == @event.Id);
+            
 
             return View(@event);
         }

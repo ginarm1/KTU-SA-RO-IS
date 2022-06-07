@@ -107,7 +107,7 @@ namespace KTU_SA_RO.Controllers
             else
             {
                 ViewData["roles"] = await _roleManager.Roles.OrderBy(r => r.Name)
-                    .Where(r => !r.Id.Equals(userRole.RoleId))
+                    .Where(r => !r.Id.Equals(userRole.RoleId) && !r.Name.Equals("admin"))
                     .Select(r => r.Name)
                     .ToListAsync();
             }

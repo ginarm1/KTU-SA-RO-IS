@@ -49,7 +49,7 @@
             @if (!Model.Is_general)
             {
                 <div class="form-group mt-2 mb-4 form-check">
-                    @if (!User.IsInRole("admin") || User.IsInRole("orgCoord"))
+                    @if (User.IsInRole("admin") || User.IsInRole("orgCoord"))
                     {
                         <label class="col-6 form-check-label">
                             <input class="form-check-input" asp-for="Is_general" id="generalBox" /> @Html.DisplayNameFor(model => model.Is_general)

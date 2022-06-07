@@ -12,7 +12,7 @@
     var eventSponsors = ViewData["eventSponsors"] as List<Sponsor>;
     var lastEvents = ViewData["lastEvents"] as List<Event>;
     var userInTeam = ViewData["userBelongsToEvent"];
-    var users = ViewData["users"] as List<ApplicationUser>;
+    var usersNameSurname = ViewData["usersNameSurname"] as List<string>;
 }
 
 <div class="container display-5 my-4 fw-bold">Plačiau apie renginį</div>
@@ -97,16 +97,13 @@
             <div class="row" id="containerAddUser" style="display:none;">
                 <form asp-action="Create" asp-controller="EventTeamMembers">
                     <input name="eventId" class="form-control" value="@Model.Id" hidden />
-                    <div class="d-flex justify-content-between">
-                        <input name="userName" class="form-control me-3" placeholder="Vardas" required />
-                        <select id="jquery-searchable-dropdown" name="userSurname" class="form-control custom-select" asp-items="@(new SelectList(users, "Surname", "Surname"))"></select>
-                    </div>
-                    <div class="d-flex justify-content-between my-4">
-                        <input name="userEmail" class="form-control w-50" type="email" placeholder="El. paštas (neprivaloma)" />
-                        <div class="form-label mt-1">Pozicija:</div>
-                        <select name="pickedPosition" class="form-control w-25" asp-items="@(new SelectList(positions,"",""))" required>
-                        </select>
-                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        @*<input name="userName" class="form-control me-3" placeholder="Vardas" required />*@
+                        @if(usersNameSurname != null)
+                        {
+                            <select id="jquery-searchable-dropdown" name="userNameSurname" class="form-control custom-select" asp-items="@(new SelectList(usersNameSurname, "", ""))"></select>
+                        }
+                   </div>
                     <input type="submit" value="Patvirtinti" class="btn btn-primary text-uppercase float-end mb-4 rounded-2" id="submit" />
                 </form>
             </div>
