@@ -11,14 +11,14 @@ namespace KTU_SA_RO.Services
         /// Get users role
         /// </summary>
         /// <returns></returns>
-        public Task<Dictionary<string, IdentityRole>> GetUsersRole();
+        Task<Dictionary<string, IdentityRole>> GetUsersRole();
         /// <summary>
         /// Get one user role by his email
         /// </summary>
-        public Task<string> GetUserRole(string email);
+        Task<string> GetUserRole(string email);
         /// <summary>
         /// Add new user role
         /// </summary>
-        public void AddNewUserRole(ApplicationUser tempUser, string roleId);
+        void AddNewUserRole(ApplicationUser tempUser, string roleId);
     }
 }

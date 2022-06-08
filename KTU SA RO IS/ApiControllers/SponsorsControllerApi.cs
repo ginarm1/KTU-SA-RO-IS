@@ -36,8 +36,8 @@ namespace KTU_SA_RO.Controllers.ApiControllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
-        public async Task<ActionResult<List<Sponsor>>> AddSponsor(Sponsor sponsor)
+        //[Authorize(Roles = "admin")]
+        public async Task<ActionResult<Sponsor>> AddSponsor([FromBody] Sponsor sponsor)
         {
             _context.Sponsors.Add(sponsor);
 
