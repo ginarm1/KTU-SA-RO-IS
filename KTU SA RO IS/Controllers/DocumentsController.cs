@@ -47,7 +47,6 @@ namespace KTU_SA_RO.Controllers
 
             memorysStream.Write(byteArray, 0, byteArray.Length);
 
-            // invoiceType = 0 -> LT company or person, invoiceType = 1 -> company not from LT, invoiceType = 2 -> person not from EU or particular countries
             if (!await DocumentService.ChangeTextInBrackets(sponsorId, memorysStream, sponsorship, companyLegalType, sponsorshipsDetails , _context))
             {
                 TempData["danger"] = "";

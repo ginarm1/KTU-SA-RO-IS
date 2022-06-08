@@ -24,12 +24,18 @@ namespace KTU_SA_RO.Services
             _appEnvironment = appEnvironment;
         }
 
+        /// <summary>
+        /// Delete brackets where text will be changed
+        /// </summary>
         public static void DeleteBrackets(Text[] words, int i)
         {
             words[i - 1].Text = words[i - 1].Text.Replace("{",string.Empty);
             words[i + 1].Text = words[i + 1].Text.Replace("}", string.Empty);
         }
 
+        /// <summary>
+        /// Changes Word document text in brackets with dynamic data
+        /// </summary>
         public async static Task<bool> ChangeTextInBrackets(int? sponsorId, MemoryStream memoryStream, 
             Sponsorship sponsorship, string companyLegalType, ICollection<Sponsorship> sponsorshipsDetails , ApplicationDbContext context)
         {
@@ -167,6 +173,9 @@ namespace KTU_SA_RO.Services
             return true;
         }
 
+        /// <summary>
+        /// Looks for sponsorship details and changes text to details
+        /// </summary>
         public static void SponsorshipContainsPart(Text word, ICollection<Sponsorship> sponsorshipsDetails, int? sponsorId, int? eventId)
         {
             word.Text = "";

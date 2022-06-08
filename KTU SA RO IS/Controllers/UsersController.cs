@@ -1,5 +1,6 @@
 ﻿using KTU_SA_RO.Data;
 using KTU_SA_RO.Models;
+using KTU_SA_RO.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -29,7 +30,8 @@ namespace KTU_SA_RO.Controllers
         // GET: Users
         public async Task<IActionResult> Index(int pageIndex = 1)
         {
-            ViewData["roles"] = await GetUsersRole();
+            UserService userService = new UserService(_context,_roleManager,_userManager);
+            ViewData["roles"] = await userService.GetUsersRole();
 
             /*Pagination*/
             var pageSize = 10;
@@ -45,58 +47,13 @@ namespace KTU_SA_RO.Controllers
                 .ToListAsync());
         }
 
-        // Get users roles
-        private async Task<Dictionary<string, IdentityRole>> GetUsersRole()
-        {
-            var UsersName = await _userManager.Users.Select(u => new { u.Id, u.UserName }).ToListAsync();
-            var Roles = await _roleManager.Roles.ToListAsync();
-
-            var UsersRoles = await _context.UserRoles.ToListAsync();
-
-            var UserRole = new Dictionary<string, IdentityRole>();
-            //var roles = new Dictionary<ApplicationUser, List<IdentityRole>>();
-            foreach (var usr in UsersName)
-            {
-                //var rolelist = new List<IdentityRole>();
-                foreach (var userRole in UsersRoles.Where(a => a.UserId.Equals(usr.Id)))
-                {
-                    var role = new IdentityRole();
-                    role = Roles.Single(a => a.Id.Equals(userRole.RoleId));
-                    //rolelist.Add(role);
-                    UserRole.Add(usr.UserName, role);
-                }
-
-            }
-            return UserRole;
-        }
-
-        // Get one user roles by his email
-        private async Task<string> GetUserRole(string email)
-        {
-            var User = await _userManager.Users.FirstOrDefaultAsync(u => u.Email.Equals(email));
-            var Roles = await _roleManager.Roles.ToListAsync();
-
-            var userRole = await _context.UserRoles.Where(u => u.UserId.Equals(User.Id)).FirstOrDefaultAsync();
-
-            //var roles = new Dictionary<ApplicationUser, List<IdentityRole>>();
-            string roleName = null;
-            if (userRole != null)
-            {
-                var role = Roles.Single(a => a.Id.Equals(userRole.RoleId));
-                roleName = role.Name;
-            }
-
-            else
-                TempData["danger"] = "Nepriskirta rolė naudotojui arba rolė nerasta";
-
-            return roleName;
-        }
-
         [Route("Users/UserRole/{userId}")]
         public async Task<IActionResult> UserRole(string userId)
         {
+            UserService userService = new UserService(_context, _roleManager, _userManager);
+
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(userId));
-            ViewData["userRoleName"] = await GetUserRole(user.Email);
+            ViewData["userRoleName"] = await userService.GetUserRole(user.Email);
             var userRole = await _context.UserRoles.Where(u => u.UserId.Equals(user.Id)).FirstOrDefaultAsync();
             if (userRole == null)
             {
@@ -190,22 +147,16 @@ namespace KTU_SA_RO.Controllers
             await _userManager.DeleteAsync(DeleteUser);
 
             var successMsg = "Naudotojas:" + DeleteUser.Name + " " + DeleteUser.Surname;
+
             if (userEventTeams != null && userRequirements != null)
-            {
                 TempData["success"] = "<b>" + successMsg + "<b/> iš <u>renginio komandos</u> ir <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
-            }
             else if (userEventTeams != null)
-            {
                 TempData["success"] = "<b>" + successMsg + "<b/> su <u>renginio komandos nariais</u> sėkmingai pašalintas!";
-            }
             else if (userRequirements != null)
-            {
                 TempData["success"] = "<b>" + successMsg + "<b/> su <u>specifiniais reikalavimais</u> sėkmingai pašalintas!";
-            }
             else
-            {
                 TempData["success"] = "<b>" + successMsg + "<b/> sėkmingai pašalintas";
-            }
+
             TempData["success"] = "Naudotojas <b>" + DeleteUser.Name + DeleteUser.Surname + "</b> sėkmingai pašalintas!";
             return RedirectToAction(nameof(Index));
         }

@@ -10,6 +10,7 @@ using KTU_SA_RO.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using KTU_SA_RO.Services;
 
 namespace KTU_SA_RO.Controllers
 {
@@ -104,9 +105,7 @@ namespace KTU_SA_RO.Controllers
             ViewData["userId"] = userId;
 
             if (userEvents.Count == 0)
-            {
                 TempData["danger"] = "Jūsų renginių nebuvo rasta";
-            }
 
             return View(nameof(Index));
         }
@@ -121,12 +120,13 @@ namespace KTU_SA_RO.Controllers
             }
 
             var positions = new List<string>();
+            EventService eventService = new EventService(_context);
 
             // convert user roles to positions
             foreach (var role in Enum.GetValues(typeof(Role)))
             {
                 if(!role.Equals("admin"))
-                    positions.Add(SetUserPosition(role.ToString()));
+                    positions.Add(eventService.SetUserPosition(role.ToString()));
             }
             ViewData["positions"] = positions;
 
@@ -142,9 +142,9 @@ namespace KTU_SA_RO.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (lastEventsCount != null)
-                ViewData["lastEvents"] = LastEventsStats(@event, lastEventsCount, 4);
+                ViewData["lastEvents"] = eventService.LastEventsStats(@event, lastEventsCount, 4);
             else
-                ViewData["lastEvents"] = LastEventsStats(@event, 3, 4);
+                ViewData["lastEvents"] = eventService.LastEventsStats(@event, 3, 4);
             
             ViewData["sponsors"] = await _context.Sponsors.ToListAsync();
             ViewData["eventSponsors"] = @event.Sponsorships.Select(s => s.Sponsor).Distinct().ToList();
@@ -162,7 +162,7 @@ namespace KTU_SA_RO.Controllers
                     if (user != null)
                     {
                         eventTeam.Add(i,user);
-                        membersRole.Add(i,SetUserPosition(eventTeamMember.RoleName));
+                        membersRole.Add(i, eventService.SetUserPosition(eventTeamMember.RoleName));
                     }
                     else
                     {
@@ -190,7 +190,7 @@ namespace KTU_SA_RO.Controllers
                 {
                     var userRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
                     var role = await _roleManager.Roles.FirstOrDefaultAsync(a => a.Name.Equals(userRole));
-                    usersNameSurname.Add(user.Name + " " + user.Surname + " || " + SetUserPosition(role.Name)); 
+                    usersNameSurname.Add(user.Name + " " + user.Surname + " || " + eventService.SetUserPosition(role.Name)); 
                     ViewData["usersNameSurname"] = usersNameSurname;
                 }
             }
@@ -205,55 +205,6 @@ namespace KTU_SA_RO.Controllers
             
 
             return View(@event);
-        }
-
-        public List<Event> LastEventsStats(Event chosenEvent,int? chosenEventsCount , int removeLettersCount)
-        {
-            if (chosenEvent.Title.Length > 3)
-            {
-                string titleTrimed = chosenEvent.Title.Remove(chosenEvent.Title.Length - removeLettersCount);
-                var lastEvents = new List<Event>();
-
-                var les = _context.Events.Where(e => e.Title.Contains(titleTrimed) && !e.StartDate.Equals(chosenEvent.StartDate) && !e.EndDate.Equals(chosenEvent.EndDate)).OrderByDescending(e => e.Id).Select(e => e.Id).AsEnumerable();
-                if (chosenEventsCount > les.Count())
-                    chosenEventsCount = les.Count();
-
-                for (int i = 0; i < chosenEventsCount; i++)
-                {
-                    var lastEvent = _context.Events
-                        .Where(e => e.Title.Contains(titleTrimed) && !e.StartDate.Equals(chosenEvent.StartDate) && !e.EndDate.Equals(chosenEvent.EndDate) && les.ElementAtOrDefault(i) == e.Id)
-                        .Include(et => et.EventTeamMembers)
-                        .Include(rv => rv.Revenues)
-                        .Include(c => c.Costs)
-                        .Include(t => t.Ticketings)
-                        .Include(s => s.Sponsorships)
-                        .FirstOrDefault();
-                    lastEvents.Add(lastEvent);
-                }
-                return lastEvents;
-            }
-
-            return null;
-        }
-
-        public string SetUserPosition(string roleName)
-        {
-            if (roleName.Equals("registered"))
-                return "Registruotas naudotojas";
-            if (roleName.Equals("eventCoord"))
-                return "Renginio koordinatorius";
-            if (roleName.Equals("fsaOrgCoord"))
-                return "ORK koordinatorius";
-            if (roleName.Equals("fsaBussinesCoord"))
-                return "VIP koordinatorius";
-            if (roleName.Equals("fsaPrCoord"))
-                return "RSV koordinatorius"; 
-            if (roleName.Equals("orgCoord"))
-                return "CSA ORK koordinatorius";
-            if (roleName.Equals("admin"))
-                return "Administratorius";
-            else
-                return null;
         }
 
         // GET: Events/Create

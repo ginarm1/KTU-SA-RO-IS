@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace KTU_SA_RO.Controllers.ApiControllers
 {
     [ApiController]
-    [Route("Api/[controller]")]
-    public class SponsorsController : ControllerBase
+    [Route("Api/sponsors")]
+    public class SponsorsControllerApi : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public SponsorsController(ApplicationDbContext context)
+        public SponsorsControllerApi(ApplicationDbContext context)
         {
             _context = context;
         }
