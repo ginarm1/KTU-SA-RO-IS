@@ -20,7 +20,7 @@ namespace KTU_SA_RO.Controllers.ApiControllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<ActionResult<List<Sponsor>>> Index()
         {
             return Ok(await _context.Sponsors.ToListAsync());
